@@ -103,11 +103,11 @@ public class MiscListeners implements Listener {
 				// that aren't /inf
 				if (Files.getConfig().getStringList("Blocked Commands").contains(msg.toLowerCase()))
 				{
-					e.getPlayer().sendMessage(Msgs.Error_Cant_Use_Command.getString());
+					e.getPlayer().sendMessage(Msgs.Error_Misc_Use_Command.getString(true));
 					e.setCancelled(true);
 				} else if (!(Files.getConfig().getStringList("Allowed Commands").contains(msg.toLowerCase()) || e.getMessage().toLowerCase().contains("inf")))
 				{
-					e.getPlayer().sendMessage(Msgs.Error_Cant_Use_Command.getString());
+					e.getPlayer().sendMessage(Msgs.Error_Misc_Use_Command.getString(true));
 					e.setCancelled(true);
 				}
 			}

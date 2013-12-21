@@ -3,77 +3,69 @@ package me.sniperzciinema.cranked.Messages;
 
 import org.bukkit.ChatColor;
 
-import me.sniperzciinema.cranked.Main;
 import me.sniperzciinema.cranked.Tools.Files;
 
 
 public enum Msgs
 {
-	//List of all Messages, and beside are some variables for them.
-	Format_Header("Format.Header"),//<title>
+	Format_Header("Format.Header"),	// <title>>
 	Format_Line("Format.Line"),
-	Arena_Created("Arena.Created"),//<arena>
-	Arena_Creator("Arena.Creator"), // <creator>>
-	Arena_Removed("Arena.Removed"), //<arena>
-	Arena_How_To_Set_More_Spawns("Arena.How To Set More Spawns"),
-	Arena_Information("Arena.Information"), //<arena> // <creator>>
-	Arena_Spawn_Set("Arena.Spawn Set"), //<spawn>
-	Arena_Arena_Is_Set("Arena.Arena Is Set"), 
-	Arena_Spawns("Arena.Spawns"),//<spawns>> 
-	Arena_Spawn_Removed("Arena.Spawn Removed"), //<spawn>>
-	Arena_Tpd_To_Spawn("Arena.Tpd To Spawn"),//<spawn> 
-	Arena_List_Arenas("Arena.List Arenas"), //<validarenas> // <notvalidarenas>
-	Error_No_Permission("Error.No Permission"), 
-	Error_Game_Already_Started("Error.Games Already Started"), 
-	Error_Not_In_A_Game("Error.Not In A Game"), 
-	Error_Already_In_A_Game("Error.Already In A Game"), 
-	Error_Not_An_Arena("Error.Not An Arena"),//<arena>
-	Error_Already_An_Arena("Error.Already An Arena"),
-	Error_Missing_Spawns("Error.Missing Spawns"), 
-	Error_Plugin_Unload("Error.Plugin Unload"), 
-	Error_Cant_Use_Command("Error.Cant Use Command"),
-	Error_Not_Enough_Players("Error.Not Enough Players"),
-	GameOver_Winners("GameOver.Winners"),
-	GameOver_Times_Up("GameOver.Times Up"),
-	GameOver_Max_Points_Reached("GameOver.Max Points Reached"),
-	Game_Start("Game.Start"),
-	Game_Starting("Game.Starting"),
-	Game_You_Joined_A_Game("Game.You Joined A Game"), 
-	Game_StatusUpdate("Game.Status Update"),//<current>> // <needed>
-	Game_They_Joined_A_Game("Game.They Joined A Game"),//<player> 
-	Game_You_Left_A_Game("Game.You Left A Game"), 
-	Game_They_Left_A_Game("Game.They Left A Game"), //<player>>
-	Game_Not_Enough_Players("Game.Not Enough Players"), 
-	Game_Players_Needed("Game.Players Needed"),//<current>> // <needed>
-	Game_PreGame_Time_Left("Game.PreGame Time Left"),// <time>
-	Game_PreGame_Please_Wait("Game.PreGame Please Wait"),
-	Game_Time_Left("Game.Game Time Left"), // <time>
-	Game_Ended("Game.Ended"),
-	Commands_How_To_Set_Spawn("Commands.How To Set Spawn"), 
-	Commands_How_To_Set_Arena("Commands.How To Set Arena"), 
-	Commands_How_To_Create("Commands.How To Create"), 
-	Commands_How_To_Remove("Commands.How To Remove"), 
-	Commands_How_To_Info("Commands.How To Info"), 
-	Commands_How_To_Join("Commands.How To Join"), 
-	Commands_How_To_Leave("Commands.How To Leave"),  
-	Commands_How_To_Suicide("Commands.How To Suicide"),
-	Commands_How_To_Arenas("Commands.How To Arenas"),  
-	Commands_How_To_Show_Arena_Spawns("Commands.How To Show Arena Spawns"), 
-	Commands_How_To_Tp_To_Arena_Spawns("Commands.How To Tp To Arena Spawns"), 
-	Commands_How_To_Delete_Arena_Spawns("Commands.How To Delete Arena Spawns"), 
-	Commands_How_To_Admin("Commands.How To Admin"),  
-	Info_Players_In("Info.Players In"),//<current>>
-	Info_Game_State("Info.Game State"),//<state>
-	Info_Time_Left("Info.Time Left"), // <time>
-	Info_Required_Players_To_Start("Info.Required Players To Start"),
-	Info_Time_Limit("Info.Time Limit"),//<time>
-	Info_Max_Points("Info.Max Points"),//<points>
-	Info_Creator("Info.Creator"),//<creator>
-	Stats_Score("Stats.Score"),//<value>
-	Stats_Kills("Stats.Kills"),//<value>
-	Stats_Deaths("Stats.Deaths"),//<value>
-	Stats_Playing_Time("Stats.Playing Time"),//<value>
-	Stats_Highest_KillStreak("Stats.Highest KillStreak"),//<value>
+	Format_Prefix("Format.Prefix"),
+	Arena_Arenas("Arena.Arenas"),
+	Arena_Information("Arena.Information"),
+	Command_Arena_Created("Command.Arena.Created")/* <arena> */,
+	Command_Arena_Removed("CommandArena.Removed")/* <arena> */,
+	Command_Arena_Set("Command.Arena.Set")/* <arena> */,
+	Command_Spawn_Set("Command.Spawn.Set")/* <spawn> */,
+	Command_Spawn_Tp("Command.Spawn.Tp")/* <spawn> */,
+	Command_Spawn_Spawns("Command.Spawn.Spawns")/* <spawns> */,
+	Command_Spawn_Deleted("Command.Spawn.Deleted")/* <spawn> */,
+	Command_Info_Players("Game.Info.Players")/* <players> */,
+	Command_Info_State("Game.Info.State")/* <state> */,
+	Error_Misc_No_Permission("Error.Misc.No Permission"),
+	Error_Misc_Plugin_Unloaded("Error.Misc.Plugin Unloaded"),
+	Error_Misc_Plugin_Disabled("Error.Misc.Plugin Disabled"),
+	Error_Misc_Use_Command("Error.Misc.Cant Use Command"),
+	Error_Misc_Not_Player("Error.Misc.Not Player"),
+	Error_Misc_Unkown_Command("Error.Misc.Unkown Command"),
+	Error_Game_Started("Error.Game.Started"),
+	Error_Game_Not_Started("Error.Game.Not Started"),
+	Error_Game_Not_In("Error.Game.Not In"),
+	Error_Game_In("Error.Game.In"),
+	Error_Top_Not_Stat("Error.Top.Not Stat")/* <stats> */,
+	Error_Arena_Doesnt_Exist("Error.Arena.Doesnt Exist")/* <arena> */,
+	Error_Arena_Not_Valid("Error.Arena.Not Valid")/* <arena> */,
+	Error_Arena_Already_Exists("Error.Arena.Already Exist"),
+	Error_Arena_No_Spawns("Error.Arena.No Spawns"),
+	Error_Sign_Not_Valid("Error.Sign.Not Valid"),
+	Game_Time_Left("Game.Time Left")/* <time> */,
+	Game_Joined_You("Game.Joined.You"),
+	Game_Joined_They("Game.Joined.They")/* <player> */,
+	Game_Left_You("Game.Left.You"),
+	Game_Left_They("Game.Left.They")/* <player> */,
+	Game_End_Not_Enough_Players("Game.End.Not Enough Players"),
+	Help_Lists("Help.Lists")/* <lists> */,
+	Help_TpSpawn("Help.TpSpawn"),
+	Help_DelSpawn("Help.DelSpawn"),
+	Help_SetSpawn("Help.SetSpawn"),
+	Help_Create("Help.Create"),
+	Help_Remove("Help.Remove"),
+	Help_SetArena("Help.SetArena"),
+	Help_Info("Help.Info"),
+	Help_Top("Help.Top")/* <stats> */,
+	Arena_Creator("Arena.Creator"),
+
+	Waiting_Players_Needed("Waiting.Players Needed"),
+	Before_Game_Time_Left("Before Game.Time Left"),
+	Before_Game_Please_Wait("Before Game.Please Wait"),
+	Before_Game_Death("Before Game.Death"),
+	Command_Admin_Reload("Command.Admin.Reload"),
+	Command_Admin_Stat_Changed("Command.Admin.Stat Changed"),
+	Game_Over_Ended("Game Over.Ended"),
+	Game_Over_Times_Up("Game Over.Times Up"),
+	Game_Over_Winners("Game Over.Winners"),
+	Game_Started("Game.Started")
+
 	;
 
 	private String string;
@@ -83,23 +75,11 @@ public enum Msgs
 		string = s;
 	}
 
-	//Get the message from the Messages.yml, well replacing and variables given
-	public String getString() {
-		String prefix = Main.cranked;
+	public String getString(boolean usePrefix, String... variables) {
+		String prefix = ChatColor.translateAlternateColorCodes('&', Files.getMessages().getString("Format.Prefix").replaceAll("&x", "&" + String.valueOf(RandomChatColor.getColor().getChar())).replaceAll("&y", "&" + String.valueOf(RandomChatColor.getFormat().getChar()))) + " ";
 		try
 		{
-			return prefix + ChatColor.translateAlternateColorCodes('&', Files.getMessages().getString(string));
-		} catch (NullPointerException npe)
-		{
-			return prefix +"Unable to find message: "+string;
-		}
-	}
-
-	public String getString(String... variables) {
-		String prefix = Main.cranked;
-		try
-		{
-			String message = prefix + ChatColor.translateAlternateColorCodes('&', Files.getMessages().getString(string));
+			String message = (usePrefix ? prefix : "") + ChatColor.translateAlternateColorCodes('&', Files.getMessages().getString(string));
 			int i = 0;
 			String replace = null;
 			for (String variable : variables)

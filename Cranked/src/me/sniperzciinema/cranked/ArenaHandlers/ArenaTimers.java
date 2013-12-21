@@ -101,7 +101,7 @@ public class ArenaTimers {
 				{
 					for (Player player : arena.getPlayers())
 					{
-						player.sendMessage(Msgs.Game_StatusUpdate.getString("<current>", String.valueOf(arena.getPlayers().size()), "<needed>", String.valueOf(arena.getSettings().getRequiredPlayers())));
+						player.sendMessage(Msgs.Waiting_Players_Needed.getString(true, "<current>", String.valueOf(arena.getPlayers().size()), "<needed>", String.valueOf(arena.getSettings().getRequiredPlayers())));
 					}
 					restartUpdaterTimer();
 				}
@@ -134,7 +134,7 @@ public class ArenaTimers {
 		{
 			CPlayerManager.getCrankedPlayer(player).respawn();
 			CPlayerManager.getCrankedPlayer(player).getScoreBoard().showStats();
-			player.sendMessage(Msgs.Game_PreGame_Please_Wait.getString());
+			player.sendMessage(Msgs.Before_Game_Please_Wait.getString(true));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,
 					Integer.MAX_VALUE, 128));
 			player.addPotionEffect(new PotionEffect(
@@ -158,7 +158,7 @@ public class ArenaTimers {
 						// Tell the player how much time is left if it's a
 						// certain value
 						if (timeLeft == (getGameTime() / 4) * 3 || timeLeft == getGameTime() / 2 || timeLeft == getGameTime() / 4 || timeLeft == 5 || timeLeft == 4 || timeLeft == 3 || timeLeft == 2 || timeLeft == 1)
-							player.sendMessage(Msgs.Game_PreGame_Time_Left.getString("<time>", Time.getTime((long) timeLeft)));
+							player.sendMessage(Msgs.Before_Game_Time_Left.getString(true, "<time>", Time.getTime((long) timeLeft)));
 					}
 				}
 				// GAME STARTS
@@ -184,7 +184,7 @@ public class ArenaTimers {
 			Agility.resetSpeed(p);
 			for (PotionEffect effect : p.getActivePotionEffects())
 				p.removePotionEffect(effect.getType());
-			p.sendMessage(Msgs.Game_Start.getString());
+			p.sendMessage(Msgs.Game_Started.getString(true));
 		}
 		game = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.me, new Runnable()
 		{
@@ -203,7 +203,7 @@ public class ArenaTimers {
 					if (timeLeft == (getGameTime() / 4) * 3 || timeLeft == getGameTime() / 2 || timeLeft == getGameTime() / 4 || timeLeft == 60 || timeLeft == 10 || timeLeft == 9 || timeLeft == 8 || timeLeft == 7 || timeLeft == 6 || timeLeft == 5 || timeLeft == 4 || timeLeft == 3 || timeLeft == 2 || timeLeft == 1)
 						for (Player player : arena.getPlayers())
 						{
-							player.sendMessage(Msgs.Game_Time_Left.getString("<time>", Time.getTime((long) timeLeft)));
+							player.sendMessage(Msgs.Game_Time_Left.getString(true, "<time>", Time.getTime((long) timeLeft)));
 						}
 
 				}

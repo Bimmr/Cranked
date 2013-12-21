@@ -33,7 +33,7 @@ public class Game {
 		// Reset the timers and state
 		arena.reset();
 
-		Player[] winners = Sort.topPoints(arena.getPlayers(), 3);
+		Player[] winners = Sort.topStats(arena.getPlayers(), 3);
 		int place = 0;
 		// Reset all players, inform them the game ended
 		for (Player p : arena.getPlayers())
@@ -43,24 +43,24 @@ public class Game {
 			if(Stats.getHighestKillStreak(p.getName()) < cp.getKillstreak())
 				Stats.setHighestKillStreak(p.getName(), cp.getKillstreak());
 			Stats.setPlayingTime(p.getName(), Stats.getPlayingTime(p.getName()) + (System.currentTimeMillis()/1000 - cp.getTimeJoined()));
-			p.sendMessage(Msgs.Format_Line.getString());
+			p.sendMessage(Msgs.Format_Line.getString(false));
 			p.sendMessage("");
-			p.sendMessage(Msgs.Game_Ended.getString());
+			p.sendMessage(Msgs.Game_Over_Ended.getString(true));
 			if (timeRanOut)
-				p.sendMessage(Msgs.GameOver_Times_Up.getString());
+				p.sendMessage(Msgs.Game_Over_Times_Up.getString(true));
 
 			p.sendMessage("");
 			for (Player winner : winners)
 			{
 				if (winner != null)
-					p.sendMessage(Msgs.GameOver_Winners.getString("<place>", String.valueOf(place + 1), "<player>", winner.getName() + "(" + CPlayerManager.getCrankedPlayer(winner).getPoints() + ")"));
+					p.sendMessage(Msgs.Game_Over_Winners.getString(true, "<place>", String.valueOf(place + 1), "<player>", winner.getName() + "(" + CPlayerManager.getCrankedPlayer(winner).getPoints() + ")"));
 				place++;
 			}
 
 			p.sendMessage("");
-			p.sendMessage(Msgs.Arena_Information.getString("<arena>", arena.getName(), "<creator>", arena.getCreator()));
-			p.sendMessage(Msgs.Arena_Creator.getString("<creator>", arena.getCreator()));
-			p.sendMessage(Msgs.Format_Line.getString());
+			p.sendMessage(Msgs.Arena_Information.getString(true,"<arena>", arena.getName(), "<creator>", arena.getCreator()));
+			p.sendMessage(Msgs.Arena_Creator.getString(true, "<creator>", arena.getCreator()));
+			p.sendMessage(Msgs.Format_Line.getString(false));
 			leave(cp);
 
 			// Set back any blocks that were broken well playing in the
@@ -116,7 +116,7 @@ public class Game {
 			arena.reset();
 			for (Player p : arena.getPlayers())
 			{
-				p.sendMessage(Msgs.Error_Not_Enough_Players.getString());
+				p.sendMessage(Msgs.Game_End_Not_Enough_Players.getString(true));
 				CPlayer cpp = CPlayerManager.getCrankedPlayer(p);
 				cpp.reset();
 				cpp.getScoreBoard().showStats();

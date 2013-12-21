@@ -17,14 +17,17 @@ import me.sniperzciinema.cranked.Messages.Time;
 import me.sniperzciinema.cranked.PlayerHandlers.CPlayer;
 import me.sniperzciinema.cranked.PlayerHandlers.CPlayerManager;
 import me.sniperzciinema.cranked.Tools.Files;
+import me.sniperzciinema.cranked.Tools.Handlers.ItemHandler;
 import me.sniperzciinema.cranked.Tools.Handlers.LocationHandler;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
 
 public class Commands implements CommandExecutor {
 
@@ -49,25 +52,22 @@ public class Commands implements CommandExecutor {
 
 			if (args.length > 0 && args[0].equalsIgnoreCase("TEST"))
 			{
-				Deaths.playerDies(p,null, DeathTypes.Other);
+				Deaths.playerDies(p, null, DeathTypes.Other);
 			}
 			// //////////////////////////////JOIN///////////////////////////////////
-			else if (args.length > 0 && args[0].equalsIgnoreCase("JOIN"))
+			else if (args.length > 0 && args[0].equalsIgnoreCase("Join"))
 			{
 				if (p == null)
-				{
 					sender.sendMessage("Expected a player!");
-					return true;
-				}
-				if (!sender.hasPermission("Cranked.Join") && !sender.hasPermission("Cranked.Join." + args[1]))
-				{
-					sender.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				} else if (cp.getArena() != null)
-				{
-					sender.sendMessage(Msgs.Error_Already_In_A_Game.getString());
-					return true;
-				} else if (args.length >= 2)
+
+				else if (!sender.hasPermission("Cranked.Join") && !sender.hasPermission("Cranked.Join." + args[1]))
+					sender.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+
+				else if (cp.getArena() != null)
+
+					sender.sendMessage(Msgs.Error_Game_Not_In.getString(true));
+
+				else if (args.length >= 2)
 				{
 					String arenaName = args[1];
 					if (ArenaManager.arenaRegistered(arenaName))
@@ -77,74 +77,65 @@ public class Commands implements CommandExecutor {
 							Game.join(cp, ArenaManager.getArena(StringUtil.getWord(arenaName)));
 							Arena arena = cp.getArena();
 							// Info the players of their current situation
-							p.sendMessage(Msgs.Format_Line.getString());
+							p.sendMessage(Msgs.Format_Line.getString(false));
 							p.sendMessage("");
-							p.sendMessage(Msgs.Game_You_Joined_A_Game.getString("<arena>", cp.getArena().getName()));
-							p.sendMessage(Msgs.Arena_Creator.getString("<creator>", arena.getCreator()));
+							p.sendMessage(Msgs.Game_Joined_You.getString(true, "<arena>", cp.getArena().getName()));
+							p.sendMessage(Msgs.Arena_Creator.getString(true, "<creator>", arena.getCreator()));
 							p.sendMessage("");
 							p.sendMessage("");
 							if (arena.getState() == GameState.Waiting)
 							{
-								p.sendMessage(Msgs.Game_StatusUpdate.getString("<current>", String.valueOf(arena.getPlayers().size()), "<needed>", String.valueOf(arena.getSettings().getRequiredPlayers())));
+								p.sendMessage(Msgs.Waiting_Players_Needed.getString(true, "<current>", String.valueOf(arena.getPlayers().size()), "<needed>", String.valueOf(arena.getSettings().getRequiredPlayers())));
 							} else if (arena.getState() == GameState.PreGame)
 							{
-								p.sendMessage(Msgs.Game_Starting.getString("<time>", Time.getTime((long) arena.getTimer().getTimeLeft())));
+								p.sendMessage(Msgs.Before_Game_Time_Left.getString(true, "<time>", Time.getTime((long) arena.getTimer().getTimeLeft())));
 							} else if (arena.getState() == GameState.Started)
 							{
-								p.sendMessage(Msgs.Game_Time_Left.getString("<time>", Time.getTime((long) arena.getTimer().getTimeLeft())));
+								p.sendMessage(Msgs.Game_Time_Left.getString(true, "<time>", Time.getTime((long) arena.getTimer().getTimeLeft())));
 							}
 							p.sendMessage("");
-							p.sendMessage(Msgs.Format_Line.getString());
+							p.sendMessage(Msgs.Format_Line.getString(false));
+
 							for (Player ppl : cp.getArena().getPlayers())
 								if (ppl != cp.getPlayer())
-									ppl.sendMessage(Msgs.Game_They_Joined_A_Game.getString("<player>", p.getName(), "<arena>", cp.getArena().getName()));
+									ppl.sendMessage(Msgs.Game_Joined_They.getString(true, "<player>", p.getName(), "<arena>", cp.getArena().getName()));
 
 							Agility.speedUp(p, false);
 						} else
-						{
-							sender.sendMessage(Msgs.Error_Missing_Spawns.getString("<arena>", arenaName));
-						}
+							sender.sendMessage(Msgs.Error_Arena_No_Spawns.getString(true, "<arena>", arenaName));
 					} else
-					{
-						sender.sendMessage(Msgs.Error_Not_An_Arena.getString("<arena>", arenaName));
-					}
+						sender.sendMessage(Msgs.Error_Arena_Doesnt_Exist.getString(true, "<arena>", arenaName));
 				} else
-				{
 					Menus.chooseArena(p);
-				}
 			}
 			// //////////////////////////////LEAVE///////////////////////////////////
-			else if (args.length > 0 && args[0].equalsIgnoreCase("LEAVE"))
+			else if (args.length > 0 && args[0].equalsIgnoreCase("Leave"))
 			{
 				if (p == null)
-				{
-					sender.sendMessage("Expected a player!");
-					return true;
-				}
-				if (!p.hasPermission("Cranked.Join"))
-				{
-					p.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				} else if (cp.getArena() == null)
-				{
-					p.sendMessage(Msgs.Error_Not_In_A_Game.getString());
-					return true;
-				} else
+					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(false));
+
+				else if (!p.hasPermission("Cranked.Leave"))
+					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+
+				else if (cp.getArena() == null)
+					p.sendMessage(Msgs.Error_Game_Not_In.getString(true));
+
+				else
 				{
 					Arena arena = cp.getArena();
 					Game.leave(cp);
 
 					// Tell the player they left
-					p.sendMessage(Msgs.Format_Line.getString());
+					p.sendMessage(Msgs.Format_Line.getString(false));
 					p.sendMessage("");
-					p.sendMessage(Msgs.Game_You_Left_A_Game.getString("<arena>", arena.getName()));
+					p.sendMessage(Msgs.Game_Left_You.getString(true, "<arena>", arena.getName()));
 					p.sendMessage("");
-					p.sendMessage(Msgs.Format_Line.getString());
+					p.sendMessage(Msgs.Format_Line.getString(false));
 					// Update the other players on the situation
 					for (Player ppl : arena.getPlayers())
 					{
-						CPlayerManager.getCrankedPlayer(ppl).getScoreBoard().showStats();
-						ppl.sendMessage(Msgs.Game_They_Left_A_Game.getString("<player>", cp.getName(), "<arena>", arena.getName()));
+						CPlayerManager.getCrankedPlayer(ppl).getScoreBoard().showProper();
+						ppl.sendMessage(Msgs.Game_Left_They.getString(true, "<player>", cp.getName(), "<arena>", arena.getName()));
 					}
 
 					Agility.resetSpeed(p);
@@ -152,127 +143,106 @@ public class Commands implements CommandExecutor {
 			}
 
 			// //////////////////////////////CREATE///////////////////////////////////
-			else if (args.length > 0 && args[0].equalsIgnoreCase("CREATE"))
+			else if (args.length > 0 && args[0].equalsIgnoreCase("Create"))
 			{
-				
-				if (p == null)
-				{
-					sender.sendMessage("Expected a player!");
-					return true;
-				}
-				if (!sender.hasPermission("Cranked.SetUp"))
-				{
 
-					sender.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				} else if (args.length >= 2)
+				if (p == null)
+					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(false));
+
+				if (!sender.hasPermission("Cranked.Create"))
+					sender.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+
+				else if (args.length >= 2)
 				{
-					String arena = args[1];
+					String arena = StringUtil.getWord(args[1]);
 					if (!ArenaManager.arenaRegistered(arena))
 					{
 
-						ArenaManager.createArena(args[1]);
-						p.sendMessage(Msgs.Format_Line.getString());
-						p.sendMessage(Msgs.Arena_Created.getString("<arena>", arena));
-						p.sendMessage(Msgs.Arena_How_To_Set_More_Spawns.getString());
+						ArenaManager.createArena(arena);
+						p.sendMessage(Msgs.Format_Line.getString(false));
+						p.sendMessage(Msgs.Command_Arena_Created.getString(true, "<arena>", arena));
+						p.sendMessage(Msgs.Help_SetSpawn.getString(true));
 						cp.setCreating(arena);
+
 						if (args.length == 3)
-							ArenaManager.getArena(StringUtil.getWord(arena)).setCreator(args[2]);
+							ArenaManager.getArena(arena).setCreator(args[2]);
+
 						else
 							ArenaManager.getArena(StringUtil.getWord(arena)).setCreator("Unkown");
-						p.sendMessage(Msgs.Format_Line.getString());
+
+						p.sendMessage(Msgs.Format_Line.getString(false));
 
 					} else
-					{
+						p.sendMessage(Msgs.Error_Game_In.getString(true, "<arena>", arena));
 
-						p.sendMessage(Msgs.Error_Already_An_Arena.getString("<arena>", arena));
-					}
 				} else
-				{
-
-					p.sendMessage(Msgs.Commands_How_To_Create.getString());
-				}
+					p.sendMessage(Msgs.Help_Create.getString(true));
 
 			}
 
 			// //////////////////////////////REMOVE///////////////////////////////////
-			else if (args.length > 0 && args[0].equalsIgnoreCase("REMOVE"))
+			else if (args.length > 0 && args[0].equalsIgnoreCase("Remove"))
 			{
-				if (!sender.hasPermission("Cranked.SetUp"))
-				{
+				if (!sender.hasPermission("Cranked.Remove"))
+					sender.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
 
-					sender.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				} else if (args.length >= 2)
+				else if (args.length >= 2)
 				{
-					String arena = args[1];
+					String arena = StringUtil.getWord(args[1]);
+
 					if (ArenaManager.arenaRegistered(arena))
 					{
 						ArenaManager.removeArena(args[1]);
 
-						sender.sendMessage(Msgs.Arena_Removed.getString("<arena>", arena));
+						sender.sendMessage(Msgs.Command_Arena_Removed.getString(true, "<arena>", arena));
 					} else
-					{
-						sender.sendMessage(Msgs.Error_Not_An_Arena.getString("<arena>", arena));
-					}
-				} else
-				{
-					sender.sendMessage(Msgs.Commands_How_To_Remove.getString());
-				}
+						sender.sendMessage(Msgs.Error_Arena_Doesnt_Exist.getString(true, "<arena>", arena));
 
+				} else
+					sender.sendMessage(Msgs.Help_Remove.getString(true));
 			}
 			// //////////////////////////////ARENAS///////////////////////////////////
-			else if (args.length > 0 && args[0].equalsIgnoreCase("ARENAS"))
+			else if (args.length > 0 && args[0].equalsIgnoreCase("Arenas"))
 			{
-				if (!sender.hasPermission("Cranked.List"))
+				if (!sender.hasPermission("Cranked.Arenas"))
+					sender.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+				else
 				{
-					sender.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				} else
-				{
-					sender.sendMessage(Msgs.Format_Header.getString("<title>", "Arenas"));
-					sender.sendMessage(Msgs.Arena_List_Arenas.getString("<validarenas>", ArenaManager.getPossibleArenas(), "<notvalidarenas>", ArenaManager.getNotPossibleArenas()));
-					sender.sendMessage(Msgs.Format_Line.getString());
+					sender.sendMessage(Msgs.Format_Header.getString(false, "<title>", "Arenas"));
+					sender.sendMessage(Msgs.Arena_Arenas.getString(true, "<validarenas>", ArenaManager.getPossibleArenas(), "<notvalidarenas>", ArenaManager.getNotPossibleArenas()));
+					sender.sendMessage(Msgs.Format_Line.getString(false));
 				}
 			}
 			// //////////////////////////////SETSPAWN///////////////////////////////////
-			else if (args.length > 0 && args[0].equalsIgnoreCase("SETSPAWN"))
+			else if (args.length > 0 && args[0].equalsIgnoreCase("SetSpawn"))
 			{
 				if (p == null)
-				{
-					sender.sendMessage("Expected a player!");
-					return true;
-				}
-				if (!p.hasPermission("Cranked.Setup"))
-				{
-					p.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				} else
+					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(true));
+
+				else if (!p.hasPermission("Cranked.SetSpawn"))
+					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+
+				else
 				{
 					String arena = cp.getCreating();
 					if (ArenaManager.arenaRegistered(arena))
 					{
 						ArenaManager.setSpawn(arena, p.getLocation());
-						p.sendMessage(Msgs.Arena_Spawn_Set.getString("<spawn>", String.valueOf(ArenaManager.getArena(StringUtil.getWord(arena)).getSpawns().size())));
+						p.sendMessage(Msgs.Command_Spawn_Set.getString(true, "<spawn>", String.valueOf(ArenaManager.getArena(arena).getSpawns().size())));
 					} else
-					{
-						p.sendMessage(Msgs.Commands_How_To_Set_Spawn.getString());
-					}
+						p.sendMessage(Msgs.Help_SetSpawn.getString(true));
 				}
 			}
-			// //////////////////////////////SETSPAWN///////////////////////////////////
-			else if (args.length > 0 && args[0].equalsIgnoreCase("SETARENA"))
+			// //////////////////////////////SETARENA///////////////////////////////////
+			else if (args.length > 0 && args[0].equalsIgnoreCase("SetArena"))
 			{
 				if (p == null)
-				{
-					sender.sendMessage("Expected a player!");
-					return true;
-				}
-				if (!p.hasPermission("Cranked.Setup"))
-				{
-					p.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				} else
+					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(true));
+
+				else if (!p.hasPermission("Cranked.SetArena"))
+					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+
+				else
 				{
 					if (args.length == 2)
 					{
@@ -280,289 +250,203 @@ public class Commands implements CommandExecutor {
 						if (ArenaManager.arenaRegistered(args[1]))
 						{
 							cp.setCreating(arenaName);
-							p.sendMessage(Msgs.Arena_Arena_Is_Set.getString("<arena>", arenaName));
+							p.sendMessage(Msgs.Command_Arena_Set.getString(true, "<arena>", arenaName));
 						} else
-						{
-							sender.sendMessage(Msgs.Error_Not_An_Arena.getString("<arena>", arenaName));
-						}
+							sender.sendMessage(Msgs.Error_Arena_Doesnt_Exist.getString(true, "<arena>", arenaName));
+
 					} else
-					{
-						p.sendMessage(Msgs.Commands_How_To_Set_Arena.getString());
-					}
+						p.sendMessage(Msgs.Help_SetArena.getString(true));
 				}
 			}
 			// //////////////////////////////ADMIN///////////////////////////////////
-			else if (args.length > 0 && args[0].equalsIgnoreCase("ADMIN"))
+			else if (args.length > 0 && args[0].equalsIgnoreCase("Admin"))
 			{
-				if (!sender.hasPermission("Cranked.Admin"))
-				{
-					sender.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				} else
+
+				if (!sender.hasPermission("Infected.Admin"))
+					sender.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+
+				else
 				{
 					if (args.length == 2)
 					{
+						// RELOAD
+						if (args[1].equalsIgnoreCase("Reload"))
+						{
+							Files.reloadConfig();
+							Files.reloadMessages();
+							Files.reloadPlayers();
+							sender.sendMessage(Msgs.Command_Admin_Reload.getString(true));
+						}
+						// CODE
+						else if (args[1].equalsIgnoreCase("Code"))
+						{
+							p.sendMessage(Msgs.Format_Prefix.getString(false) + "Code: " + ChatColor.WHITE + ItemHandler.getItemStackToString(((Player) sender).getItemInHand()));
+							p.sendMessage(Msgs.Format_Prefix.getString(false) + "This code has also been sent to your console to allow for copy and paste!");
+							System.out.println(ItemHandler.getItemStackToString(((Player) sender).getItemInHand()));
+						} else
+							p.sendMessage(Msgs.Error_Misc_Unkown_Command.getString(true));
+					} else if (args.length == 3)
+					{
+						if (args[1].equalsIgnoreCase("Kick"))
+						{
+							Player user = Bukkit.getPlayer(args[2]);
+							if (user == null || !CPlayerManager.isInArena(user))
+							{
+								p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "The player must be playing Cranked");
+							} else
+							{
+								user.performCommand("Cranked Leave");
+								user.sendMessage("You been kicked");
+								p.sendMessage(Msgs.Format_Prefix.getString(false) + "You have kicked " + user.getName() + " from Cranked");
+							}
+						} else
+							p.sendMessage(Msgs.Error_Misc_Unkown_Command.getString(true));
+					} else if (args.length == 4)
+					{
+						String user = args[2];
 
+						int i = Integer.parseInt(args[3]);
+
+						if (args[1].equalsIgnoreCase("Score"))
+						{
+							Stats.setScore(user, Stats.getScore(user) + i);
+							p.sendMessage(Msgs.Command_Admin_Stat_Changed.getString(true, "<stat>", "Score", "<value>", String.valueOf(Stats.getScore(user))));
+						} else if (args[1].equalsIgnoreCase("kStats"))
+						{
+							Stats.setKills(user, Stats.getKills(user) + i);
+							p.sendMessage(Msgs.Command_Admin_Stat_Changed.getString(true, "<stat>", "Kills", "<value>", String.valueOf(Stats.getKills(user))));
+						} else if (args[1].equalsIgnoreCase("DStats"))
+						{
+							Stats.setDeaths(user, Stats.getDeaths(user) + i);
+							p.sendMessage(Msgs.Command_Admin_Stat_Changed.getString(true, "<stat>", "Deaths", "<value>", String.valueOf(Stats.getDeaths(user))));
+						} else
+							p.sendMessage(Msgs.Error_Misc_Unkown_Command.getString(true));
+
+					} else
+					{
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GREEN + ChatColor.STRIKETHROUGH + ChatColor.BOLD + "======" + ChatColor.GOLD + " Admin Menu " + ChatColor.GREEN + ChatColor.STRIKETHROUGH + ChatColor.BOLD + "======");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.AQUA + "/Inf Admin Points <Player> <#>");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Add points to a p(Also goes negative)");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.BLUE + "/Inf Admin Score <Player> <#>");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Add score to a p(Also goes negative)");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.DARK_AQUA + "/Inf Admin KStats <Player> <#>");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Add kills to a p(Also goes negative)");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.DARK_BLUE + "/Inf Admin DStats <Player> <#>");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Add deaths to a p(Also goes negative)");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.DARK_GRAY + "/Inf Admin Kick <Player>");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Kick a p out of Cranked");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.DARK_GREEN + "/Inf Admin Reset <Player>");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Reset a p's stats");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.DARK_PURPLE + "/Inf Admin Shutdown");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Prevent joining Cranked");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.DARK_RED + "/Inf Admin Reload");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Reload the config");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GOLD + "/Inf Admin Code");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "See Cranked's item code for the item in hand");
 					}
 				}
 			}
 
-			// //////////////////////////////////////
-			// INFO
+			// //////////////////////////////////////INFO///////////////////////////////////////////////////
 			else if (args.length > 0 && args[0].equalsIgnoreCase("Info"))
 			{
 
 				if (!sender.hasPermission("Cranked.Info"))
-				{
-					sender.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				}
-				if (args.length == 2)
+					sender.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+
+				else if (args.length == 2)
 				{
 					if (ArenaManager.arenaRegistered(args[1]))
 					{
 						Arena arena = ArenaManager.getArena(args[1]);
 						sender.sendMessage("");
-						sender.sendMessage(Msgs.Format_Header.getString("<title>", arena.getName() + " Information"));
-						sender.sendMessage(Msgs.Info_Players_In.getString("<current>", String.valueOf(arena.getPlayers().size()), "<max>", String.valueOf(arena.getSettings().getMaxPlayers())));
-						sender.sendMessage(Msgs.Info_Required_Players_To_Start.getString("<needed>", String.valueOf(arena.getSettings().getRequiredPlayers())));
-						sender.sendMessage(Msgs.Info_Game_State.getString("<state>", String.valueOf(arena.getState())));
-						sender.sendMessage(Msgs.Info_Time_Left.getString("<time>", String.valueOf(arena.getState() == GameState.Started ? Time.getTime((long) arena.getTimer().getTimeLeft()) : "N/A")));
-						sender.sendMessage(Msgs.Info_Time_Limit.getString("<time>", String.valueOf(arena.getSettings().getGameTime())));
-						sender.sendMessage(Msgs.Info_Creator.getString("<creator>", String.valueOf(arena.getCreator())));
+						sender.sendMessage(Msgs.Format_Header.getString(false, "<title>", arena.getName() + " Information"));
+						sender.sendMessage(Msgs.Command_Info_Players.getString(true, "<current>", String.valueOf(arena.getPlayers().size()), "<max>", String.valueOf(arena.getSettings().getMaxPlayers())));
+						sender.sendMessage(Msgs.Command_Info_State.getString(true, "<state>", String.valueOf(arena.getState())));
+						sender.sendMessage(Msgs.Game_Time_Left.getString(true, "<time>", String.valueOf(arena.getState() == GameState.Started ? Time.getTime((long) arena.getTimer().getTimeLeft()) : "N/A")));
+						sender.sendMessage(Msgs.Arena_Creator.getString(true, "<creator>", String.valueOf(arena.getCreator())));
 					} else
-					{
-						sender.sendMessage(Msgs.Error_Not_An_Arena.getString("<arena>", args[1]));
-					}
+						sender.sendMessage(Msgs.Error_Arena_Doesnt_Exist.getString(true, "<arena>", args[1]));
 				} else
-				{
-					sender.sendMessage(Msgs.Commands_How_To_Info.getString());
-				}
+					sender.sendMessage(Msgs.Help_Info.getString(true));
 
 			}
 
-			// /////////////////////////////////////////////////////////////
-			// SUICIDE
+			// ////////////////////////////////////////////////SUICIDE///////////////////////////////////////
 			else if (args.length > 0 && args[0].equalsIgnoreCase("Suicide"))
 			{
 				if (!(sender instanceof Player))
-				{
-					sender.sendMessage("Expected a player!");
-					return true;
-				} else if (!sender.hasPermission("Cranked.Suicide"))
-				{
-					sender.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				}
-				if (cp.getArena() != null)
-				{
+					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(false));
+
+				else if (!sender.hasPermission("Cranked.Suicide"))
+					sender.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+
+				else if (cp.getArena() != null)
 					Deaths.playerDies(null, cp.getPlayer(), DeathTypes.Other);
-				} else
-				{
-					p.sendMessage(Msgs.Error_Not_In_A_Game.getString());
-				}
+
+				else
+					p.sendMessage(Msgs.Error_Game_Not_In.getString(true));
 			}
-			// /////////////////////////////////////////////////
-			// HELP
+			// /////////////////////////////////////////////HELP//////////////////////////////////////////
 			else if (args.length > 0 && args[0].equalsIgnoreCase("Help"))
 			{
-				if (!sender.hasPermission("Cranked.Join"))
-				{
-					sender.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				} else
+				if (!sender.hasPermission("Cranked.Help"))
+					sender.sendMessage(Msgs.Error_Misc_No_Permission.getString(false));
+				else
 				{
 					sender.sendMessage("");
-					sender.sendMessage(Msgs.Format_Header.getString("<title>", "Cranked Help"));
-					sender.sendMessage(Msgs.Commands_How_To_Join.getString());
-					sender.sendMessage(Msgs.Commands_How_To_Leave.getString());
-					if (sender.hasPermission("Cranked.Suicide"))
-						sender.sendMessage(Msgs.Commands_How_To_Suicide.getString());
-					if (sender.hasPermission("Cranked.Info"))
-						sender.sendMessage(Msgs.Commands_How_To_Info.getString());
-					if (sender.hasPermission("Cranked.Arenas"))
-						sender.sendMessage(Msgs.Commands_How_To_Arenas.getString());
-					if (sender.hasPermission("Cranked.SetUp"))
-					{
-						sender.sendMessage(Msgs.Commands_How_To_Set_Arena.getString());
-						sender.sendMessage(Msgs.Commands_How_To_Set_Spawn.getString());
-						sender.sendMessage(Msgs.Commands_How_To_Show_Arena_Spawns.getString());
-						sender.sendMessage(Msgs.Commands_How_To_Tp_To_Arena_Spawns.getString());
-						sender.sendMessage(Msgs.Commands_How_To_Delete_Arena_Spawns.getString());
-						sender.sendMessage(Msgs.Commands_How_To_Create.getString());
-						sender.sendMessage(Msgs.Commands_How_To_Remove.getString());
-					}
-					if (sender.hasPermission("Cranked.Admin"))
-						sender.sendMessage(Msgs.Commands_How_To_Admin.getString());
+					sender.sendMessage(Msgs.Format_Header.getString(false, "<title>", "Cranked Help"));
+					sender.sendMessage("Put help things here");
 				}
 			}
-			// TODO: Admin
-			/*
-			 * // /////////////////////////////////////////////////////////////
-			 * // ADMIN else if (args.length > 0 &&
-			 * args[0].equalsIgnoreCase("Admin")) { CommandSender player =
-			 * sender; if (!player.hasPermission("Cranked.Admin")) {
-			 * player.sendMessage(Messages.sendMessage(Msgs.ERROR_NOPERMISSION,
-			 * null, null)); return true; }
-			 * 
-			 * if (args.length == 2) { if (args[1].equalsIgnoreCase("Shutdown"))
-			 * { if (Cranked.getGameState() != GameState.DISABLED) {
-			 * Cranked.setGameState(GameState.DISABLED);
-			 * player.sendMessage(plugin.I + ChatColor.GRAY +
-			 * "Joining Cranked has been disabled."); } else {
-			 * Cranked.setGameState(GameState.INLOBBY);
-			 * player.sendMessage(plugin.I + ChatColor.GRAY +
-			 * "Joining Cranked has been enabled."); } } else if
-			 * (args[1].equalsIgnoreCase("Reload")) {
-			 * System.out.println("===== Cranked =====");
-			 * Cranked.filesReloadAll(); plugin.addon.getAddons();
-			 * System.out.println("====================");
-			 * 
-			 * player.sendMessage(plugin.I +
-			 * "Crankeds Files have been reloaded"); } else if
-			 * (args[1].equalsIgnoreCase("Code")) { player.sendMessage(plugin.I
-			 * + "Code: " + ChatColor.WHITE +
-			 * ItemHandler.getItemStackToString(((Player)
-			 * sender).getItemInHand())); player.sendMessage(plugin.I +
-			 * "This code has also been sent to your console to allow for copy and paste!"
-			 * ); System.out.println(ItemHandler.getItemStackToString(((Player)
-			 * sender).getItemInHand())); } else { player.sendMessage(plugin.I +
-			 * ChatColor.RED + "Unknown Admin Command, Type /Cranked Admin");
-			 * return true; } } else if (args.length == 3) { if
-			 * (args[1].equalsIgnoreCase("Kick")) { Player user =
-			 * Bukkit.getPlayer(args[2]); if (user == null ||
-			 * !Cranked.isPlayerInGame(user) || !Cranked.isPlayerInLobby(user))
-			 * { player.sendMessage(plugin.I + ChatColor.RED +
-			 * "The player must be playing Cranked"); } else {
-			 * user.performCommand("Cranked Leave");
-			 * user.sendMessage(Messages.sendMessage(Msgs.ADMIN_YOUAREKICKED,
-			 * null, null)); player.sendMessage(plugin.I + "You have kicked " +
-			 * user.getName() + " from Cranked"); } } else if
-			 * (args[1].equalsIgnoreCase("Reset")) { String name = args[2];
-			 * Cranked.filesGetPlayers().set("Players." + name.toLowerCase(),
-			 * null); player.sendMessage(plugin.I + name + "'s now reset!"); } }
-			 * else if (args.length == 4) { String user = args[2];
-			 * 
-			 * int i = Integer.parseInt(args[3]); if
-			 * (args[1].equalsIgnoreCase("Points")) {
-			 * Cranked.playerSetPoints(user, Cranked.playerGetPoints(user) + i,
-			 * 0); player.sendMessage(plugin.I + user + "'s new points is: " +
-			 * Cranked.playerGetPoints(user)); } else if
-			 * (args[1].equalsIgnoreCase("Score")) {
-			 * Cranked.playerSetScore(user, Cranked.playerGetScore(user) + i);
-			 * player.sendMessage(plugin.I + user + "'s new score is: " +
-			 * Cranked.playerGetScore(user)); } else if
-			 * (args[1].equalsIgnoreCase("kStats")) {
-			 * Cranked.playerSetKills(user, Cranked.playerGetKills(user) + i);
-			 * player.sendMessage(plugin.I + user + "'s new kill count is: " +
-			 * Cranked.playerGetKills(user)); } else if
-			 * (args[1].equalsIgnoreCase("DStats")) {
-			 * Cranked.playerSetDeaths(user, Cranked.playerGetDeaths(user) + i);
-			 * player.sendMessage(plugin.I + user + "'s new death count is: " +
-			 * Cranked.playerGetDeaths(user)); } else {
-			 * player.sendMessage(plugin.I + ChatColor.RED +
-			 * "Thats an invalid command"); } } else {
-			 * player.sendMessage(plugin.I + ChatColor.GREEN +
-			 * ChatColor.STRIKETHROUGH + ChatColor.BOLD + "======" +
-			 * ChatColor.GOLD + " Admin Menu " + ChatColor.GREEN +
-			 * ChatColor.STRIKETHROUGH + ChatColor.BOLD + "======");
-			 * player.sendMessage(plugin.I + ChatColor.AQUA +
-			 * "/Inf Admin Points <Player> <#>"); player.sendMessage(plugin.I +
-			 * ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC
-			 * +"Add points to a player(Also goes negative)");
-			 * player.sendMessage(plugin.I + ChatColor.BLUE +
-			 * "/Inf Admin Score <Player> <#>"); player.sendMessage(plugin.I +
-			 * ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC
-			 * +"Add score to a player(Also goes negative)");
-			 * player.sendMessage(plugin.I + ChatColor.DARK_AQUA +
-			 * "/Inf Admin KStats <Player> <#>"); player.sendMessage(plugin.I +
-			 * ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC
-			 * +"Add kills to a player(Also goes negative)");
-			 * player.sendMessage(plugin.I + ChatColor.DARK_BLUE +
-			 * "/Inf Admin DStats <Player> <#>"); player.sendMessage(plugin.I +
-			 * ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC
-			 * +"Add deaths to a player(Also goes negative)");
-			 * player.sendMessage(plugin.I + ChatColor.DARK_GRAY +
-			 * "/Inf Admin Kick <Player>"); player.sendMessage(plugin.I +
-			 * ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC
-			 * +"Kick a player out of Cranked"); player.sendMessage(plugin.I +
-			 * ChatColor.DARK_GREEN + "/Inf Admin Reset <Player>");
-			 * player.sendMessage(plugin.I + ChatColor.RED + "-> " +
-			 * ChatColor.WHITE + ChatColor.ITALIC +"Reset a player's stats");
-			 * player.sendMessage(plugin.I + ChatColor.DARK_PURPLE +
-			 * "/Inf Admin Shutdown"); player.sendMessage(plugin.I +
-			 * ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC
-			 * +"Prevent joining Cranked"); player.sendMessage(plugin.I +
-			 * ChatColor.DARK_RED + "/Inf Admin Reload");
-			 * player.sendMessage(plugin.I + ChatColor.RED + "-> " +
-			 * ChatColor.WHITE + ChatColor.ITALIC +"Reload the config");
-			 * player.sendMessage(plugin.I + ChatColor.GOLD +
-			 * "/Inf Admin Code"); player.sendMessage(plugin.I + ChatColor.RED +
-			 * "-> " + ChatColor.WHITE + ChatColor.ITALIC
-			 * +"See Cranked's item code for the item in hand"); } }
-			 */
-			// ////////////////////////////////////////////
-			// STATS
+			// //////////////////////////////////////////////STATS/////////////////////////////////////
 			else if (args.length > 0 && args[0].equalsIgnoreCase("Stats"))
 			{
 
 				if (!(sender instanceof Player))
-				{
-					sender.sendMessage("Expected a player!");
-					return true;
-				}
+					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(false));
+
 				if (!p.hasPermission("Cranked.Stats"))
-				{
-					p.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				}
-				if (args.length != 1)
-				{
-					if (!p.hasPermission("Cranked.Stats.Other"))
-					{
-						p.sendMessage(Msgs.Error_No_Permission.getString());
-						return true;
-					}
-					String user = args[1].toLowerCase();
-					p.sendMessage("");
-					p.sendMessage(Msgs.Format_Header.getString("<title>", user));
-					p.sendMessage(Msgs.Stats_Score.getString("<value>", String.valueOf(Stats.getScore(user))));
-					p.sendMessage(Msgs.Stats_Highest_KillStreak.getString("<value>", String.valueOf(Stats.getHighestKillStreak(user))));
-					p.sendMessage(Msgs.Stats_Kills.getString("<value>", String.valueOf(Stats.getKills(user))));
-					p.sendMessage(Msgs.Stats_Deaths.getString("<value>", String.valueOf(Stats.getDeaths(user))));
-					p.sendMessage(Msgs.Stats_Playing_Time.getString("<value>", String.valueOf(Time.getTime((long)Stats.getPlayingTime(user)))));
-				} else
-				{
-					String user = p.getName().toLowerCase();
-					p.sendMessage("");
-					p.sendMessage(Msgs.Format_Header.getString("<title>", user));
-					p.sendMessage(Msgs.Stats_Score.getString("<value>", String.valueOf(Stats.getScore(user))));
-					p.sendMessage(Msgs.Stats_Highest_KillStreak.getString("<value>", String.valueOf(Stats.getHighestKillStreak(user))));
-					p.sendMessage(Msgs.Stats_Kills.getString("<value>", String.valueOf(Stats.getKills(user))));
-					p.sendMessage(Msgs.Stats_Deaths.getString("<value>", String.valueOf(Stats.getDeaths(user))));
-					p.sendMessage(Msgs.Stats_Playing_Time.getString("<value>", String.valueOf(Time.getTime((long)Stats.getPlayingTime(user)))));
-				}
+					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+
+//				if (args.length != 1)
+//				{
+//					if (!p.hasPermission("Cranked.Stats.Other"))
+//						p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+//					
+//					String user = args[1].toLowerCase();
+//					p.sendMessage("");
+//					p.sendMessage(Msgs.Format_Header.getString(false, "<title>", user));
+//					p.sendMessage(Msgs.getString("<value>", String.valueOf(Stats.getScore(user))));
+//					p.sendMessage(Msgs.Stats_Highest_KillStreak.getString("<value>", String.valueOf(Stats.getHighestKillStreak(user))));
+//					p.sendMessage(Msgs.Stats_Kills.getString("<value>", String.valueOf(Stats.getKills(user))));
+//					p.sendMessage(Msgs.Stats_Deaths.getString("<value>", String.valueOf(Stats.getDeaths(user))));
+//					p.sendMessage(Msgs.Stats_Playing_Time.getString("<value>", String.valueOf(Time.getTime((long) Stats.getPlayingTime(user)))));
+//				} else
+//				{
+//					String user = p.getName().toLowerCase();
+//					p.sendMessage("");
+//					p.sendMessage(Msgs.Format_Header.getString("<title>", user));
+//					p.sendMessage(Msgs.Stats_Score.getString("<value>", String.valueOf(Stats.getScore(user))));
+//					p.sendMessage(Msgs.Stats_Highest_KillStreak.getString("<value>", String.valueOf(Stats.getHighestKillStreak(user))));
+//					p.sendMessage(Msgs.Stats_Kills.getString("<value>", String.valueOf(Stats.getKills(user))));
+//					p.sendMessage(Msgs.Stats_Deaths.getString("<value>", String.valueOf(Stats.getDeaths(user))));
+//					p.sendMessage(Msgs.Stats_Playing_Time.getString("<value>", String.valueOf(Time.getTime((long) Stats.getPlayingTime(user)))));
+//				}
 			}
 
-			// ////////////////////////////////////////////////
-			// TPSPAWN
+			// //////////////////////////////////////////////TPSPAWN////////////////////////////////
 			else if (args.length > 0 && args[0].equalsIgnoreCase("TpSpawn"))
 			{
 				if (!(sender instanceof Player))
-				{
-					sender.sendMessage("Expected a player!");
-					return true;
-				}
+					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(false));
+
 				if (!p.hasPermission("Cranked.SetUp"))
-				{
-					p.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				}
+					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+
 				if (cp.getCreating() == null)
-				{
-					p.sendMessage(Msgs.Commands_How_To_Show_Arena_Spawns.getString());
-					return true;
-				}
+					p.sendMessage(Msgs.Help_SetArena.getString(true));
+
 				if (args.length != 1)
 				{
 					try
@@ -571,35 +455,27 @@ public class Commands implements CommandExecutor {
 						List<String> list = ArenaManager.getArena(cp.getCreating()).getSpawns();
 						Location loc = LocationHandler.getPlayerLocation(list.get(spawn - 1));
 						p.teleport(loc);
-						p.sendMessage(Msgs.Arena_Tpd_To_Spawn.getString("<spawn>", String.valueOf(spawn)));
+						p.sendMessage(Msgs.Command_Spawn_Tp.getString(true, "<spawn>", String.valueOf(spawn)));
 					} catch (NumberFormatException NFE)
 					{
-						p.sendMessage(Msgs.Commands_How_To_Tp_To_Arena_Spawns.getString());
+						p.sendMessage(Msgs.Help_TpSpawn.getString(true));
 					}
 				} else
-				{
-					p.sendMessage(Msgs.Commands_How_To_Tp_To_Arena_Spawns.getString());
-				}
+					p.sendMessage(Msgs.Help_TpSpawn.getString(true));
+
 			}
-			// /////////////////////////////////////////
-			// DELSPAWN
+			// ////////////////////////////////////////DELSPAWN/////////////////////////////////////
 			else if (args.length > 0 && args[0].equalsIgnoreCase("DelSpawn"))
 			{
 				if (!(sender instanceof Player))
-				{
-					sender.sendMessage("Expected a player!");
-					return true;
-				}
+					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(true));
+				
 				if (!p.hasPermission("Cranked.SetUp"))
-				{
-					p.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				}
+					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+				
 				if (cp.getCreating() == null)
-				{
-					p.sendMessage(Msgs.Commands_How_To_Show_Arena_Spawns.getString());
-					return true;
-				}
+					p.sendMessage(Msgs.Help_SetArena.getString(true));
+				
 				if (args.length != 1)
 				{
 					try
@@ -607,59 +483,48 @@ public class Commands implements CommandExecutor {
 						int spawn = Integer.valueOf(args[1]);
 						String arenaName = cp.getCreating();
 						List<String> list = ArenaManager.getArena(arenaName).getSpawns();
-						list.remove(spawn-1);
+						list.remove(spawn - 1);
 						Files.getArenas().set("Arenas." + arenaName + ".Spawns", list);
 						Files.saveArenas();
-						p.sendMessage(Msgs.Arena_Spawn_Removed.getString("<spawn>", String.valueOf(spawn)));
+						p.sendMessage(Msgs.Command_Spawn_Deleted.getString(true, "<spawn>", String.valueOf(spawn)));
 					} catch (NumberFormatException NFE)
 					{
-						p.sendMessage(Msgs.Commands_How_To_Delete_Arena_Spawns.getString());
+						p.sendMessage(Msgs.Help_DelSpawn.getString(true));
 					}
 				} else
-				{
-					p.sendMessage(Msgs.Commands_How_To_Delete_Arena_Spawns.getString());
-				}
+					p.sendMessage(Msgs.Help_DelSpawn.getString(true));
 			}
 
-			// ///////////////////////////////////
-			// SPAWNS
+			// //////////////////////////////////SPAWNS/////////////////////////////////////////
 			else if (args.length > 0 && args[0].equalsIgnoreCase("Spawns"))
 			{
 
 				if (!(sender instanceof Player))
-				{
-					sender.sendMessage("Expected a player!");
-					return true;
-				}
-				if (!p.hasPermission("Cranked.SetUp"))
-				{
-					p.sendMessage(Msgs.Error_No_Permission.getString());
-					return true;
-				}
+					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(true));
+				
+				if (!p.hasPermission("Cranked.Spawns"))
+					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+				
 				if (cp.getCreating() == null)
-				{
-					p.sendMessage(Msgs.Commands_How_To_Show_Arena_Spawns.getString());
-					return true;
-				}
+					p.sendMessage(Msgs.Help_SetArena.getString(true));
+				
 				List<String> list = ArenaManager.getArena(cp.getCreating()).getSpawns();
-				p.sendMessage(Msgs.Arena_Spawns.getString("<spawns>", String.valueOf(list.size())));
+				p.sendMessage(Msgs.Command_Spawn_Spawns.getString(true, "<spawns>", String.valueOf(list.size())));
 			} else
 			{
 				CommandSender player = sender;
 				player.sendMessage("");
-				player.sendMessage(Msgs.Format_Header.getString("<title>", "Cranked"));
+				player.sendMessage(Msgs.Format_Header.getString(true, "<title>", "Cranked"));
 				if (Main.update)
-					player.sendMessage(Main.cranked + ChatColor.RED + ChatColor.BOLD + "Update Available: " + ChatColor.WHITE + ChatColor.BOLD + Main.name);
+					player.sendMessage(Msgs.Format_Prefix.getString(true) + ChatColor.RED + ChatColor.BOLD + "Update Available: " + ChatColor.WHITE + ChatColor.BOLD + Main.name);
 				player.sendMessage("");
-				player.sendMessage(Main.cranked + ChatColor.GRAY + "Author: " + ChatColor.GREEN + ChatColor.BOLD + "SniperzCiinema(xXSniperzzXx_SD)");
-				player.sendMessage(Main.cranked + ChatColor.GRAY + "Version: " + ChatColor.GREEN + ChatColor.BOLD + plugin.getDescription().getVersion());
-				player.sendMessage(Main.cranked + ChatColor.GRAY + "BukkitDev: " + ChatColor.GREEN + ChatColor.BOLD + "http://bit.ly/1c8oN9S");
-
-				player.sendMessage(Main.cranked + ChatColor.YELLOW + "For Help type: /Cranked Help");
+				player.sendMessage(Msgs.Format_Prefix.getString(true) + ChatColor.GRAY + "Author: " + ChatColor.GREEN + ChatColor.BOLD + "SniperzCiinema(xXSniperzzXx_SD)");
+				player.sendMessage(Msgs.Format_Prefix.getString(true) + ChatColor.GRAY + "Version: " + ChatColor.GREEN + ChatColor.BOLD + plugin.getDescription().getVersion());
+				player.sendMessage(Msgs.Format_Prefix.getString(true) + ChatColor.GRAY + "BukkitDev: " + ChatColor.GREEN + ChatColor.BOLD + "Link to come...");
+				player.sendMessage(Msgs.Format_Prefix.getString(true) + ChatColor.YELLOW + "For Help type: /Cranked Help");
 
 			}
 		}
 		return true;
 	}
-
 }

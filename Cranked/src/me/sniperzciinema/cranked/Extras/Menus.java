@@ -42,7 +42,7 @@ public class Menus {
 
 									event.getPlayer().performCommand("Cranked Join " + ChatColor.stripColor(event.getName()));
 								else
-									event.getPlayer().sendMessage(Msgs.Error_Missing_Spawns.getString());
+									event.getPlayer().sendMessage(Msgs.Error_Arena_No_Spawns.getString(false));
 							}
 						}, 2);
 					}

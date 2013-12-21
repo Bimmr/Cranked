@@ -33,6 +33,18 @@ public class ScoreBoard {
 	public ScoreBoards getShowing(){
 		return showing;
 	}
+	public void switchScoreboards(){
+		if(getShowing() == ScoreBoards.Rankings)
+			showStats();
+		else
+			showRankings();
+	}
+	public void showProper(){
+		if(getShowing() == ScoreBoards.Rankings)
+			showRankings();
+		else
+			showStats();
+	}
 	public void showRankings(){
 		showing = ScoreBoards.Rankings;
 		Player player = cp.getPlayer();
@@ -53,7 +65,7 @@ public class ScoreBoard {
 			// Now set all the scores and the title
 			ob.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + ChatColor.UNDERLINE + "Rankings");
 
-			for(Player p : Sort.topPoints(cp.getArena().getPlayers(), 10))
+			for(Player p : Sort.topStats(cp.getArena().getPlayers(), 10))
 			{
 				if(p != null){
 					Score score = ob.getScore(Bukkit.getOfflinePlayer(p.getName()));

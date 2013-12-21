@@ -51,27 +51,27 @@ public class SignListener implements Listener {
 							Game.join(cp, arena);
 							
 							// Info the players of their current situation
-							p.sendMessage(Msgs.Format_Line.getString());
+							p.sendMessage(Msgs.Format_Line.getString(false));
 							p.sendMessage("");
-							p.sendMessage(Msgs.Game_You_Joined_A_Game.getString("<arena>", cp.getArena().getName()));
-							p.sendMessage(Msgs.Arena_Creator.getString("<creator>", arena.getCreator()));
+							p.sendMessage(Msgs.Game_Joined_You.getString(true, "<arena>", cp.getArena().getName()));
+							p.sendMessage(Msgs.Arena_Creator.getString(true, "<creator>", arena.getCreator()));
 							p.sendMessage("");
 							p.sendMessage("");
 							if (arena.getState() == GameState.Waiting)
 							{
-								p.sendMessage(Msgs.Game_StatusUpdate.getString("<current>", String.valueOf(arena.getPlayers().size()), "<needed>", String.valueOf(arena.getSettings().getRequiredPlayers())));
+								p.sendMessage(Msgs.Waiting_Players_Needed.getString(true, "<current>", String.valueOf(arena.getPlayers().size()), "<needed>", String.valueOf(arena.getSettings().getRequiredPlayers())));
 							} else if (arena.getState() == GameState.PreGame)
 							{
-								p.sendMessage(Msgs.Game_Starting.getString("<time>", Time.getTime((long) arena.getTimer().getTimeLeft())));
+								p.sendMessage(Msgs.Before_Game_Time_Left.getString(true, "<time>", Time.getTime((long) arena.getTimer().getTimeLeft())));
 							} else if (arena.getState() == GameState.Started)
 							{
-								p.sendMessage(Msgs.Game_Time_Left.getString("<time>", Time.getTime((long) arena.getTimer().getTimeLeft())));
+								p.sendMessage(Msgs.Game_Time_Left.getString(true, "<time>", Time.getTime((long) arena.getTimer().getTimeLeft())));
 							}
 							p.sendMessage("");
-							p.sendMessage(Msgs.Format_Line.getString());
+							p.sendMessage(Msgs.Format_Line.getString(true));
 							for (Player ppl : cp.getArena().getPlayers())
 								if (ppl != cp.getPlayer())
-									ppl.sendMessage(Msgs.Game_They_Joined_A_Game.getString("<player>", p.getName(), "<arena>", cp.getArena().getName()));
+									ppl.sendMessage(Msgs.Game_Joined_They.getString(true, "<player>", p.getName(), "<arena>", cp.getArena().getName()));
 
 						}
 					}
@@ -92,7 +92,7 @@ public class SignListener implements Listener {
 			{
 				if (!p.hasPermission("Infected.Setup"))
 				{
-					p.sendMessage(Msgs.Error_No_Permission.getString());
+					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
 					event.setCancelled(true);
 				}
 				else if(ArenaManager.arenaRegistered(event.getLine(1))){
@@ -102,7 +102,7 @@ public class SignListener implements Listener {
 					event.setLine(2, ChatColor.GOLD + arena.getState().toString());
 					event.setLine(3, ChatColor.GOLD + "" + arena.getPlayers().size() + "/"+arena.getSettings().getMaxPlayers());
 				}else{
-					p.sendMessage(Msgs.Error_Not_An_Arena.getString());
+					p.sendMessage(Msgs.Error_Arena_Doesnt_Exist.getString(true));
 				}
 			}
 		}

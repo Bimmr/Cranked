@@ -1,73 +1,77 @@
 Format:
-  Header: '&e&l>&e&m-----------««&4&l<title>&e&o&m»»-----------&l<'
-  Line: '&e&l>&e&m-------------------------------------------&l<'
+  Header: "&e&l>&e&m-----------««&4&l<title>&e&o&m»»-----------&l<"
+  Line: "&e&l>&e&m-------------------------------------------&l<"
+  Prefix: "&8&l«&6&lCranked&8&l»&9"
 Arena:
-  Arena Is Set: "&7You have selected: &f&o<arena>."
-  Created: "&aYou have created &b&o<arena>."
-  Creator: "&a&lMade by: &f&o<creator>."
-  How To Set More Spawns: "&9Use the &f&o/&oCR SetSpawn &9to add more spawns."  
   Information: "&a&lArena: &f&o<arena> - &a&lMade by: &f&o<creator>"
-  List Arenas: "Arenas: &a<validarenas>, &8<notvalidarenas>."
-  Removed: "&f&f&o<arena> &7has been removed."
-  Spawn Set: "&7Spawn #&f<spawn> &7 set."
-  Spawn Removed: "&7Spawn #&f<spawn> &7 removed."
-  Tpd To Spawn: "&7Teleported to spawn #&f&o<spawn>&7."
+  Arenas: "Arenas: &a<validarenas>, &8<notvalidarenas>."
+  Creator: '<creator> made this'
+Command:
+  Arena:
+    Created: '&x<arena> has been created'
+    Removed: '&x<arena> has been removed'
+    Set: '&x<arena> has been selected'
+  Spawn:
+    Set: '&x<spawn> has been set for the selected arena'
+    Tp: '&xYou have teleported to spawn #<spawn>'
+    Spawns: '&xThere are <spawns> spawns'
+    Deleted: '&xSpawn #<spawn> has been deleted'
+  Info:
+    Players: 'Players in game<current>/<max>
+    State: '&Game State: <state>'
+  Admin:
+    Reload: 'Cranked Files'' have been reloaded'
+    Stat Changed: '
+Waiting:
+  Players Needed: "&7We have &f&o<current>/<needed> &7players before the game starts."
 Error:
-  No Permission: "&c&oYou do not have permission the to execute this command!"
-  Game Already Started: "&c&oThe game has already started..."
-  Not In A Game: "&c&oYou are not in a game..."
-  Already In A Game: "&c&oYou are already in a game..."
-  Not An Arena: "&f&o<arena> &c&ois not an arena..."
-  Already An Arena: "&f&o<arena>&c is already an arena..."
-  Missing Spawns: "&c&oThere are no spawns for this arena..."
-  Plugin Unload: "&6&lCranked &9has been unloaded, so the game has ended..."
-  Cant Use Command: "&c&oYou cannot use this command in &6&lCranked..."
-  Max Speed: "&cYou can't go any faster!"
+  Misc:
+    No Permission: '&c&oYou do not have permission the to execute this command!'
+    Unloaded: '&c&oCranked has been unloaded!'
+    Disabled: '&c&oCranked is currently Disabled'
+    Use Command: '&c&oUnable to use this command in Cranked!'
+    Not Player: '&c&oYou need to be a player to use this command!'
+    Unkown Command: '&c&oCranked has no clue what command you''re trying to use'
+  Game:
+    Started: 'Cranked is already started'
+    Not Started: 'The game still hasn''t started'
+    Not In: 'You''re not even in a game...'
+    In: 'You''re already in a game'
+  Top:
+    Not Stat: 'Cranked doesn't track this, try one of these: <stats>'
+  Arena:
+    Doesnt Exist: '<arena> doesn''t exist'
+    Not Valid: '<arena> isn''t a valid arena'
+    Already Exist: '&xThis arena already exists'
+    No Spawns: '&c&oThis arena has no spawns...'
+    Not Valid: '&c&oSomethings wrong with this arena'
+Before Game:
+  Time Left: '<time>.'
+  Please Wait: 'Please Wait for the game to start'
+  Death: 'You're a failure... You already died?!'
 Game:
-  Status Update: "&7We have &f&o<current>/<needed> &7players before the game starts."
-  You Joined A Game: "&a&lYou have joined &f&o<arena>."
-  They Joined A Game: "&a<player>&1 has joined &f&o<arena>."
-  You Left A Game: "&c&lYou left &f&o<arena>."
-  They Left A Game: "&c&l<player> left &f&o<arena>."
-  Not Enough Players: "&cTheres not enough players to start game!"
-  Players Needed: "&c&o<current>&4/&o&c&o<needed> &3players in the game"
-  PreGame Please Wait: "Please Wait for the game to start"
-  PreGame Time Left: "Starting in: &e&l<time>!"
-  Game Time Left: "Time left: &e&l<time> &9left!"
-  Start: "&a&lKill them all &4>:D!"
-  Starting: "&6&lThe game has started!"
-  Ended: "    &9&lThe Game Has Ended!"
-GameOver:
+  Time Left: "Time left: &e&l<time> &9left!"
+  Joined:
+    You: 'You have joined <arena>'
+    They: '<player> has joined <arena>'
+  Left:
+    You: 'You have left <arena>'
+    They: '<player> has left <arena>'
+  End:
+    Not Enough Players: 'Not enough players left to continue'
+  Started: "&a&lWatch your back!"
+Game Over:
   Times Up: "&6&lTimes Up!."
   Winners: "&a<place>. &e&l<player>."
-Commands:
-  How To Set Spawn: "&e&o/CR SetSpawn &7- &fSet a spawn"
-  How To Set Arena: "&e&o/CR SetArena <Arena> &7- &fSet an Arena"
-  How To Create: "&e&o/CR Create <Arena> &7- &fCreate an Arena"
-  How To Remove: "&e&o/CR Remove <Arena> &7- &fRemove an Arena"
-  How To Info: "&e&o/CR Info &7- &fSee Arena info"
-  How To Join: "&e&o/CR Join [Arena]&7- &fJoin an arena"
-  How To Leave: "&e&o/CR Leave &7- &fLeave the arena"
-  How To Suicide: "&e&o/CR Suicide &7- &fSuicide if you're stuck"
-  How To Arenas: "&e&o/CR Arenas &7- &fSee all arenas"
-  How To Show Arena Spawns: "&e&o/CR Spawns &7- &fShow arena Spawns"
-  How To Tp To Arena Spawns: "&e&o/CR TpSpawn <Spawn>&7 - &fTp to arena Spawns"
-  How To Delete Arena Spawns: "&e&o/CR DelSpawns <Spawn> &7- &fDelete arena Spawns"
-  How To Admin: "&e&o/CR Admins &7- &fShow Admin Commands"
-Info:
-  Players In: "&e&lThere are currently &f&o<current>/<max> &e&lplayers playing."
-  Game State: "&9&lGame State: &f&o<state>"
-  Time Left: "&4&lTime Left: &f&o<time>"
-  Required Players To Start: "&5&lAuto Start At: &f&o<needed>"
-  Time Limit: "&6&lTime Limit: &f&o<time>"
-  Max Points: "&9&lMax Points: &f&o<points>"
-  Creator: "&a&lMade by: &f&o<creator>"
-Stats:
-  Score: "&bScore: &b&o<value>"
-  Highest KillStreak: "&6Highest KillStreak: &a&o<value>"
-  Kills: "&2Kills: &a&o<value>"
-  Deaths: "&4Deaths: &c&o<value>"
-  Playing Time: "&ePlaying Time: &c&o<value>"
+  Ended: "    &9&lThe Game Has Ended!"
+Help:
+  SetSpawn: "&e&o/CR SetSpawn &7- &fSet a spawn"
+  SetArena: "&e&o/CR SetArena <Arena> &7- &fSet an Arena"
+  Create: "&e&o/CR Create <Arena> &7- &fCreate an Arena"
+  Remove: "&e&o/CR Remove <Arena> &7- &fRemove an Arena"
+  Info: "&e&o/CR Info <Arena>&7- &fSee Arena info"
+  Spawns: "&e&o/CR TpSpawn <Spawn>&7 - &fTp to arena Spawns"
+  DelSpawns: "&e&o/CR DelSpawns <Spawn> &7- &fDelete arena Spawns"
 Deaths:
   Arrow:
     - "&c<killer> &e&ohas shot &7<killed>"

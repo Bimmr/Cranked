@@ -1,7 +1,7 @@
 name: Cranked
 description: COD Ghosts Cranked for MC
 main: me.sniperzciinema.cranked.Main
-version: 0.0.1
+version: 0.0.2
 author: xXSniperzzXx_SD
 commands:
   Cranked:
@@ -12,9 +12,20 @@ permissions:
   Cranked.Join:
     default: true
     children:
+      Cranked.Leave: true
+      Cranked.Arenas: true
       Cranked.List: true
       
   Cranked.Admin:
     default: op
     children:
       Cranked.SetUp: true
+      
+  Cranked.SetUp:
+    children:
+      Cranked.Spawns: true
+      Cranked.SetSpawn: true
+      Cranked.TpSpawn: true
+      Cranked.DelSpawn: true
+      Cranked.Create: true
+      Cranked.Remove: true

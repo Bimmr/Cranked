@@ -24,7 +24,6 @@ import me.sniperzciinema.cranked.Tools.Metrics;
 import me.sniperzciinema.cranked.Tools.Updater;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,7 +34,6 @@ import code.husky.mysql.MySQL;
 public class Main extends JavaPlugin {
 
 	public static Plugin me;
-	public static String cranked = "" + ChatColor.DARK_GRAY + ChatColor.BOLD + "«" + ChatColor.GOLD + ChatColor.BOLD + "Cranked" + ChatColor.DARK_GRAY + ChatColor.BOLD + "»" + ChatColor.DARK_AQUA + " ";
 
 	public static MySQL MySQL = null;
 	public static Connection c = null;
@@ -45,34 +43,17 @@ public class Main extends JavaPlugin {
 
 	public void onEnable() {
 
-		System.out.println("===== Cranked =====");
+		System.out.println(Msgs.Format_Line.getString(false));
 		if (getConfig().getBoolean("Check For Updates.Enable"))
 		{
 			try
 			{
-				Updater updater = new Updater(this, 0/*
-													 * NEED TO UPLOAD FIRST TO
-													 * GET ID
-													 */, getFile(),
+				Updater updater = new Updater(this, 0/* NEED TO UPLOAD FIRST TO
+													 * GET ID */, getFile(),
 						Updater.UpdateType.NO_DOWNLOAD, false);
 
 				Main.update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE;
 				Main.name = updater.getLatestName();
-
-				System.out.println(this.getDescription().getVersion().replaceAll(".", ""));
-				System.out.println(updater.getLatestFileVersion().replaceAll(".", ""));
-
-				int currentVersion = Integer.valueOf(this.getDescription().getVersion().replaceAll("\\.", ""));
-				int newVersion = Integer.valueOf(updater.getLatestFileVersion().replaceAll("\\.", ""));
-
-				if (currentVersion >= newVersion)
-				{
-					System.out.println("You are running a beta version of Cranked!");
-					update = false;
-				}
-
-				else
-					System.out.println("You need to update Cranked to: " + updater.getLatestFileVersion());
 
 			} catch (Exception ex)
 			{
@@ -138,6 +119,7 @@ public class Main extends JavaPlugin {
 			}
 		else
 			System.out.println("Couldn't Find Any Arenas");
+
 		if (getConfig().getBoolean("MySQL.Enable"))
 		{
 			System.out.println("Attempting to connect to MySQL");
@@ -161,7 +143,7 @@ public class Main extends JavaPlugin {
 			}
 		}
 		System.out.println("Using Players.yml for stats");
-		System.out.println("====================");
+		System.out.println(Msgs.Format_Line.getString(true));
 
 	}
 
@@ -171,7 +153,7 @@ public class Main extends JavaPlugin {
 			{
 				if (cp.getArena() != null)
 				{
-					cp.getPlayer().sendMessage(Msgs.Error_Plugin_Unload.getString());
+					cp.getPlayer().sendMessage(Msgs.Error_Misc_Plugin_Unloaded.getString(true));
 					Game.leave(cp);
 				}
 				try
@@ -184,9 +166,7 @@ public class Main extends JavaPlugin {
 			}
 
 		if (getConfig().getBoolean("MySQL.Enable"))
-		{
 			MySQL.closeConnection();
-		}
 	}
 
 }
