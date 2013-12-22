@@ -1,14 +1,14 @@
 
-package me.sniperzciinema.cranked.ArenaHandlers;
+package me.sniperzciinema.cranked.Handlers.Arena;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import me.sniperzciinema.cranked.Handlers.Location.LocationHandler;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
 import me.sniperzciinema.cranked.Messages.StringUtil;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayer;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayerManager;
 import me.sniperzciinema.cranked.Tools.Files;
-import me.sniperzciinema.cranked.Tools.Handlers.LocationHandler;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -87,14 +87,14 @@ public class ArenaManager {
 	// Add the arena to arenas
 	public static void loadArena(Arena arena) {
 		if (!arenaRegistered(arena))
-		{
 			arenas.add(arena);
-		}
 	}
 
 	// Create the area
 	public static void createArena(String name) {
 		name = StringUtil.getWord(name);
+		Files.arenas.set("Arenas." + name, null);
+		Files.saveArenas();
 		loadArena(new Arena(name));
 	}
 

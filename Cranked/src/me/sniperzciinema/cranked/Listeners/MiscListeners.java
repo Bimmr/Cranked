@@ -1,9 +1,9 @@
 
 package me.sniperzciinema.cranked.Listeners;
 
-import me.sniperzciinema.cranked.ArenaHandlers.ArenaManager;
+import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
 import me.sniperzciinema.cranked.Messages.Msgs;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayerManager;
 import me.sniperzciinema.cranked.Tools.Files;
 
 import org.bukkit.Material;
@@ -40,16 +40,8 @@ public class MiscListeners implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerBreakBlock(BlockBreakEvent e) {
-		if (!e.isCancelled())
-			if (CPlayerManager.getCrankedPlayer(e.getPlayer()).getArena() != null)
-			{
-				e.getBlock().getDrops().clear();
-				if (CPlayerManager.getCrankedPlayer(e.getPlayer()).getArena().getBlock(e.getBlock().getLocation()) == null)
-					ArenaManager.getArena(e.getPlayer()).setBlock(e.getBlock().getLocation(), e.getBlock().getType());
-				else
-					ArenaManager.getArena(e.getPlayer()).setBlock(e.getBlock().getLocation(), null);
-				e.getBlock().getDrops().clear();
-			}
+		if (CPlayerManager.getCrankedPlayer(e.getPlayer()).getArena() != null)
+			e.setCancelled(true);
 
 	}
 
@@ -74,12 +66,8 @@ public class MiscListeners implements Listener {
 	// Check to make sure they arn't trying to place a block in game
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerBlockPlace(BlockPlaceEvent e) {
-		if (!e.isCancelled())
-			if (CPlayerManager.getCrankedPlayer(e.getPlayer()).getArena() != null)
-			{
-				if (CPlayerManager.getCrankedPlayer(e.getPlayer()).getArena().getBlock(e.getBlock().getLocation()) == null)
-					ArenaManager.getArena(e.getPlayer()).setBlock(e.getBlock().getLocation(), Material.AIR);
-			}
+		if (CPlayerManager.getCrankedPlayer(e.getPlayer()).getArena() != null)
+			e.setCancelled(true);
 	}
 
 	// When a player uses a command make sure it does, what its supposed to
@@ -91,21 +79,14 @@ public class MiscListeners implements Listener {
 			String[] ss = e.getMessage().split(" ");
 			msg = ss[0];
 		} else
-		{
 			msg = e.getMessage();
-		}
 
 		if (CPlayerManager.getCrankedPlayer(e.getPlayer()).getArena() != null)
 			if (!e.getPlayer().isOp())
 			{
-
-				// If a player tries a command but is in infected, block all
-				// that aren't /inf
-				if (Files.getConfig().getStringList("Blocked Commands").contains(msg.toLowerCase()))
-				{
-					e.getPlayer().sendMessage(Msgs.Error_Misc_Use_Command.getString(true));
-					e.setCancelled(true);
-				} else if (!(Files.getConfig().getStringList("Allowed Commands").contains(msg.toLowerCase()) || e.getMessage().toLowerCase().contains("inf")))
+				// If a player tries a command but is in cranked, block all
+				// that aren't /cranked
+				if (!msg.toLowerCase().startsWith("/cr") && Files.getConfig().getStringList("Blocked Commands").contains(msg.toLowerCase()))
 				{
 					e.getPlayer().sendMessage(Msgs.Error_Misc_Use_Command.getString(true));
 					e.setCancelled(true);

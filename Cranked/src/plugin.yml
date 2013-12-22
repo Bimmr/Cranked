@@ -15,6 +15,8 @@ permissions:
       Cranked.Leave: true
       Cranked.Arenas: true
       Cranked.List: true
+      Cranked.Help: true
+      Cranked.Info: true
       
   Cranked.Admin:
     default: op

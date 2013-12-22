@@ -1,5 +1,5 @@
 
-package me.sniperzciinema.cranked.PlayerHandlers;
+package me.sniperzciinema.cranked.Handlers.Player;
 
 import java.util.ArrayList;
 import java.util.List;

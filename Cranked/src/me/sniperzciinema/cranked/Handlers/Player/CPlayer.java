@@ -1,14 +1,14 @@
 
-package me.sniperzciinema.cranked.PlayerHandlers;
+package me.sniperzciinema.cranked.Handlers.Player;
 
 import java.util.Random;
 
-import me.sniperzciinema.cranked.ArenaHandlers.Arena;
+import me.sniperzciinema.cranked.Extras.ScoreBoard;
 import me.sniperzciinema.cranked.GameMechanics.Agility;
 import me.sniperzciinema.cranked.GameMechanics.Equip;
 import me.sniperzciinema.cranked.GameMechanics.Stats;
-import me.sniperzciinema.cranked.Tools.Handlers.LocationHandler;
-import me.sniperzciinema.cranked.Extras.ScoreBoard;
+import me.sniperzciinema.cranked.Handlers.Arena.Arena;
+import me.sniperzciinema.cranked.Handlers.Location.LocationHandler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+
 
 public class CPlayer {
 
@@ -44,6 +45,9 @@ public class CPlayer {
 	{
 		name = p.getName();
 		player = p;
+	}
+	public boolean isInGame(){
+		return getArena() != null;
 	}
 
 	// Set all their info into their CPlayer
@@ -79,6 +83,7 @@ public class CPlayer {
 		p.setLevel(level);
 		p.setExp(exp);
 		p.setHealth(health);
+		p.setFireTicks(0);
 		p.setFoodLevel(food);
 		p.getInventory().setContents(inventory);
 		p.getInventory().setArmorContents(armor);
@@ -123,20 +128,19 @@ public class CPlayer {
 	// Respawn the player
 	@SuppressWarnings("deprecation")
 	public void respawn() {
-		if (getArena() != null)
-		{
-			Player p = getPlayer();
-			p.setHealth(20.0);
-			p.setFoodLevel(20);
-			p.setFireTicks(0);
-			p.setExp(1.0F);
-			Random r = new Random();
-			int i = r.nextInt(getArena().getSpawns().size());
-			String loc = getArena().getSpawns().get(i);
-			p.teleport(LocationHandler.getPlayerLocation(loc));
-			Equip.equipPlayer(p);
-			p.updateInventory();
-		}
+		Player p = getPlayer();
+		p.setHealth(20.0);
+		p.setFoodLevel(20);
+		p.setFireTicks(0);
+		p.setExp(1.0F);
+		p.setFallDistance(0F);
+		Random r = new Random();
+		int i = r.nextInt(getArena().getSpawns().size());
+		String loc = getArena().getSpawns().get(i);
+		p.teleport(LocationHandler.getPlayerLocation(loc));
+		p.setFallDistance(0F);
+		Equip.equipPlayer(p);
+		p.updateInventory();
 	}
 
 	// Get the players current killStreak
@@ -305,13 +309,13 @@ public class CPlayer {
 	}
 
 	// Update the players speed depending on their killstreak
-	public void updateSpeed() {
-		Agility.speedUp(getPlayer(), true);
+	public void speed() {
+		Agility.speed(player);
 	}
 
 	// Reset the players speed to default
 	public void resetSpeed() {
-		Agility.resetSpeed(getPlayer());
+		Agility.resetSpeed(player);
 	}
 
 	// Update the kills and deaths and score that are saved in file
@@ -333,8 +337,8 @@ public class CPlayer {
 	public CPlayerTimers getTimer() {
 		return PlayerTimer;
 	}
-	
-	public boolean isCranked(){
+
+	public boolean isCranked() {
 		return getTimer().isCranked();
 	}
 
@@ -346,7 +350,8 @@ public class CPlayer {
 	}
 
 	/**
-	 * @param timeJoined the timeJoined to set
+	 * @param timeJoined
+	 *            the timeJoined to set
 	 */
 	public void setTimeJoined(long timeJoined) {
 		this.timeJoined = timeJoined;

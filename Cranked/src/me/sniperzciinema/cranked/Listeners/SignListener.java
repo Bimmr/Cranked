@@ -2,13 +2,13 @@
 package me.sniperzciinema.cranked.Listeners;
 
 import me.sniperzciinema.cranked.Game;
-import me.sniperzciinema.cranked.ArenaHandlers.Arena;
-import me.sniperzciinema.cranked.ArenaHandlers.ArenaManager;
-import me.sniperzciinema.cranked.ArenaHandlers.GameState;
+import me.sniperzciinema.cranked.Handlers.Arena.Arena;
+import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
+import me.sniperzciinema.cranked.Handlers.Arena.GameState;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
 import me.sniperzciinema.cranked.Messages.Msgs;
 import me.sniperzciinema.cranked.Messages.Time;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayer;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayerManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -49,7 +49,7 @@ public class SignListener implements Listener {
 							Arena arena = ArenaManager.getArena(arenaName);
 							CPlayer cp = CPlayerManager.getCrankedPlayer(p);
 							Game.join(cp, arena);
-							
+
 							// Info the players of their current situation
 							p.sendMessage(Msgs.Format_Line.getString(false));
 							p.sendMessage("");
@@ -82,7 +82,6 @@ public class SignListener implements Listener {
 
 	// ======================================================================================================================
 
-
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerCreateSign(SignChangeEvent event) {
 		if (!event.isCancelled())
@@ -94,14 +93,15 @@ public class SignListener implements Listener {
 				{
 					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
 					event.setCancelled(true);
-				}
-				else if(ArenaManager.arenaRegistered(event.getLine(1))){
+				} else if (ArenaManager.arenaRegistered(event.getLine(1)))
+				{
 					Arena arena = ArenaManager.getArena(event.getLine(1));
 					event.setLine(0, ChatColor.DARK_RED + "" + "[Cranked]");
 					event.setLine(1, ChatColor.GREEN + arena.getName());
 					event.setLine(2, ChatColor.GOLD + arena.getState().toString());
-					event.setLine(3, ChatColor.GOLD + "" + arena.getPlayers().size() + "/"+arena.getSettings().getMaxPlayers());
-				}else{
+					event.setLine(3, ChatColor.GOLD + "" + arena.getPlayers().size() + "/" + arena.getSettings().getMaxPlayers());
+				} else
+				{
 					p.sendMessage(Msgs.Error_Arena_Doesnt_Exist.getString(true));
 				}
 			}

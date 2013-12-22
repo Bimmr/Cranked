@@ -3,21 +3,20 @@ package me.sniperzciinema.cranked;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Statement;
 
-import me.sniperzciinema.cranked.ArenaHandlers.Arena;
-import me.sniperzciinema.cranked.ArenaHandlers.ArenaManager;
+import me.sniperzciinema.cranked.Handlers.Arena.Arena;
+import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
 import me.sniperzciinema.cranked.Listeners.CrackShotApi;
 import me.sniperzciinema.cranked.Listeners.DamageEvents;
+import me.sniperzciinema.cranked.Listeners.MiscListeners;
 import me.sniperzciinema.cranked.Listeners.RankingsToggle;
 import me.sniperzciinema.cranked.Listeners.RegisterAndUnRegister;
-import me.sniperzciinema.cranked.Listeners.MiscListeners;
 import me.sniperzciinema.cranked.Listeners.SignListener;
 import me.sniperzciinema.cranked.Messages.Msgs;
 import me.sniperzciinema.cranked.Messages.StringUtil;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayer;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayerManager;
 import me.sniperzciinema.cranked.Tools.Files;
 import me.sniperzciinema.cranked.Tools.IconMenu;
 import me.sniperzciinema.cranked.Tools.Metrics;
@@ -36,14 +35,14 @@ public class Main extends JavaPlugin {
 	public static Plugin me;
 
 	public static MySQL MySQL = null;
-	public static Connection c = null;
+	public static Connection connection = null;
 
 	public static boolean update;
 	public static String name;
 
 	public void onEnable() {
 
-		System.out.println(Msgs.Format_Line.getString(false));
+		System.out.println(Msgs.Format_Header.getString(false, "<title>", "Cranked Startup"));
 		if (getConfig().getBoolean("Check For Updates.Enable"))
 		{
 			try
@@ -128,22 +127,22 @@ public class Main extends JavaPlugin {
 					getConfig().getString("MySQL.Database"),
 					getConfig().getString("MySQL.User"),
 					getConfig().getString("MySQL.Pass"));
-			c = MySQL.openConnection();
+			connection = MySQL.openConnection();
 			try
 			{
-				Statement state = c.createStatement();
+				connection = MySQL.openConnection();
+				Statement statement = connection.createStatement();
 
-				state.executeUpdate("CREATE TABLE IF NOT EXISTS Cranked (Player CHAR(16), Kills INT(10), Deaths INT(10), Score INT(10));");
-			} catch (SQLException e)
+				statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + "Cranked" + " (Player VARCHAR(20), Kills INT(10), Deaths INT(10), Score INT(10), PlayingTime INT(15), HighestKillStreak INT(10));");
+				System.out.println("MySQL Table has been loaded");
+			} catch (Exception e)
 			{
-				e.printStackTrace();
-				System.out.println("!Unable to connect to MySQL!");
-				getConfig().set("MySql.Enable", false);
-				saveConfig();
+				Files.getConfig().set("MySQL.Enabled", false);
+				System.out.println("Unable to connect to MySQL");
 			}
 		}
 		System.out.println("Using Players.yml for stats");
-		System.out.println(Msgs.Format_Line.getString(true));
+		System.out.println(Msgs.Format_Line.getString(false));
 
 	}
 

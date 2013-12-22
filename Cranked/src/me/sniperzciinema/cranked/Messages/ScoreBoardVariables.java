@@ -1,8 +1,8 @@
 
 package me.sniperzciinema.cranked.Messages;
 
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayer;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayerManager;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -26,10 +26,9 @@ public class ScoreBoardVariables {
 		newString = newString.replaceAll("<neededplayers>", String.valueOf(cp.getArena().getSettings().getRequiredPlayers()));
 		newString = newString.replaceAll("<creator>", String.valueOf(cp.getArena().getCreator()));
 		newString = newString.replaceAll("<state>", String.valueOf(cp.getArena().getState()));
-		
-		//TODO: Fix kills and deaths
-		
-		
+
+		// TODO: Fix kills and deaths
+
 		// Replace color codes
 		newString = ChatColor.translateAlternateColorCodes('&', ChatColor.stripColor(newString));
 

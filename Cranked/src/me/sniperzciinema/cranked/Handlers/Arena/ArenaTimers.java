@@ -1,16 +1,16 @@
 
-package me.sniperzciinema.cranked.ArenaHandlers;
+package me.sniperzciinema.cranked.Handlers.Arena;
+
+import me.sniperzciinema.cranked.Game;
+import me.sniperzciinema.cranked.Main;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
+import me.sniperzciinema.cranked.Messages.Msgs;
+import me.sniperzciinema.cranked.Messages.Time;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import me.sniperzciinema.cranked.Game;
-import me.sniperzciinema.cranked.Main;
-import me.sniperzciinema.cranked.GameMechanics.Agility;
-import me.sniperzciinema.cranked.Messages.Msgs;
-import me.sniperzciinema.cranked.Messages.Time;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayerManager;
 
 
 public class ArenaTimers {
@@ -137,8 +137,7 @@ public class ArenaTimers {
 			player.sendMessage(Msgs.Before_Game_Please_Wait.getString(true));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,
 					Integer.MAX_VALUE, 128));
-			player.addPotionEffect(new PotionEffect(
-					PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1), true);
+			player.setWalkSpeed(0.0F);
 		}
 		pregame = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.me, new Runnable()
 		{
@@ -154,7 +153,6 @@ public class ArenaTimers {
 						// For some reason i need to we the walk time in here,
 						// as if i don't it bugs out...
 						player.setLevel(timeLeft);
-						player.setWalkSpeed(0.0F);
 						// Tell the player how much time is left if it's a
 						// certain value
 						if (timeLeft == (getGameTime() / 4) * 3 || timeLeft == getGameTime() / 2 || timeLeft == getGameTime() / 4 || timeLeft == 5 || timeLeft == 4 || timeLeft == 3 || timeLeft == 2 || timeLeft == 1)
@@ -175,13 +173,13 @@ public class ArenaTimers {
 		// Set info
 		stopPreGameTimer();
 		arena.setState(GameState.Started);
-		
+
 		timeLeft = getGameTime();
 		for (Player p : arena.getPlayers())
 		{
-			if(!p.isSneaking())
+			if (!p.isSneaking())
 				CPlayerManager.getCrankedPlayer(p).getScoreBoard().showStats();
-			Agility.resetSpeed(p);
+			p.setWalkSpeed(0.2F);
 			for (PotionEffect effect : p.getActivePotionEffects())
 				p.removePotionEffect(effect.getType());
 			p.sendMessage(Msgs.Game_Started.getString(true));
@@ -197,7 +195,7 @@ public class ArenaTimers {
 					timeLeft -= 1;
 					for (Player player : arena.getPlayers())
 					{
-							player.setLevel(timeLeft);
+						player.setLevel(timeLeft);
 					}
 					// Display time if it's a certain value
 					if (timeLeft == (getGameTime() / 4) * 3 || timeLeft == getGameTime() / 2 || timeLeft == getGameTime() / 4 || timeLeft == 60 || timeLeft == 10 || timeLeft == 9 || timeLeft == 8 || timeLeft == 7 || timeLeft == 6 || timeLeft == 5 || timeLeft == 4 || timeLeft == 3 || timeLeft == 2 || timeLeft == 1)

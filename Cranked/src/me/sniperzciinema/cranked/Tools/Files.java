@@ -22,15 +22,30 @@ public class Files {
 	public static YamlConfiguration messages = null;
 	public static File messagesFile = null;
 
-	
-	public static void reloadConfig(){
+	public static void reloadConfig() {
 		Main.me.reloadConfig();
 	}
-	public static void saveConfig(){
+
+	public static void saveConfig() {
 		Main.me.saveConfig();
 	}
-	public static FileConfiguration getConfig(){
+
+	public static FileConfiguration getConfig() {
 		return Main.me.getConfig();
+	}
+
+	public static void reloadAll() {
+		reloadConfig();
+		reloadArenas();
+		reloadPlayers();
+		reloadMessages();
+	}
+
+	public static void saveAll() {
+		saveConfig();
+		saveArenas();
+		savePlayers();
+		saveMessages();
 	}
 
 	// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,10 +85,9 @@ public class Files {
 		}
 	}
 
+	// //////////////////////////////////////////////////////////////////////////////
+	// MESSAGES
 
-	
-	////////////////////////////////////////////////////////////////////////////////    MESSAGES
-	
 	// Reload Arenas File
 	public static void reloadMessages() {
 		if (messages == null)
@@ -109,7 +123,9 @@ public class Files {
 			Bukkit.getLogger().log(Level.SEVERE, "Could not save config " + messagesFile, ex);
 		}
 	}
-	//======================================================================================  PLAYERS
+
+	// ======================================================================================
+	// PLAYERS
 
 	// Reload Kills File
 	public static void reloadPlayers() {
@@ -149,6 +165,5 @@ public class Files {
 			Bukkit.getLogger().log(Level.SEVERE, "Could not save config " + playerFile, ex);
 		}
 	}
-	
-	
+
 }

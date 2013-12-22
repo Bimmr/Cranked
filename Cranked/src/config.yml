@@ -1,5 +1,4 @@
-# Default Cranked Config, last edited in version 0.0.1
-# Default minecraft speed is 0.2 and speed can NOT go higher then 1 or less then 0
+# Default Cranked Config, last edited in version 0.0.2
 MySQL:
   Enable: false
   Host: 127.0.0.1
@@ -13,13 +12,6 @@ Settings:
       PreGame: 10
       Game: 300
       Waiting Status Update: 60
-    Playing:
-      Max Players: 20
-    Speed:
-      Bonus Well Waiting: 0.6
-      Bonus Per Kill: 0.075
-      Only Add Speed Once: true
-      Max Speed: 1
     Score:
       Per Kill: 10
     Points:

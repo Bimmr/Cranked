@@ -5,6 +5,10 @@ public enum DeathTypes
 {
 	// List of possible ways to die
 
-	Arrow, Melee, OutOfTime, Gun, Other,
+	Arrow,
+	Melee,
+	OutOfTime,
+	Gun,
+	Other,
 
 };

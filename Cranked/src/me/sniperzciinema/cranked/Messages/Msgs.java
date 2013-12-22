@@ -1,9 +1,9 @@
 
 package me.sniperzciinema.cranked.Messages;
 
-import org.bukkit.ChatColor;
-
 import me.sniperzciinema.cranked.Tools.Files;
+
+import org.bukkit.ChatColor;
 
 
 public enum Msgs
@@ -20,8 +20,8 @@ public enum Msgs
 	Command_Spawn_Tp("Command.Spawn.Tp")/* <spawn> */,
 	Command_Spawn_Spawns("Command.Spawn.Spawns")/* <spawns> */,
 	Command_Spawn_Deleted("Command.Spawn.Deleted")/* <spawn> */,
-	Command_Info_Players("Game.Info.Players")/* <players> */,
-	Command_Info_State("Game.Info.State")/* <state> */,
+	Command_Info_Players("Command.Info.Players")/* <players> */,
+	Command_Info_State("Command.Info.State")/* <state> */,
 	Error_Misc_No_Permission("Error.Misc.No Permission"),
 	Error_Misc_Plugin_Unloaded("Error.Misc.Plugin Unloaded"),
 	Error_Misc_Plugin_Disabled("Error.Misc.Plugin Disabled"),
@@ -79,7 +79,7 @@ public enum Msgs
 		String prefix = ChatColor.translateAlternateColorCodes('&', Files.getMessages().getString("Format.Prefix").replaceAll("&x", "&" + String.valueOf(RandomChatColor.getColor().getChar())).replaceAll("&y", "&" + String.valueOf(RandomChatColor.getFormat().getChar()))) + " ";
 		try
 		{
-			String message = (usePrefix ? prefix : "") + ChatColor.translateAlternateColorCodes('&', Files.getMessages().getString(string));
+			String message = (usePrefix ? prefix : "") + ChatColor.translateAlternateColorCodes('&', Files.getMessages().getString(string).replaceAll("&x", "&" + String.valueOf(RandomChatColor.getColor().getChar())).replaceAll("&y", "&" + String.valueOf(RandomChatColor.getFormat().getChar()))) + " ";
 			int i = 0;
 			String replace = null;
 			for (String variable : variables)

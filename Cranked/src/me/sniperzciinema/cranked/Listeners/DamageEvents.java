@@ -1,13 +1,14 @@
 
 package me.sniperzciinema.cranked.Listeners;
 
-import me.sniperzciinema.cranked.ArenaHandlers.Arena;
-import me.sniperzciinema.cranked.ArenaHandlers.ArenaManager;
-import me.sniperzciinema.cranked.ArenaHandlers.GameState;
 import me.sniperzciinema.cranked.GameMechanics.DeathTypes;
 import me.sniperzciinema.cranked.GameMechanics.Deaths;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayer;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayerManager;
+import me.sniperzciinema.cranked.Handlers.Arena.Arena;
+import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
+import me.sniperzciinema.cranked.Handlers.Arena.GameState;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
+import me.sniperzciinema.cranked.Messages.Msgs;
 
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -38,21 +39,28 @@ public class DamageEvents implements Listener {
 					// If the attack happened before the game started
 					if (arena.getState() != GameState.Started)
 					{
-						e.setDamage(0);
-						e.setCancelled(true);
+
+						if (victim.getHealth() - e.getDamage() <= 0)
+						{
+							
+							CPlayer cv = CPlayerManager.getCrankedPlayer(victim);
+							cv.respawn();
+							e.setDamage(0);
+							victim.sendMessage(Msgs.Before_Game_Death.getString(true));
+						}
 					}
 
 					// If the game has fully started
 					else
 					{
-						CPlayer cv = CPlayerManager.getCrankedPlayer(victim);
 						Player killer = null;
+						CPlayer cv = CPlayerManager.getCrankedPlayer(victim);
 						if (cv.getLastDamager() != null)
 							killer = cv.getLastDamager();
 
 						if ((victim != null) && (killer != null))
 						{
-							
+
 							// If it was enough to kill the player
 							if (victim.getHealth() - e.getDamage() <= 0)
 							{

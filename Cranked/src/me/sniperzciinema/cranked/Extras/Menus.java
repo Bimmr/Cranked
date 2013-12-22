@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Random;
 
 import me.sniperzciinema.cranked.Main;
-import me.sniperzciinema.cranked.ArenaHandlers.Arena;
-import me.sniperzciinema.cranked.ArenaHandlers.ArenaManager;
-import me.sniperzciinema.cranked.ArenaHandlers.GameState;
+import me.sniperzciinema.cranked.Handlers.Arena.Arena;
+import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
+import me.sniperzciinema.cranked.Handlers.Arena.GameState;
 import me.sniperzciinema.cranked.Messages.Msgs;
 import me.sniperzciinema.cranked.Messages.Time;
 import me.sniperzciinema.cranked.Tools.Files;
@@ -58,34 +58,22 @@ public class Menus {
 
 			// Set the message depending on if the arena is valid(Has spawns)
 			if (ArenaManager.isArenaValid(arena.getName()))
-				menu.setOption(place, new ItemStack(m), "" + ChatColor.getByChar(String.valueOf(place + 1)) + ChatColor.BOLD + ChatColor.UNDERLINE + arena.getName(), 
-						"", 
+				menu.setOption(place, new ItemStack(m),
+						"" + ChatColor.getByChar(String.valueOf(place + 1)) + ChatColor.BOLD + ChatColor.UNDERLINE + arena.getName(), 
+						"",
 						ChatColor.GREEN + "Click Here Join This Arena", 
-						ChatColor.GRAY+"--------------------------", 
+						ChatColor.GRAY + "--------------------------", 
 						ChatColor.YELLOW + "Auto Start At: " + arena.getSettings().getRequiredPlayers(), 
-						ChatColor.YELLOW + "Playing: " + arena.getPlayers().size()+"/"+arena.getSettings().getMaxPlayers(), 
+						ChatColor.YELLOW + "Playing: " + arena.getPlayers().size() + "/" + arena.getSettings().getMaxPlayers(), 
 						ChatColor.YELLOW + "State: " + arena.getState(), 
-						ChatColor.YELLOW + "Time Left: " +  (arena.getState() == GameState.Started ? arena.getTimer().getTimeLeft():"N/A"),
-						ChatColor.GRAY+"--------------------------", 
+						ChatColor.YELLOW + "Time Left: " + (arena.getState() == GameState.Started ? arena.getTimer().getTimeLeft() : "N/A"),
+						ChatColor.GRAY + "--------------------------", 
 						ChatColor.RED + "Time Limit: " + Time.getTime((long) arena.getSettings().getGameTime()), 
 						ChatColor.RED + "Points To Win: " + arena.getSettings().getPointsToWin(), 
-						ChatColor.GRAY+"--------------------------", 
+						ChatColor.GRAY + "--------------------------", 
 						ChatColor.AQUA + "Creator: " + ChatColor.WHITE + arena.getCreator());
 			else
-				menu.setOption(place, new ItemStack(Material.REDSTONE_BLOCK), ChatColor.DARK_RED + arena.getName(), 
-						"",
-						ChatColor.RED + "This arena isn't playable!",
-						ChatColor.RED + "      It's Missing Spawns!",
-						ChatColor.GRAY+"--------------------------", 
-						"" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Auto Start At: " + arena.getSettings().getRequiredPlayers(), 
-						"" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Playing: " + arena.getPlayers().size()+"/"+arena.getSettings().getMaxPlayers(), 
-						"" + ChatColor.RED + ChatColor.STRIKETHROUGH + "State: " + arena.getState(), 
-						"" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Time Left: " +  (arena.getState() == GameState.Started ? arena.getTimer().getTimeLeft():"N/A"),
-						ChatColor.GRAY+"--------------------------", 
-						"" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Time Limit: " + Time.getTime((long) arena.getSettings().getGameTime()), 
-						"" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Points To Win: " + arena.getSettings().getPointsToWin(), 
-						ChatColor.GRAY+"--------------------------", 
-						"" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Creator: " + ChatColor.WHITE + arena.getCreator());
+				menu.setOption(place, new ItemStack(Material.REDSTONE_BLOCK), ChatColor.DARK_RED + arena.getName(), "", ChatColor.RED + "This arena isn't playable!", ChatColor.RED + "      It's Missing Spawns!", ChatColor.GRAY + "--------------------------", "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Auto Start At: " + arena.getSettings().getRequiredPlayers(), "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Playing: " + arena.getPlayers().size() + "/" + arena.getSettings().getMaxPlayers(), "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "State: " + arena.getState(), "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Time Left: " + (arena.getState() == GameState.Started ? arena.getTimer().getTimeLeft() : "N/A"), ChatColor.GRAY + "--------------------------", "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Time Limit: " + Time.getTime((long) arena.getSettings().getGameTime()), "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Points To Win: " + arena.getSettings().getPointsToWin(), ChatColor.GRAY + "--------------------------", "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Creator: " + ChatColor.WHITE + arena.getCreator());
 
 			place++;
 		}

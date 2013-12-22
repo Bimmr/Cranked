@@ -1,12 +1,13 @@
 
 package me.sniperzciinema.cranked.Tools;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.inventory.ItemStack;
+import me.sniperzciinema.cranked.Handlers.Arena.Arena;
+import me.sniperzciinema.cranked.Handlers.Items.ItemHandler;
 
-import me.sniperzciinema.cranked.ArenaHandlers.Arena;
-import me.sniperzciinema.cranked.Tools.Handlers.ItemHandler;
+import org.bukkit.inventory.ItemStack;
 
 
 public class Settings {
@@ -58,17 +59,17 @@ public class Settings {
 		if (Files.getArenas().contains("Arenas." + arena.getName() + ".Points.Max Points"))
 			return Files.getArenas().getInt("Arenas." + arena.getName() + ".Points.Max Points");
 		else
-			return Files.getConfig().getInt("Settings.Global.Points.MaxPoints");
+			return Files.getConfig().getInt("Settings.Global.Points.Max Points");
 	}
+
 	public int getMaxPlayers() {
 		if (Files.getArenas().contains("Arenas." + arena.getName() + ".Game.Max Players"))
 			return Files.getArenas().getInt("Arenas." + arena.getName() + ".Game.Max Players");
 		else
-			return Files.getConfig().getInt("Settings.Global.Game.MaxPlayers");
+			return Files.getConfig().getInt("Settings.Global.Game.Max Players");
 	}
 
 	// ////////////////////////////////////////////////-BOOLEANS-////////////////////////////////////////////////////
-
 
 	public boolean canDropBlocks() {
 		if (Files.getArenas().contains("Arenas." + arena.getName() + ".Misc.Can Drop Blocks"))
@@ -84,34 +85,9 @@ public class Settings {
 			return Files.getConfig().getBoolean("Settings.Global.Misc.Can Loose Hunger");
 	}
 
-	public boolean speedUpOnce() {
-		if (Files.getArenas().contains("Arenas." + arena.getName() + ".Speed.Only Add Speed Once"))
-			return Files.getArenas().getBoolean("Arenas." + arena.getName() + ".Only Add Speed Once");
-		else
-			return Files.getConfig().getBoolean("Settings.Global.Speed.Only Add Speed Once");
-	}
 
 	// ////////////////////////////////////////////////-FLOATS-///////////////////////////////////////////////////////
 
-	public float getBonusSpeed() {
-		if (Files.getArenas().contains("Arenas." + arena.getName() + ".Speed.Bonus Per Kill"))
-			return Float.parseFloat(Files.getArenas().getString("Arenas." + arena.getName() + ".Speed.Bonus Per Kill"));
-		else
-			return Float.parseFloat(Files.getConfig().getString("Settings.Global.Speed.Bonus Per Kill"));
-	}
-	public float getMaxSpeed() {
-		if (Files.getArenas().contains("Arenas." + arena.getName() + ".Speed.Max Speed"))
-			return Float.parseFloat(Files.getArenas().getString("Arenas." + arena.getName() + ".Speed.Max Speed"));
-		else
-			return Float.parseFloat(Files.getConfig().getString("Settings.Global.Speed.Max Speed"));
-	}
-
-	public float getWaitingSpeed() {
-		if (Files.getArenas().contains("Arenas." + arena.getName() + ".Speed.Bonus Well Waiting"))
-			return Float.parseFloat(Files.getArenas().getString("Arenas." + arena.getName() + ".Speed.Bonus Well Waiting"));
-		else
-			return Float.parseFloat(Files.getConfig().getString("Settings.Global.Speed.Bonus Well Waiting"));
-	}
 
 	// ////////////////////////////////////////////-ITEMS-///////////////////////////////////////////////////////////
 
@@ -143,17 +119,18 @@ public class Settings {
 			return ItemHandler.getItemStack(Files.getConfig().getString("Settings.Global.Equipment.Feet"));
 	}
 
-	public ItemStack[] getDefaultItems() {
+	public ArrayList<ItemStack> getDefaultItems() {
 		if (Files.getArenas().contains("Arenas." + arena.getName() + ".Equipment.Items"))
 			return ItemHandler.getItemStackList(Files.getArenas().getStringList("Arenas." + arena.getName() + ".Equipment.Items"));
 		else
 			return ItemHandler.getItemStackList(Files.getConfig().getStringList("Settings.Global.Equipment.Items"));
 	}
+
 	// /////////////////////////////////////////////-LIST-////////////////////////////////////////
 	public List<String> getScoreBoardRows() {
-		if (Files.getArenas().contains("Arenas." + arena.getName() + ".ScoreBoard."+arena.getState()))
-			return Files.getArenas().getStringList("Arenas." + arena.getName() + ".ScoreBoard."+arena.getState());
+		if (Files.getArenas().contains("Arenas." + arena.getName() + ".ScoreBoard." + arena.getState()))
+			return Files.getArenas().getStringList("Arenas." + arena.getName() + ".ScoreBoard." + arena.getState());
 		else
-			return Files.getConfig().getStringList("Settings.Global.ScoreBoard."+arena.getState());
+			return Files.getConfig().getStringList("Settings.Global.ScoreBoard." + arena.getState());
 	}
 }

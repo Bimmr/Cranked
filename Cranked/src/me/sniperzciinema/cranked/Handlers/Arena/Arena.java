@@ -1,16 +1,16 @@
 
-package me.sniperzciinema.cranked.ArenaHandlers;
+package me.sniperzciinema.cranked.Handlers.Arena;
 
 import java.util.HashMap;
 import java.util.List;
+
+import me.sniperzciinema.cranked.Tools.Files;
+import me.sniperzciinema.cranked.Tools.Settings;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-
-import me.sniperzciinema.cranked.Tools.Files;
-import me.sniperzciinema.cranked.Tools.Settings;
 
 
 public class Arena {

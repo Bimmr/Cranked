@@ -1,13 +1,13 @@
 
 package me.sniperzciinema.cranked.Listeners;
 
-import me.sniperzciinema.cranked.ArenaHandlers.Arena;
-import me.sniperzciinema.cranked.ArenaHandlers.ArenaManager;
-import me.sniperzciinema.cranked.ArenaHandlers.GameState;
 import me.sniperzciinema.cranked.GameMechanics.DeathTypes;
 import me.sniperzciinema.cranked.GameMechanics.Deaths;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayer;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayerManager;
+import me.sniperzciinema.cranked.Handlers.Arena.Arena;
+import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
+import me.sniperzciinema.cranked.Handlers.Arena.GameState;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

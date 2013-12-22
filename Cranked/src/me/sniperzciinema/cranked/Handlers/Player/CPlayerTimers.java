@@ -1,12 +1,13 @@
 
-package me.sniperzciinema.cranked.PlayerHandlers;
+package me.sniperzciinema.cranked.Handlers.Player;
+
+import me.sniperzciinema.cranked.Main;
+import me.sniperzciinema.cranked.GameMechanics.DeathTypes;
+import me.sniperzciinema.cranked.GameMechanics.Deaths;
+import me.sniperzciinema.cranked.Handlers.Arena.GameState;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import me.sniperzciinema.cranked.Main;
-import me.sniperzciinema.cranked.ArenaHandlers.GameState;
-import me.sniperzciinema.cranked.GameMechanics.DeathTypes;
-import me.sniperzciinema.cranked.GameMechanics.Deaths;
 
 
 public class CPlayerTimers {
@@ -24,7 +25,8 @@ public class CPlayerTimers {
 	public CPlayer getCrankedPlayer() {
 		return cp;
 	}
-	public boolean isCranked(){
+
+	public boolean isCranked() {
 		return timeSinceLastKill != 0;
 	}
 
@@ -78,14 +80,15 @@ public class CPlayerTimers {
 				{
 					timeSinceLastKill += 1;
 
-					player.setExp(player.getExp() - (float)1/30);
-				}
-				else if (timeSinceLastKill == 30)
+					if (getCrankedPlayer().isInGame())
+						player.setExp(player.getExp() - (float) 1 / 30);
+				} else if (timeSinceLastKill == 30)
 				{
 					// Times up and they didnt get a kill, so we'll kill them
 					// with a bang(That doesn't break blocks)!
-					if(getCrankedPlayer().getArena().getState() == GameState.Started)
-						Deaths.playerDies(null, player, DeathTypes.OutOfTime);
+					if (getCrankedPlayer().isInGame())
+						if (getCrankedPlayer().getArena().getState() == GameState.Started)
+							Deaths.playerDies(null, player, DeathTypes.OutOfTime);
 				}
 			}
 		}, 0L, 20L);

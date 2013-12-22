@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayerManager;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
 
 import org.bukkit.entity.Player;
 

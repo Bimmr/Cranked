@@ -1,12 +1,9 @@
 
 package me.sniperzciinema.cranked.GameMechanics;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import me.sniperzciinema.cranked.Main;
 import me.sniperzciinema.cranked.Tools.Files;
+import me.sniperzciinema.cranked.Tools.MySQLManager;
 
 
 public class Stats {
@@ -79,11 +76,12 @@ public class Stats {
 		else
 			return Files.getPlayers().getInt("Players." + name + ".Playing Time");
 	}
-/**
- * 
- * @param name
- * @param playingTime
- */
+
+	/**
+	 * 
+	 * @param name
+	 * @param playingTime
+	 */
 	public static void setPlayingTime(String name, Long playingTime) {
 		if (Main.me.getConfig().getBoolean("MySQL.Enable"))
 			setMySQLStats(name, "Playing Time", playingTime.intValue());
@@ -105,11 +103,12 @@ public class Stats {
 		else
 			return Files.getPlayers().getInt("Players." + name + ".Highest KillStreak");
 	}
-/**
- * 
- * @param name
- * @param highestKillStreak
- */
+
+	/**
+	 * 
+	 * @param name
+	 * @param highestKillStreak
+	 */
 	public static void setHighestKillStreak(String name, int highestKillStreak) {
 		if (Main.me.getConfig().getBoolean("MySQL.Enable"))
 			setMySQLStats(name, "Highest KillStreak", highestKillStreak);
@@ -120,50 +119,20 @@ public class Stats {
 		}
 	}
 
-	// Method to get the MySQL Stats (Untested...)
-	private static String getMySQLStats(String name, String stat) {
-		String value = "0";
-
-		Statement statement;
-		try
-		{
-			statement = Main.c.createStatement();
-
-			ResultSet res;
-
-			res = statement.executeQuery("SELECT * FROM " + stat + " WHERE PlayerName = '" + name + "';");
-
-			res.next();
-
-			if (res.getString("PlayerName") == null)
-			{
-				value = "0";
-			} else
-			{
-				value = res.getString("stat");
-			}
-		} catch (SQLException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			value = "0";
-		}
-		return value;
+	private static Integer getMySQLStats(String name, String stat) {
+		name = name.toLowerCase();
+		return MySQLManager.getInt("Infected", stat, name);
 	}
 
-	// Method to set the MySQL Stats (Untested...)
+	/**
+	 * Attempts to set Stats to MySQL (Untested)
+	 * 
+	 * @param name
+	 * @param stat
+	 * @param value
+	 */
 	private static void setMySQLStats(String name, String stat, int value) {
-		Statement statement;
-		try
-		{
-			statement = Main.c.createStatement();
-
-			statement.executeUpdate("INSERT INTO Cranked (`PlayerName`, `" + stat + "`) VALUES ('" + name + "', " + value + ");");
-		} catch (SQLException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		name = name.toLowerCase();
+		MySQLManager.update("Infected", stat, value, name);
 	}
 }

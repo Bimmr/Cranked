@@ -29,9 +29,10 @@ public class IconMenu implements Listener {
 	private String[] optionNames;
 	private ItemStack[] optionIcons;
 
-	public static boolean hasMenuOpen(Player p){
+	public static boolean hasMenuOpen(Player p) {
 		return openedFor.contains(p);
 	}
+
 	public IconMenu(String name, int size, OptionClickEventHandler handler,
 			Plugin plugin)
 	{

@@ -3,9 +3,9 @@ package me.sniperzciinema.cranked.Extras;
 
 import java.util.List;
 
+import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
 import me.sniperzciinema.cranked.Messages.ScoreBoardVariables;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayer;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayerManager;
 import me.sniperzciinema.cranked.Tools.Sort;
 
 import org.bukkit.Bukkit;
@@ -27,25 +27,32 @@ public class ScoreBoard {
 		this.cp = cp;
 	}
 
-	public enum ScoreBoards{Rankings, Stats};
+	public enum ScoreBoards
+	{
+		Rankings, Stats
+	};
+
 	private ScoreBoards showing;
-	
-	public ScoreBoards getShowing(){
+
+	public ScoreBoards getShowing() {
 		return showing;
 	}
-	public void switchScoreboards(){
-		if(getShowing() == ScoreBoards.Rankings)
+
+	public void switchScoreboards() {
+		if (getShowing() == ScoreBoards.Rankings)
 			showStats();
 		else
 			showRankings();
 	}
-	public void showProper(){
-		if(getShowing() == ScoreBoards.Rankings)
+
+	public void showProper() {
+		if (getShowing() == ScoreBoards.Rankings)
 			showRankings();
 		else
 			showStats();
 	}
-	public void showRankings(){
+
+	public void showRankings() {
 		showing = ScoreBoards.Rankings;
 		Player player = cp.getPlayer();
 
@@ -65,9 +72,10 @@ public class ScoreBoard {
 			// Now set all the scores and the title
 			ob.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + ChatColor.UNDERLINE + "Rankings");
 
-			for(Player p : Sort.topStats(cp.getArena().getPlayers(), 10))
+			for (Player p : Sort.topStats(cp.getArena().getPlayers(), 10))
 			{
-				if(p != null){
+				if (p != null)
+				{
 					Score score = ob.getScore(Bukkit.getOfflinePlayer(p.getName()));
 					score.setScore(CPlayerManager.getCrankedPlayer(p).getPoints());
 				}
@@ -75,6 +83,7 @@ public class ScoreBoard {
 			player.setScoreboard(sb);
 		}
 	}
+
 	public void showStats() {
 		showing = ScoreBoards.Stats;
 		Player player = cp.getPlayer();

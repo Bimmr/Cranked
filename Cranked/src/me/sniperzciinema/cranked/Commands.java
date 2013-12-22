@@ -3,22 +3,22 @@ package me.sniperzciinema.cranked;
 
 import java.util.List;
 
-import me.sniperzciinema.cranked.ArenaHandlers.Arena;
-import me.sniperzciinema.cranked.ArenaHandlers.ArenaManager;
-import me.sniperzciinema.cranked.ArenaHandlers.GameState;
 import me.sniperzciinema.cranked.Extras.Menus;
 import me.sniperzciinema.cranked.GameMechanics.Agility;
 import me.sniperzciinema.cranked.GameMechanics.DeathTypes;
 import me.sniperzciinema.cranked.GameMechanics.Deaths;
 import me.sniperzciinema.cranked.GameMechanics.Stats;
+import me.sniperzciinema.cranked.Handlers.Arena.Arena;
+import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
+import me.sniperzciinema.cranked.Handlers.Arena.GameState;
+import me.sniperzciinema.cranked.Handlers.Items.ItemHandler;
+import me.sniperzciinema.cranked.Handlers.Location.LocationHandler;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
 import me.sniperzciinema.cranked.Messages.Msgs;
 import me.sniperzciinema.cranked.Messages.StringUtil;
 import me.sniperzciinema.cranked.Messages.Time;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayer;
-import me.sniperzciinema.cranked.PlayerHandlers.CPlayerManager;
 import me.sniperzciinema.cranked.Tools.Files;
-import me.sniperzciinema.cranked.Tools.Handlers.ItemHandler;
-import me.sniperzciinema.cranked.Tools.Handlers.LocationHandler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -50,12 +50,8 @@ public class Commands implements CommandExecutor {
 				cp = CPlayerManager.getCrankedPlayer(p);
 			}
 
-			if (args.length > 0 && args[0].equalsIgnoreCase("TEST"))
-			{
-				Deaths.playerDies(p, null, DeathTypes.Other);
-			}
 			// //////////////////////////////JOIN///////////////////////////////////
-			else if (args.length > 0 && args[0].equalsIgnoreCase("Join"))
+			if (args.length > 0 && args[0].equalsIgnoreCase("Join"))
 			{
 				if (p == null)
 					sender.sendMessage("Expected a player!");
@@ -80,27 +76,19 @@ public class Commands implements CommandExecutor {
 							p.sendMessage(Msgs.Format_Line.getString(false));
 							p.sendMessage("");
 							p.sendMessage(Msgs.Game_Joined_You.getString(true, "<arena>", cp.getArena().getName()));
-							p.sendMessage(Msgs.Arena_Creator.getString(true, "<creator>", arena.getCreator()));
-							p.sendMessage("");
+							p.sendMessage(Msgs.Arena_Information.getString(true, "<arena>", arena.getName(), "<creator>", arena.getCreator()));
 							p.sendMessage("");
 							if (arena.getState() == GameState.Waiting)
-							{
 								p.sendMessage(Msgs.Waiting_Players_Needed.getString(true, "<current>", String.valueOf(arena.getPlayers().size()), "<needed>", String.valueOf(arena.getSettings().getRequiredPlayers())));
-							} else if (arena.getState() == GameState.PreGame)
-							{
-								p.sendMessage(Msgs.Before_Game_Time_Left.getString(true, "<time>", Time.getTime((long) arena.getTimer().getTimeLeft())));
-							} else if (arena.getState() == GameState.Started)
-							{
-								p.sendMessage(Msgs.Game_Time_Left.getString(true, "<time>", Time.getTime((long) arena.getTimer().getTimeLeft())));
-							}
 							p.sendMessage("");
 							p.sendMessage(Msgs.Format_Line.getString(false));
 
 							for (Player ppl : cp.getArena().getPlayers())
-								if (ppl != cp.getPlayer())
+								if (ppl != cp.getPlayer()){
 									ppl.sendMessage(Msgs.Game_Joined_They.getString(true, "<player>", p.getName(), "<arena>", cp.getArena().getName()));
-
-							Agility.speedUp(p, false);
+									CPlayerManager.getCrankedPlayer(ppl).getScoreBoard().showProper();
+								}
+							cp.speed();
 						} else
 							sender.sendMessage(Msgs.Error_Arena_No_Spawns.getString(true, "<arena>", arenaName));
 					} else
@@ -225,12 +213,13 @@ public class Commands implements CommandExecutor {
 				else
 				{
 					String arena = cp.getCreating();
+					System.out.println(arena);
 					if (ArenaManager.arenaRegistered(arena))
 					{
 						ArenaManager.setSpawn(arena, p.getLocation());
 						p.sendMessage(Msgs.Command_Spawn_Set.getString(true, "<spawn>", String.valueOf(ArenaManager.getArena(arena).getSpawns().size())));
 					} else
-						p.sendMessage(Msgs.Help_SetSpawn.getString(true));
+						p.sendMessage(Msgs.Help_SetArena.getString(true));
 				}
 			}
 			// //////////////////////////////SETARENA///////////////////////////////////
@@ -469,13 +458,13 @@ public class Commands implements CommandExecutor {
 			{
 				if (!(sender instanceof Player))
 					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(true));
-				
+
 				if (!p.hasPermission("Cranked.SetUp"))
 					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
-				
+
 				if (cp.getCreating() == null)
 					p.sendMessage(Msgs.Help_SetArena.getString(true));
-				
+
 				if (args.length != 1)
 				{
 					try
@@ -501,27 +490,27 @@ public class Commands implements CommandExecutor {
 
 				if (!(sender instanceof Player))
 					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(true));
-				
+
 				if (!p.hasPermission("Cranked.Spawns"))
 					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
-				
+
 				if (cp.getCreating() == null)
 					p.sendMessage(Msgs.Help_SetArena.getString(true));
-				
+
 				List<String> list = ArenaManager.getArena(cp.getCreating()).getSpawns();
 				p.sendMessage(Msgs.Command_Spawn_Spawns.getString(true, "<spawns>", String.valueOf(list.size())));
 			} else
 			{
 				CommandSender player = sender;
 				player.sendMessage("");
-				player.sendMessage(Msgs.Format_Header.getString(true, "<title>", "Cranked"));
+				player.sendMessage(Msgs.Format_Header.getString(false, "<title>", "Cranked"));
 				if (Main.update)
-					player.sendMessage(Msgs.Format_Prefix.getString(true) + ChatColor.RED + ChatColor.BOLD + "Update Available: " + ChatColor.WHITE + ChatColor.BOLD + Main.name);
+					player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + ChatColor.BOLD + "Update Available: " + ChatColor.WHITE + ChatColor.BOLD + Main.name);
 				player.sendMessage("");
-				player.sendMessage(Msgs.Format_Prefix.getString(true) + ChatColor.GRAY + "Author: " + ChatColor.GREEN + ChatColor.BOLD + "SniperzCiinema(xXSniperzzXx_SD)");
-				player.sendMessage(Msgs.Format_Prefix.getString(true) + ChatColor.GRAY + "Version: " + ChatColor.GREEN + ChatColor.BOLD + plugin.getDescription().getVersion());
-				player.sendMessage(Msgs.Format_Prefix.getString(true) + ChatColor.GRAY + "BukkitDev: " + ChatColor.GREEN + ChatColor.BOLD + "Link to come...");
-				player.sendMessage(Msgs.Format_Prefix.getString(true) + ChatColor.YELLOW + "For Help type: /Cranked Help");
+				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "Author: " + ChatColor.GREEN + ChatColor.BOLD + "SniperzCiinema");
+				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "Version: " + ChatColor.GREEN + ChatColor.BOLD + plugin.getDescription().getVersion());
+				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "BukkitDev: " + ChatColor.GREEN + ChatColor.BOLD + "Link to come...");
+				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.YELLOW + "For Help type: /Cranked Help");
 
 			}
 		}
