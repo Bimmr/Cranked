@@ -1,7 +1,7 @@
 name: Cranked
 description: COD Ghosts Cranked for MC
-main: me.sniperzciinema.cranked.Main
-version: 0.0.2
+main: me.sniperzciinema.cranked.Cranked
+version: 0.0.3
 author: xXSniperzzXx_SD
 commands:
   Cranked:

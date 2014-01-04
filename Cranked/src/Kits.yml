@@ -1,0 +1,55 @@
+# Default Kits.yml, Last Edited in v0.0.3
+# #
+# For more help with ids go here: 
+# Item/Block Ids - Minecraftinfo.com/IDList.htm
+# Enchantment Ids - http://minecraft.gamepedia.com/Enchanting#Enchantments
+# Potion Effect Ids - http://minecraft.gamepedia.com/Potion_effects#List_of_effects
+# #
+# Cranked's Item Codes  -----   ItemID:DamageValue,Amount-EnchantmentID@EnchantmentLevel-EnchantmentID@EnchantmentLevel%Item_Name
+# This code HAS to be used in the order shown, in other words no saying the amount of the item you want, then saying the damage value
+# You can use "/Cranked Admin Code" To return the code for the item in your hand
+# #
+# #
+# ==== Permissions =====
+# Cranked.Kits.*
+#    Cranked.Kits.<ClassName>
+# =============================================== #
+Kits: 
+  Guard:
+    Icon: '268'
+    Helmet: '306'
+    Chestplate: '303'
+    Leggings: '304'
+    Boots: '305'
+    Items:
+    - '268'
+    - '261'
+    - '262,10'
+    KillStreaks:
+      '5': '268-19'
+      '7': '305-2' 
+  Knight:
+    Icon: '314'
+    Helmet: '314'
+    Chestplate: '315'
+    Leggings: '316'
+    Boots: '317'
+    Items:
+    - '268'
+    - '261'
+    - '262,10'
+    KillStreaks:
+      '5': '268-19@1'
+      '7': '262'
+      '6': '261,10'
+      '10': '261,10'
+  Regular:
+    Icon: '367'
+    Helmet: '298'
+    Chestplate: '299'
+    Leggings: '300'
+    Boots: '305'
+    Items:
+    - '272'
+    KillStreaks:
+    '10': '276-1'

@@ -1,4 +1,4 @@
-# Default Cranked Config, last edited in version 0.0.2
+# Default Cranked Config, last edited in version 0.0.3
 MySQL:
   Enable: false
   Host: 127.0.0.1
@@ -21,15 +21,7 @@ Settings:
       Can Loose Food: false
     Auto Start:
       Required Players: 4
-    Equipment:
-      Helmet: '298'
-      Chest: '299'
-      Legs: '300'
-      Feet: '301'
-      Items:
-        - 272-34@100
-        - '261'
-        - 262,64
+    Default Kit: Guard
     ScoreBoard:
       Waiting:
         - " "

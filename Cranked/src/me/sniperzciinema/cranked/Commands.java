@@ -31,9 +31,9 @@ import org.bukkit.entity.Player;
 
 public class Commands implements CommandExecutor {
 
-	Main plugin;
+	Cranked plugin;
 
-	public Commands(Main plugin)
+	public Commands(Cranked plugin)
 	{
 		this.plugin = plugin;
 	}
@@ -50,8 +50,20 @@ public class Commands implements CommandExecutor {
 				cp = CPlayerManager.getCrankedPlayer(p);
 			}
 
+			// //////////////////////////////////////////////-Kits-///////////////////////////////////////
+			if (args.length >= 1 && args[0].equalsIgnoreCase("Kits"))
+			{
+				if (p == null)
+					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(false));
+
+				else if (cp.getArena() == null)
+					p.sendMessage(Msgs.Error_Game_Not_In.getString(true));
+
+				else
+					Menus.chooseKit(p);
+			}
 			// //////////////////////////////JOIN///////////////////////////////////
-			if (args.length > 0 && args[0].equalsIgnoreCase("Join"))
+			else if (args.length > 0 && args[0].equalsIgnoreCase("Join"))
 			{
 				if (p == null)
 					sender.sendMessage("Expected a player!");
@@ -504,8 +516,8 @@ public class Commands implements CommandExecutor {
 				CommandSender player = sender;
 				player.sendMessage("");
 				player.sendMessage(Msgs.Format_Header.getString(false, "<title>", "Cranked"));
-				if (Main.update)
-					player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + ChatColor.BOLD + "Update Available: " + ChatColor.WHITE + ChatColor.BOLD + Main.name);
+				if (Cranked.update)
+					player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + ChatColor.BOLD + "Update Available: " + ChatColor.WHITE + ChatColor.BOLD + Cranked.name);
 				player.sendMessage("");
 				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "Author: " + ChatColor.GREEN + ChatColor.BOLD + "SniperzCiinema");
 				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "Version: " + ChatColor.GREEN + ChatColor.BOLD + plugin.getDescription().getVersion());

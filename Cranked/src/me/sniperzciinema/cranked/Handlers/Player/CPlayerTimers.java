@@ -1,7 +1,7 @@
 
 package me.sniperzciinema.cranked.Handlers.Player;
 
-import me.sniperzciinema.cranked.Main;
+import me.sniperzciinema.cranked.Cranked;
 import me.sniperzciinema.cranked.GameMechanics.DeathTypes;
 import me.sniperzciinema.cranked.GameMechanics.Deaths;
 import me.sniperzciinema.cranked.Handlers.Arena.GameState;
@@ -49,7 +49,7 @@ public class CPlayerTimers {
 	// Method to restart the timer
 	public void restartTimer() {
 		stopTimer();
-		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.me, new Runnable()
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Cranked.me, new Runnable()
 		{
 
 			@Override
@@ -69,7 +69,7 @@ public class CPlayerTimers {
 		player.setExp(0.99F);
 
 		// Create the schedular
-		timer = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.me, new Runnable()
+		timer = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Cranked.me, new Runnable()
 		{
 
 			@Override

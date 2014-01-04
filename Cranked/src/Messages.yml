@@ -61,6 +61,13 @@ Game:
   End:
     Not Enough Players: 'Not enough players left to continue'
   Started: '&a&lWatch your back!'
+Kits:
+  None: '&7You have chosen the &x&odefault kit'
+  Chosen: '&cYou have chosen &x&o<kit> &cas your kit.'
+Menu:
+  Kits:
+    Click To Choose: '&eClick to choose this kit'
+    Click For None: '&eClick to choose the default kit'
 Game Over:
   Times Up: '       &6&lTimes Up!'
   Winners: '&l&a<place>. &e&o<player>.'

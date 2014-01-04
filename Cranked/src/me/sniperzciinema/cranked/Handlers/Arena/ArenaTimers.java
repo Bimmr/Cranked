@@ -2,7 +2,7 @@
 package me.sniperzciinema.cranked.Handlers.Arena;
 
 import me.sniperzciinema.cranked.Game;
-import me.sniperzciinema.cranked.Main;
+import me.sniperzciinema.cranked.Cranked;
 import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
 import me.sniperzciinema.cranked.Messages.Msgs;
 import me.sniperzciinema.cranked.Messages.Time;
@@ -69,7 +69,7 @@ public class ArenaTimers {
 	// Restart the waiting status timer
 	public void restartUpdaterTimer() {
 		stopUpdaterTimer();
-		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.me, new Runnable()
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Cranked.me, new Runnable()
 		{
 
 			@Override
@@ -83,7 +83,7 @@ public class ArenaTimers {
 	// The waiting status updater
 	public void startUpdaterTimer() {
 		updateTime = getWaitingStatusUpdateTime();
-		updater = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.me, new Runnable()
+		updater = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Cranked.me, new Runnable()
 		{
 
 			@Override
@@ -139,7 +139,7 @@ public class ArenaTimers {
 					Integer.MAX_VALUE, 128));
 			player.setWalkSpeed(0.0F);
 		}
-		pregame = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.me, new Runnable()
+		pregame = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Cranked.me, new Runnable()
 		{
 
 			@Override
@@ -184,7 +184,7 @@ public class ArenaTimers {
 				p.removePotionEffect(effect.getType());
 			p.sendMessage(Msgs.Game_Started.getString(true));
 		}
-		game = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.me, new Runnable()
+		game = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Cranked.me, new Runnable()
 		{
 
 			@Override

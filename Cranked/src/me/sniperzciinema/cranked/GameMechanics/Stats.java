@@ -1,7 +1,7 @@
 
 package me.sniperzciinema.cranked.GameMechanics;
 
-import me.sniperzciinema.cranked.Main;
+import me.sniperzciinema.cranked.Cranked;
 import me.sniperzciinema.cranked.Tools.Files;
 import me.sniperzciinema.cranked.Tools.MySQLManager;
 
@@ -10,7 +10,7 @@ public class Stats {
 
 	// Get the kills from the location required
 	public static int getKills(String name) {
-		if (Main.me.getConfig().getBoolean("MySQL.Enable"))
+		if (Cranked.me.getConfig().getBoolean("MySQL.Enable"))
 			return Integer.valueOf(getMySQLStats(name, "Kills"));
 		else
 			return Files.getPlayers().getInt("Players." + name + ".Kills");
@@ -18,7 +18,7 @@ public class Stats {
 
 	// Set the kills to the location required
 	public static void setKills(String name, Integer kills) {
-		if (Main.me.getConfig().getBoolean("MySQL.Enable"))
+		if (Cranked.me.getConfig().getBoolean("MySQL.Enable"))
 			setMySQLStats(name, "Kills", kills);
 		else
 		{
@@ -29,7 +29,7 @@ public class Stats {
 
 	// Get the deaths from the location required
 	public static int getDeaths(String name) {
-		if (Main.me.getConfig().getBoolean("MySQL.Enable"))
+		if (Cranked.me.getConfig().getBoolean("MySQL.Enable"))
 			return Integer.valueOf(getMySQLStats(name, "Deaths"));
 		else
 			return Files.getPlayers().getInt("Players." + name + ".Deaths");
@@ -37,7 +37,7 @@ public class Stats {
 
 	// Set the Deaths to the location required
 	public static void setDeaths(String name, Integer deaths) {
-		if (Main.me.getConfig().getBoolean("MySQL.Enable"))
+		if (Cranked.me.getConfig().getBoolean("MySQL.Enable"))
 			setMySQLStats(name, "Deaths", deaths);
 		else
 		{
@@ -48,7 +48,7 @@ public class Stats {
 
 	// Get the score from the location required
 	public static int getScore(String name) {
-		if (Main.me.getConfig().getBoolean("MySQL.Enable"))
+		if (Cranked.me.getConfig().getBoolean("MySQL.Enable"))
 			return Integer.valueOf(getMySQLStats(name, "Score"));
 		else
 			return Files.getPlayers().getInt("Players." + name + ".Score");
@@ -56,7 +56,7 @@ public class Stats {
 
 	// Set the Score to the location required
 	public static void setScore(String name, Integer score) {
-		if (Main.me.getConfig().getBoolean("MySQL.Enable"))
+		if (Cranked.me.getConfig().getBoolean("MySQL.Enable"))
 			setMySQLStats(name, "Score", score);
 		else
 		{
@@ -71,7 +71,7 @@ public class Stats {
 	 * @return playingTime
 	 */
 	public static int getPlayingTime(String name) {
-		if (Main.me.getConfig().getBoolean("MySQL.Enable"))
+		if (Cranked.me.getConfig().getBoolean("MySQL.Enable"))
 			return Integer.valueOf(getMySQLStats(name, "Playing Time"));
 		else
 			return Files.getPlayers().getInt("Players." + name + ".Playing Time");
@@ -83,7 +83,7 @@ public class Stats {
 	 * @param playingTime
 	 */
 	public static void setPlayingTime(String name, Long playingTime) {
-		if (Main.me.getConfig().getBoolean("MySQL.Enable"))
+		if (Cranked.me.getConfig().getBoolean("MySQL.Enable"))
 			setMySQLStats(name, "Playing Time", playingTime.intValue());
 		else
 		{
@@ -98,7 +98,7 @@ public class Stats {
 	 * @return highestKillStreak
 	 */
 	public static int getHighestKillStreak(String name) {
-		if (Main.me.getConfig().getBoolean("MySQL.Enable"))
+		if (Cranked.me.getConfig().getBoolean("MySQL.Enable"))
 			return Integer.valueOf(getMySQLStats(name, "Highest KillStreak"));
 		else
 			return Files.getPlayers().getInt("Players." + name + ".Highest KillStreak");
@@ -110,7 +110,7 @@ public class Stats {
 	 * @param highestKillStreak
 	 */
 	public static void setHighestKillStreak(String name, int highestKillStreak) {
-		if (Main.me.getConfig().getBoolean("MySQL.Enable"))
+		if (Cranked.me.getConfig().getBoolean("MySQL.Enable"))
 			setMySQLStats(name, "Highest KillStreak", highestKillStreak);
 		else
 		{

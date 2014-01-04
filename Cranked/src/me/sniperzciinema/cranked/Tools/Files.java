@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 
-import me.sniperzciinema.cranked.Main;
+import me.sniperzciinema.cranked.Cranked;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,17 +21,19 @@ public class Files {
 	public static File playerFile = null;
 	public static YamlConfiguration messages = null;
 	public static File messagesFile = null;
+	public static YamlConfiguration kits = null;
+	public static File kitsFile = null;
 
 	public static void reloadConfig() {
-		Main.me.reloadConfig();
+		Cranked.me.reloadConfig();
 	}
 
 	public static void saveConfig() {
-		Main.me.saveConfig();
+		Cranked.me.saveConfig();
 	}
 
 	public static FileConfiguration getConfig() {
-		return Main.me.getConfig();
+		return Cranked.me.getConfig();
 	}
 
 	public static void reloadAll() {
@@ -39,6 +41,7 @@ public class Files {
 		reloadArenas();
 		reloadPlayers();
 		reloadMessages();
+		reloadKits();
 	}
 
 	public static void saveAll() {
@@ -46,8 +49,54 @@ public class Files {
 		saveArenas();
 		savePlayers();
 		saveMessages();
+		saveKits();
 	}
 
+	public static void create() {
+		getConfig().options().copyDefaults(true);
+		getArenas().options().copyDefaults(true);
+		getPlayers().options().copyDefaults(true);
+		getMessages().options().copyDefaults(true);	
+		getKits().options().copyDefaults(true);
+	}
+
+
+	// Reload Abilities File
+	public static void reloadKits() {
+		if (kitsFile == null)
+			kitsFile = new File(
+					Bukkit.getPluginManager().getPlugin("Cranked").getDataFolder(),
+					"Kits.yml");
+		kits = YamlConfiguration.loadConfiguration(kitsFile);
+		// Look for defaults in the jar
+		InputStream defConfigStream = Bukkit.getPluginManager().getPlugin("Cranked").getResource("Kits.yml");
+		if (defConfigStream != null)
+		{
+			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+			if (!kitsFile.exists() || kitsFile.length() == 0)
+				kits.setDefaults(defConfig);
+		}
+	}
+
+	// Get Abilities file
+	public static FileConfiguration getKits() {
+		if (kits == null)
+			reloadKits();
+		return kits;
+	}
+
+	// Safe Abilities File
+	public static void saveKits() {
+		if (kits == null || kitsFile == null)
+			return;
+		try
+		{
+			getKits().save(kitsFile);
+		} catch (IOException ex)
+		{
+			Bukkit.getLogger().log(Level.SEVERE, "Could not save config " + kitsFile, ex);
+		}
+	}
 	// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Reload Arenas File
 	public static void reloadArenas() {
@@ -165,5 +214,6 @@ public class Files {
 			Bukkit.getLogger().log(Level.SEVERE, "Could not save config " + playerFile, ex);
 		}
 	}
+
 
 }

@@ -7,6 +7,7 @@ import java.sql.Statement;
 
 import me.sniperzciinema.cranked.Handlers.Arena.Arena;
 import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
+import me.sniperzciinema.cranked.Handlers.Kits.KitManager;
 import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
 import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
 import me.sniperzciinema.cranked.Listeners.CrackShotApi;
@@ -18,9 +19,7 @@ import me.sniperzciinema.cranked.Listeners.SignListener;
 import me.sniperzciinema.cranked.Messages.Msgs;
 import me.sniperzciinema.cranked.Messages.StringUtil;
 import me.sniperzciinema.cranked.Tools.Files;
-import me.sniperzciinema.cranked.Tools.IconMenu;
 import me.sniperzciinema.cranked.Tools.Metrics;
-import me.sniperzciinema.cranked.Tools.Updater;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -30,7 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import code.husky.mysql.MySQL;
 
 
-public class Main extends JavaPlugin {
+public class Cranked extends JavaPlugin {
 
 	public static Plugin me;
 
@@ -43,12 +42,12 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 
 		System.out.println(Msgs.Format_Header.getString(false, "<title>", "Cranked Startup"));
-		if (getConfig().getBoolean("Check For Updates.Enable"))
+		/*if (getConfig().getBoolean("Check For Updates.Enable"))
 		{
 			try
 			{
-				Updater updater = new Updater(this, 0/* NEED TO UPLOAD FIRST TO
-													 * GET ID */, getFile(),
+				Updater updater = new Updater(this, 0// NEED TO UPLOAD FIRST TO GET ID 
+				, getFile(),
 						Updater.UpdateType.NO_DOWNLOAD, false);
 
 				Main.update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE;
@@ -58,7 +57,7 @@ public class Main extends JavaPlugin {
 			{
 				System.out.println("The auto-updater tried to contact dev.bukkit.org, but was unsuccessful.");
 			}
-		}
+		}*/
 		try
 		{
 			Metrics metrics = new Metrics(this);
@@ -91,17 +90,8 @@ public class Main extends JavaPlugin {
 		}
 		getCommand("Cranked").setExecutor(new Commands(this));
 
-		// Create the default config.yml
-		Files.getArenas().options().copyDefaults(true);
-		Files.saveArenas();
-		Files.getPlayers().options().copyDefaults(true);
-		Files.savePlayers();
-		Files.getArenas().options().copyDefaults(true);
-		Files.saveArenas();
-		Files.getMessages().options().copyDefaults(true);
-		Files.saveMessages();
-		Files.getConfig().options().copyDefaults(true);
-		Files.saveConfig();
+		Files.create();
+		Files.saveAll();
 
 		for (Player p : Bukkit.getOnlinePlayers())
 		{
@@ -118,6 +108,8 @@ public class Main extends JavaPlugin {
 			}
 		else
 			System.out.println("Couldn't Find Any Arenas");
+		
+		KitManager.loadConfigKits();
 
 		if (getConfig().getBoolean("MySQL.Enable"))
 		{
@@ -154,13 +146,12 @@ public class Main extends JavaPlugin {
 				{
 					cp.getPlayer().sendMessage(Msgs.Error_Misc_Plugin_Unloaded.getString(true));
 					Game.leave(cp);
-				}
-				try
-				{
-					if (IconMenu.hasMenuOpen(cp.getPlayer()))
+					try
+					{
 						cp.getPlayer().closeInventory();
-				} catch (Exception e)
-				{
+					} catch (Exception e)
+					{
+					}
 				}
 			}
 

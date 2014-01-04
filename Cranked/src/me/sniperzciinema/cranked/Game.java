@@ -101,7 +101,7 @@ public class Game {
 		// See if autostart happens yet
 		else if (arena.getState() == GameState.Waiting && arena.getPlayers().size() >= Settings.getRequiredPlayers())
 		{
-			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.me, new Runnable()
+			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Cranked.me, new Runnable()
 			{
 				@Override
 				public void run() {

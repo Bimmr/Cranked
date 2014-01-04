@@ -87,7 +87,7 @@ public class SignListener implements Listener {
 		if (!event.isCancelled())
 		{
 			Player p = event.getPlayer();
-			if (event.getLine(0).equalsIgnoreCase("[Infected]") && event.getLine(1).equalsIgnoreCase("Cmd"))
+			if (event.getLine(0).equalsIgnoreCase("[Cranked]"))
 			{
 				if (!p.hasPermission("Infected.Setup"))
 				{

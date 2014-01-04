@@ -8,6 +8,8 @@ import me.sniperzciinema.cranked.GameMechanics.Agility;
 import me.sniperzciinema.cranked.GameMechanics.Equip;
 import me.sniperzciinema.cranked.GameMechanics.Stats;
 import me.sniperzciinema.cranked.Handlers.Arena.Arena;
+import me.sniperzciinema.cranked.Handlers.Kits.Kit;
+import me.sniperzciinema.cranked.Handlers.Kits.KitManager;
 import me.sniperzciinema.cranked.Handlers.Location.LocationHandler;
 
 import org.bukkit.Bukkit;
@@ -40,6 +42,7 @@ public class CPlayer {
 	private Player lastDamager;
 	private int kills = 0;
 	private int deaths = 0;
+	private Kit kit = KitManager.getDefaultKit();
 
 	public CPlayer(Player p)
 	{
@@ -139,7 +142,7 @@ public class CPlayer {
 		String loc = getArena().getSpawns().get(i);
 		p.teleport(LocationHandler.getPlayerLocation(loc));
 		p.setFallDistance(0F);
-		Equip.equipPlayer(p);
+		Equip.equip(p);
 		p.updateInventory();
 	}
 
@@ -355,6 +358,15 @@ public class CPlayer {
 	 */
 	public void setTimeJoined(long timeJoined) {
 		this.timeJoined = timeJoined;
+	}
+	public Kit getKit() {
+		return kit;
+	}
+	/**
+	 * @param kit the kit to set
+	 */
+	public void setKit(Kit kit) {
+		this.kit = kit;
 	}
 
 }
