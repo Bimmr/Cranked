@@ -22,25 +22,20 @@ public class Equip {
 		// Reset their inventory by: Going through and removing any old items
 		// from the class
 		// and add the new ones, this way we don't remove purchased/grenades
+		p.getInventory().clear();
 		if (!kit.getItems().isEmpty())
 			for (ItemStack is : kit.getItems())
 			{
-				if (p.getInventory().contains(is.getType()))
-					p.getInventory().remove(is);
 				if (!p.getInventory().contains(is.getType()))
 					p.getInventory().addItem(is);
 			}
 
 		// Only replace the armor if the player hasn't changed it(So if
 		// its none, or if it is the same as default)
-		if (p.getInventory().getHelmet() == kit.getHelmet() || p.getInventory().getHelmet() == null)
-			p.getInventory().setHelmet(kit.getHelmet());
-		if (p.getInventory().getChestplate() == kit.getChestplate() || p.getInventory().getChestplate() == null)
-			p.getInventory().setChestplate(kit.getChestplate());
-		if (p.getInventory().getLeggings() == kit.getLeggings() || p.getInventory().getLeggings() == null)
-			p.getInventory().setLeggings(kit.getLeggings());
-		if (p.getInventory().getBoots() == kit.getBoots() || p.getInventory().getBoots() == null)
-			p.getInventory().setBoots(kit.getBoots());
+		p.getInventory().setHelmet(kit.getHelmet());
+		p.getInventory().setChestplate(kit.getChestplate());
+		p.getInventory().setLeggings(kit.getLeggings());
+		p.getInventory().setBoots(kit.getBoots());
 
 		p.updateInventory();
 

@@ -42,7 +42,7 @@ public class CPlayer {
 	private Player lastDamager;
 	private int kills = 0;
 	private int deaths = 0;
-	private Kit kit = KitManager.getDefaultKit();
+	private Kit kit;
 
 	public CPlayer(Player p)
 	{
@@ -130,7 +130,7 @@ public class CPlayer {
 
 	// Respawn the player
 	@SuppressWarnings("deprecation")
-	public void respawn() {
+	public void respawn(boolean equip) {
 		Player p = getPlayer();
 		p.setHealth(20.0);
 		p.setFoodLevel(20);
@@ -142,7 +142,8 @@ public class CPlayer {
 		String loc = getArena().getSpawns().get(i);
 		p.teleport(LocationHandler.getPlayerLocation(loc));
 		p.setFallDistance(0F);
-		Equip.equip(p);
+		if(equip)
+			Equip.equip(p);
 		p.updateInventory();
 	}
 
@@ -360,7 +361,10 @@ public class CPlayer {
 		this.timeJoined = timeJoined;
 	}
 	public Kit getKit() {
-		return kit;
+		if(kit == null)
+			return KitManager.getDefaultKit();
+		else
+			return kit;
 	}
 	/**
 	 * @param kit the kit to set

@@ -22,7 +22,7 @@ public class Game {
 		for (Player p : arena.getPlayers())
 		{
 			CPlayer cp = CPlayerManager.getCrankedPlayer(p);
-			cp.respawn();
+			cp.respawn(true);
 			cp.setTimeJoined(System.currentTimeMillis() / 1000);
 		}
 
@@ -91,7 +91,7 @@ public class Game {
 
 		// Spawn in the player
 		p.setFallDistance(0);
-		cp.respawn();
+		cp.respawn(false);
 
 		if (arena.getState() == GameState.Started)
 		{

@@ -53,7 +53,7 @@ public class Deaths {
 			cKilled.updateStats(0, 1, 0);
 			cKilled.setKills(cKilled.getDeaths() + 1);
 			// Respawn the player
-			cKilled.respawn();
+			cKilled.respawn(true);
 			cKilled.getScoreBoard().showProper();
 		}
 

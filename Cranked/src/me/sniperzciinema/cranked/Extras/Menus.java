@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import me.sniperzciinema.cranked.Cranked;
+import me.sniperzciinema.cranked.GameMechanics.Equip;
 import me.sniperzciinema.cranked.Handlers.Arena.Arena;
 import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
 import me.sniperzciinema.cranked.Handlers.Arena.GameState;
@@ -97,13 +98,17 @@ public class Menus {
 									}
 								}, 2);
 							}
-						} else if (p.hasPermission("Cranked.Kits.*") || p.hasPermission("Cranked.Kits." + event.getName()))
+						} else if (p.hasPermission("Cranked.Kits") || p.hasPermission("Cranked.Kits." + event.getName()))
 						{
 							if (KitManager.isRegistered(KitManager.getKit(ChatColor.stripColor(event.getName()))))
 							{
 								p.sendMessage(Msgs.Kits_Chosen.getString(true, "<kit>", event.getName()));
 								cp.setKit(KitManager.getKit(ChatColor.stripColor(event.getName())));
 
+								if (cp.getArena().getState() == GameState.Started)
+									p.sendMessage("Wait till you respawn");
+								if (cp.getArena().getState() == GameState.PreGame)
+									Equip.equip(p);
 								if (event.getClick().isRightClick())
 								{
 									Bukkit.getScheduler().scheduleSyncDelayedTask(Cranked.me, new Runnable()

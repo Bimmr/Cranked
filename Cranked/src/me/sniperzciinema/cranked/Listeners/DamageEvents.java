@@ -44,7 +44,7 @@ public class DamageEvents implements Listener {
 						{
 							
 							CPlayer cv = CPlayerManager.getCrankedPlayer(victim);
-							cv.respawn();
+							cv.respawn(true);
 							e.setDamage(0);
 							victim.sendMessage(Msgs.Before_Game_Death.getString(true));
 						}

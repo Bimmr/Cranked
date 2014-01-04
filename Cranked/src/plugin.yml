@@ -17,6 +17,7 @@ permissions:
       Cranked.List: true
       Cranked.Help: true
       Cranked.Info: true
+      Cranked.Kits: true
       
   Cranked.Admin:
     default: op
