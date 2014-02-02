@@ -6,6 +6,8 @@ MySQL:
   Database: minecraft
   Username: user
   Password: pass
+Check For Updates:
+  Enabled: true
 Settings:
   Global:
     Time:

@@ -128,9 +128,9 @@ public class Settings {
 
 	// /////////////////////////////////////////////-LIST-////////////////////////////////////////
 	public List<String> getScoreBoardRows() {
-		if (Files.getArenas().contains("Arenas." + arena.getName() + ".ScoreBoard." + arena.getState()))
-			return Files.getArenas().getStringList("Arenas." + arena.getName() + ".ScoreBoard." + arena.getState());
+		if (Files.getArenas().contains("Arenas." + arena.getName() + ".ScoreBoard." + arena.getGameState()))
+			return Files.getArenas().getStringList("Arenas." + arena.getName() + ".ScoreBoard." + arena.getGameState());
 		else
-			return Files.getConfig().getStringList("Settings.Global.ScoreBoard." + arena.getState());
+			return Files.getConfig().getStringList("Settings.Global.ScoreBoard." + arena.getGameState());
 	}
 }

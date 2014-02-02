@@ -3,12 +3,7 @@ package me.sniperzciinema.cranked.Tools;
 
 import java.util.Arrays;
 
-import me.sniperzciinema.cranked.Cranked;
-import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
-
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,7 +11,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -65,49 +59,40 @@ public class IconMenu implements Listener {
 
 	public void destroy() {
 		HandlerList.unregisterAll(this);
-		this.name = "";
-		this.handler = null;
-		this.optionNames = null;
-		this.optionIcons = null;
-
-		// To fix the fact that the Menu being unregistered would prevent others
-		// from using a different menu, i made it just re-register the event
-		Bukkit.getServer().getPluginManager().registerEvents(this, Cranked.me);
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR)
-	void onInventoryClose(InventoryCloseEvent event) {
-		if (CPlayerManager.isInArena((Player) event.getPlayer()) && event.getInventory().getTitle().contains(event.getPlayer().getName()))
-		{
-			event.getInventory().clear();
-			destroy();
-		}
+		handler = null;
+		plugin = null;
+		optionNames = null;
+		optionIcons = null;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	void onInventoryClick(InventoryClickEvent event) {
-		if (event.getInventory().getTitle().equals(name) && event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR)
+		if (event.getInventory().getTitle().equals(name))
 		{
 			event.setCancelled(true);
 			int slot = event.getRawSlot();
 			if (slot >= 0 && slot < size && optionNames[slot] != null)
 			{
 				Plugin plugin = this.plugin;
-				final OptionClickEvent e = new OptionClickEvent(
+				OptionClickEvent e = new OptionClickEvent(
 						(Player) event.getWhoClicked(), slot,
 						optionNames[slot], event.getClick());
 				handler.onOptionClick(e);
-				final Player p = (Player) event.getWhoClicked();
-				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-				{
-
-					public void run() {
-						if (e.willClose())
-							p.closeInventory();
-					}
-				}, 1);
 				if (e.willClose())
+				{
+					final Player p = (Player) event.getWhoClicked();
+					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+					{
+
+						public void run() {
+							p.closeInventory();
+						}
+					}, 1);
+				}
+				if (e.willDestroy())
+				{
 					destroy();
+				}
 			}
 		}
 	}
@@ -123,7 +108,8 @@ public class IconMenu implements Listener {
 		private int position;
 		private String name;
 		private boolean close;
-		private ClickType click;
+		private boolean destroy;
+		private ClickType clickType;
 
 		public OptionClickEvent(Player player, int position, String name,
 				ClickType clickType)
@@ -132,7 +118,8 @@ public class IconMenu implements Listener {
 			this.position = position;
 			this.name = name;
 			this.close = true;
-			this.click = clickType;
+			this.destroy = false;
+			this.clickType = clickType;
 		}
 
 		public Player getPlayer() {
@@ -151,22 +138,30 @@ public class IconMenu implements Listener {
 			return close;
 		}
 
+		public boolean willDestroy() {
+			return destroy;
+		}
+
 		public void setWillClose(boolean close) {
 			this.close = close;
 		}
 
-		/**
-		 * @return the click
-		 */
-		public ClickType getClick() {
-			return click;
+		public void setWillDestroy(boolean destroy) {
+			this.destroy = destroy;
 		}
 
+		public ClickType getClickType() {
+			return clickType;
+		}
+
+		public void setClickType(ClickType clickType) {
+			this.clickType = clickType;
+		}
 	}
 
 	private ItemStack setItemNameAndLore(ItemStack item, String name, String[] lore) {
 		ItemMeta im = item.getItemMeta();
-		im.setDisplayName(ChatColor.GOLD + name);
+		im.setDisplayName(name);
 		im.setLore(Arrays.asList(lore));
 		item.setItemMeta(im);
 		return item;

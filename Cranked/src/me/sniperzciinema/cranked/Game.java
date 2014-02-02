@@ -84,7 +84,7 @@ public class Game {
 		// Set the players info
 		cp.setInfo();
 		cp.setArena(arena);
-		cp.getScoreBoard().showStats();
+		cp.getScoreBoard().showProper();
 
 		for (PotionEffect effect : p.getActivePotionEffects())
 			p.removePotionEffect(effect.getType());
@@ -93,16 +93,12 @@ public class Game {
 		p.setFallDistance(0);
 		cp.respawn(false);
 
-		if (arena.getState() == GameState.Started)
-		{
-			cp.setTimeJoined(System.currentTimeMillis() / 1000);
-		}
-
 		// See if autostart happens yet
-		else if (arena.getState() == GameState.Waiting && arena.getPlayers().size() >= Settings.getRequiredPlayers())
+		if (arena.getGameState() == GameState.Waiting && arena.getPlayers().size() >= Settings.getRequiredPlayers())
 		{
 			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Cranked.me, new Runnable()
 			{
+
 				@Override
 				public void run() {
 					start(arena);
@@ -112,25 +108,7 @@ public class Game {
 	}
 
 	public static void leave(CPlayer cp) {
-		Arena arena = cp.getArena();
-		// Reset the player
-
-		cp.reset();
-		cp.getScoreBoard().showStats();
-
-		// If there's noone left in the arena, reset it
-		if (arena.getState() != GameState.Waiting && arena.getPlayers().size() <= 1)
-		{
-
-			arena.reset();
-			for (Player p : arena.getPlayers())
-			{
-				p.sendMessage(Msgs.Game_End_Not_Enough_Players.getString(true));
-				CPlayer cpp = CPlayerManager.getCrankedPlayer(p);
-				cpp.reset();
-				cpp.getScoreBoard().showStats();
-			}
-		}
+		cp.leave();
 	}
 
 }

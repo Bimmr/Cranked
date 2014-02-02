@@ -57,13 +57,13 @@ public class SignListener implements Listener {
 							p.sendMessage(Msgs.Arena_Creator.getString(true, "<creator>", arena.getCreator()));
 							p.sendMessage("");
 							p.sendMessage("");
-							if (arena.getState() == GameState.Waiting)
+							if (arena.getGameState() == GameState.Waiting)
 							{
 								p.sendMessage(Msgs.Waiting_Players_Needed.getString(true, "<current>", String.valueOf(arena.getPlayers().size()), "<needed>", String.valueOf(arena.getSettings().getRequiredPlayers())));
-							} else if (arena.getState() == GameState.PreGame)
+							} else if (arena.getGameState() == GameState.PreGame)
 							{
 								p.sendMessage(Msgs.Before_Game_Time_Left.getString(true, "<time>", Time.getTime((long) arena.getTimer().getTimeLeft())));
-							} else if (arena.getState() == GameState.Started)
+							} else if (arena.getGameState() == GameState.Started)
 							{
 								p.sendMessage(Msgs.Game_Time_Left.getString(true, "<time>", Time.getTime((long) arena.getTimer().getTimeLeft())));
 							}
@@ -98,7 +98,7 @@ public class SignListener implements Listener {
 					Arena arena = ArenaManager.getArena(event.getLine(1));
 					event.setLine(0, ChatColor.DARK_RED + "" + "[Cranked]");
 					event.setLine(1, ChatColor.GREEN + arena.getName());
-					event.setLine(2, ChatColor.GOLD + arena.getState().toString());
+					event.setLine(2, ChatColor.GOLD + arena.getGameState().toString());
 					event.setLine(3, ChatColor.GOLD + "" + arena.getPlayers().size() + "/" + arena.getSettings().getMaxPlayers());
 				} else
 				{

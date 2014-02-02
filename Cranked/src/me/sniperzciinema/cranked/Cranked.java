@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Statement;
 
+import me.sniperzciinema.cranked.Extras.Menus;
 import me.sniperzciinema.cranked.Handlers.Arena.Arena;
 import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
 import me.sniperzciinema.cranked.Handlers.Kits.KitManager;
@@ -17,9 +18,11 @@ import me.sniperzciinema.cranked.Listeners.RankingsToggle;
 import me.sniperzciinema.cranked.Listeners.RegisterAndUnRegister;
 import me.sniperzciinema.cranked.Listeners.SignListener;
 import me.sniperzciinema.cranked.Messages.Msgs;
+import me.sniperzciinema.cranked.Messages.RandomChatColor;
 import me.sniperzciinema.cranked.Messages.StringUtil;
 import me.sniperzciinema.cranked.Tools.Files;
 import me.sniperzciinema.cranked.Tools.Metrics;
+import me.sniperzciinema.cranked.Tools.Updater;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -38,26 +41,32 @@ public class Cranked extends JavaPlugin {
 
 	public static boolean update;
 	public static String name;
+	
+	public static Menus Menus;
 
 	public void onEnable() {
 
 		System.out.println(Msgs.Format_Header.getString(false, "<title>", "Cranked Startup"));
-		/*if (getConfig().getBoolean("Check For Updates.Enable"))
+		if (getConfig().getBoolean("Check For Updates.Enabled"))
 		{
 			try
 			{
-				Updater updater = new Updater(this, 0// NEED TO UPLOAD FIRST TO GET ID 
-				, getFile(),
+				Updater updater = new Updater(this, 67895, getFile(),
 						Updater.UpdateType.NO_DOWNLOAD, false);
 
-				Main.update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE;
-				Main.name = updater.getLatestName();
-
+				update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE;
+				name = updater.getLatestName();
+				if (update)
+				{
+					for (Player player : Bukkit.getOnlinePlayers())
+						if (player.hasPermission("Cranked.Admin"))
+							player.sendMessage(RandomChatColor.getColor() + "Update for Cranked Availble: " + name);
+				}
 			} catch (Exception ex)
 			{
 				System.out.println("The auto-updater tried to contact dev.bukkit.org, but was unsuccessful.");
 			}
-		}*/
+		}
 		try
 		{
 			Metrics metrics = new Metrics(this);
@@ -108,7 +117,7 @@ public class Cranked extends JavaPlugin {
 			}
 		else
 			System.out.println("Couldn't Find Any Arenas");
-		
+
 		KitManager.loadConfigKits();
 
 		if (getConfig().getBoolean("MySQL.Enable"))
@@ -136,24 +145,20 @@ public class Cranked extends JavaPlugin {
 		System.out.println("Using Players.yml for stats");
 		System.out.println(Msgs.Format_Line.getString(false));
 
+		Menus = new Menus();
 	}
 
 	public void onDisable() {
 		if (!CPlayerManager.getPlayers().isEmpty())
+		{
 			for (CPlayer cp : CPlayerManager.getPlayers())
-			{
 				if (cp.getArena() != null)
-				{
 					cp.getPlayer().sendMessage(Msgs.Error_Misc_Plugin_Unloaded.getString(true));
+
+			for (CPlayer cp : CPlayerManager.getPlayers())
+				if (cp.getArena() != null)
 					Game.leave(cp);
-					try
-					{
-						cp.getPlayer().closeInventory();
-					} catch (Exception e)
-					{
-					}
-				}
-			}
+		}
 
 		if (getConfig().getBoolean("MySQL.Enable"))
 			MySQL.closeConnection();

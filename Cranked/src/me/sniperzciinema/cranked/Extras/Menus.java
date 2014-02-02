@@ -29,10 +29,29 @@ import org.bukkit.inventory.ItemStack;
 
 public class Menus {
 
-	public static void chooseArena(final Player player) {
-		// Create a new Icon Menu
+	//Create all the menus
+	public IconMenu arenaMenu;
+	public IconMenu kitMenu;
+
+	//When the class gets loaded create all the IconMenus and store them for later use
+	public Menus()
+	{
+		arenaMenu = getArenaMenu();
+		kitMenu = getKitMenu();
+	}
+	
+	public void destroyMenu(IconMenu menu){
+		menu.destroy();
+	}
+	
+	public void destroyAllMenus(){
+		arenaMenu.destroy();
+		kitMenu.destroy();
+	}
+
+	private IconMenu getArenaMenu() {
 		IconMenu menu = new IconMenu(
-				ChatColor.GREEN + player.getName() + "- Join",
+				ChatColor.GREEN + "Join An Arena",
 				((ArenaManager.getArenas().size() / 9) * 9) + 9,
 				new IconMenu.OptionClickEventHandler()
 				{
@@ -65,75 +84,76 @@ public class Menus {
 
 			// Set the message depending on if the arena is valid(Has spawns)
 			if (ArenaManager.isArenaValid(arena.getName()))
-				menu.setOption(place, new ItemStack(m), "" + ChatColor.getByChar(String.valueOf(place + 1)) + ChatColor.BOLD + ChatColor.UNDERLINE + arena.getName(), "", ChatColor.GREEN + "Click Here Join This Arena", ChatColor.GRAY + "--------------------------", ChatColor.YELLOW + "Auto Start At: " + arena.getSettings().getRequiredPlayers(), ChatColor.YELLOW + "Playing: " + arena.getPlayers().size() + "/" + arena.getSettings().getMaxPlayers(), ChatColor.YELLOW + "State: " + arena.getState(), ChatColor.YELLOW + "Time Left: " + (arena.getState() == GameState.Started ? arena.getTimer().getTimeLeft() : "N/A"), ChatColor.GRAY + "--------------------------", ChatColor.RED + "Time Limit: " + Time.getTime((long) arena.getSettings().getGameTime()), ChatColor.RED + "Points To Win: " + arena.getSettings().getPointsToWin(), ChatColor.GRAY + "--------------------------", ChatColor.AQUA + "Creator: " + ChatColor.WHITE + arena.getCreator());
+				menu.setOption(place, new ItemStack(m), "" + ChatColor.getByChar(String.valueOf(place + 1)) + ChatColor.BOLD + ChatColor.UNDERLINE + arena.getName(), "", ChatColor.GREEN + "Click Here Join This Arena", ChatColor.GRAY + "--------------------------", ChatColor.YELLOW + "Auto Start At: " + arena.getSettings().getRequiredPlayers(), ChatColor.YELLOW + "Playing: " + arena.getPlayers().size() + "/" + arena.getSettings().getMaxPlayers(), ChatColor.YELLOW + "State: " + arena.getGameState(), ChatColor.YELLOW + "Time Left: " + (arena.getGameState() == GameState.Started ? arena.getTimer().getTimeLeft() : "N/A"), ChatColor.GRAY + "--------------------------", ChatColor.RED + "Time Limit: " + Time.getTime((long) arena.getSettings().getGameTime()), ChatColor.RED + "Points To Win: " + arena.getSettings().getPointsToWin(), ChatColor.GRAY + "--------------------------", ChatColor.AQUA + "Creator: " + ChatColor.WHITE + arena.getCreator());
 			else
-				menu.setOption(place, new ItemStack(Material.REDSTONE_BLOCK), ChatColor.DARK_RED + arena.getName(), "", ChatColor.RED + "This arena isn't playable!", ChatColor.RED + "      It's Missing Spawns!", ChatColor.GRAY + "--------------------------", "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Auto Start At: " + arena.getSettings().getRequiredPlayers(), "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Playing: " + arena.getPlayers().size() + "/" + arena.getSettings().getMaxPlayers(), "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "State: " + arena.getState(), "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Time Left: " + (arena.getState() == GameState.Started ? arena.getTimer().getTimeLeft() : "N/A"), ChatColor.GRAY + "--------------------------", "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Time Limit: " + Time.getTime((long) arena.getSettings().getGameTime()), "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Points To Win: " + arena.getSettings().getPointsToWin(), ChatColor.GRAY + "--------------------------", "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Creator: " + ChatColor.WHITE + arena.getCreator());
+				menu.setOption(place, new ItemStack(Material.REDSTONE_BLOCK), ChatColor.DARK_RED + arena.getName(), "", ChatColor.RED + "This arena isn't playable!", ChatColor.RED + "      It's Missing Spawns!", ChatColor.GRAY + "--------------------------", "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Auto Start At: " + arena.getSettings().getRequiredPlayers(), "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Playing: " + arena.getPlayers().size() + "/" + arena.getSettings().getMaxPlayers(), "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "State: " + arena.getGameState(), "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Time Left: " + (arena.getGameState() == GameState.Started ? arena.getTimer().getTimeLeft() : "N/A"), ChatColor.GRAY + "--------------------------", "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Time Limit: " + Time.getTime((long) arena.getSettings().getGameTime()), "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Points To Win: " + arena.getSettings().getPointsToWin(), ChatColor.GRAY + "--------------------------", "" + ChatColor.RED + ChatColor.STRIKETHROUGH + "Creator: " + ChatColor.WHITE + arena.getCreator());
 
 			place++;
 		}
-		menu.open(player);
+		
+		return menu;
 	}
 
-	public static void chooseKit(final Player p) {
-		final CPlayer cp = CPlayerManager.getCrankedPlayer(p);
-		IconMenu menu = new IconMenu(
-				RandomChatColor.getColor(ChatColor.GOLD, ChatColor.GREEN, ChatColor.BLUE, ChatColor.RED, ChatColor.DARK_AQUA, ChatColor.YELLOW) + p.getName().substring(0, Math.min(13, p.getName().length())) + " - Choose a Kit",
-				((KitManager.getKits().size() / 9) * 9) + 18,
-				new IconMenu.OptionClickEventHandler()
-				{
+	private IconMenu getKitMenu() {
+	IconMenu menu = new IconMenu(
+			RandomChatColor.getColor(ChatColor.GOLD, ChatColor.GREEN, ChatColor.BLUE, ChatColor.RED, ChatColor.DARK_AQUA, ChatColor.YELLOW) + "Choose a Kit",
+			((KitManager.getKits().size() / 9) * 9) + 18,
+			new IconMenu.OptionClickEventHandler()
+			{
 
-					@Override
-					public void onOptionClick(IconMenu.OptionClickEvent event) {
-						if (ChatColor.stripColor(event.getName()).equalsIgnoreCase("None"))
+				@Override
+				public void onOptionClick(IconMenu.OptionClickEvent event) {
+					final Player p = event.getPlayer();
+					final CPlayer cp = CPlayerManager.getCrankedPlayer(p);
+					if (ChatColor.stripColor(event.getName()).equalsIgnoreCase("None"))
+					{
+						p.sendMessage(Msgs.Kits_None.getString(true));
+
+						if (event.getClickType().isRightClick())
 						{
-							p.sendMessage(Msgs.Kits_None.getString(true));
+							Bukkit.getScheduler().scheduleSyncDelayedTask(Cranked.me, new Runnable()
+							{
 
-							if (event.getClick().isRightClick())
+								public void run() {
+									cp.openMenu(kitMenu);
+								}
+							}, 2);
+						}
+					} else if (p.hasPermission("Cranked.Kits") || p.hasPermission("Cranked.Kits." + event.getName()))
+					{
+						if (KitManager.isRegistered(KitManager.getKit(ChatColor.stripColor(event.getName()))))
+						{
+							p.sendMessage(Msgs.Kits_Chosen.getString(true, "<kit>", event.getName()));
+							cp.setKit(KitManager.getKit(ChatColor.stripColor(event.getName())));
+
+							if (cp.getArena().getGameState() == GameState.Started)
+								p.sendMessage("Wait till you respawn");
+							if (cp.getArena().getGameState() == GameState.PreGame)
+								Equip.equip(p);
+							if (event.getClickType().isRightClick())
 							{
 								Bukkit.getScheduler().scheduleSyncDelayedTask(Cranked.me, new Runnable()
 								{
 
 									public void run() {
-										chooseKit(p);
+										cp.openMenu(kitMenu);
 									}
 								}, 2);
 							}
-						} else if (p.hasPermission("Cranked.Kits") || p.hasPermission("Cranked.Kits." + event.getName()))
-						{
-							if (KitManager.isRegistered(KitManager.getKit(ChatColor.stripColor(event.getName()))))
-							{
-								p.sendMessage(Msgs.Kits_Chosen.getString(true, "<kit>", event.getName()));
-								cp.setKit(KitManager.getKit(ChatColor.stripColor(event.getName())));
+						}
 
-								if (cp.getArena().getState() == GameState.Started)
-									p.sendMessage("Wait till you respawn");
-								if (cp.getArena().getState() == GameState.PreGame)
-									Equip.equip(p);
-								if (event.getClick().isRightClick())
-								{
-									Bukkit.getScheduler().scheduleSyncDelayedTask(Cranked.me, new Runnable()
-									{
-
-										public void run() {
-											chooseKit(p);
-										}
-									}, 2);
-								}
-							}
-
-						} else
-							p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
-					}
-				}, Cranked.me);
-		int i = 0;
-		for (Kit kit : KitManager.getKits())
-		{
-			ItemStack item = kit.getIcon();
-			menu.setOption(i, item, kit.getName(), ChatColor.DARK_AQUA + Msgs.Menu_Kits_Click_To_Choose.getString(false), "", ChatColor.GRAY + "Helmet: " + ChatColor.GREEN + StringUtil.getWord(kit.getHelmet().getType().name()), ChatColor.GRAY + "Chestplate: " + ChatColor.GREEN + StringUtil.getWord(kit.getChestplate().getType().name()), ChatColor.GRAY + "Leggings: " + ChatColor.GREEN + StringUtil.getWord(kit.getLeggings().getType().name()), ChatColor.GRAY + "Boots: " + ChatColor.GREEN + StringUtil.getWord(kit.getBoots().getType().name()));
-			i++;
-		}
-		menu.setOption(i, new ItemStack(Material.CAKE), "None", Msgs.Menu_Kits_Click_For_None.getString(false));
-		menu.open(p);
+					} else
+						p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+				}
+			}, Cranked.me);
+	int i = 0;
+	for (Kit kit : KitManager.getKits())
+	{
+		ItemStack item = kit.getIcon();
+		menu.setOption(i, item, kit.getName(), ChatColor.DARK_AQUA + Msgs.Menu_Kits_Click_To_Choose.getString(false), "", ChatColor.GRAY + "Helmet: " + ChatColor.GREEN + StringUtil.getWord(kit.getHelmet().getType().name()), ChatColor.GRAY + "Chestplate: " + ChatColor.GREEN + StringUtil.getWord(kit.getChestplate().getType().name()), ChatColor.GRAY + "Leggings: " + ChatColor.GREEN + StringUtil.getWord(kit.getLeggings().getType().name()), ChatColor.GRAY + "Boots: " + ChatColor.GREEN + StringUtil.getWord(kit.getBoots().getType().name()));
+		i++;
 	}
-
+	menu.setOption(i, new ItemStack(Material.CAKE), "None", Msgs.Menu_Kits_Click_For_None.getString(false));
+		return menu;
+	}
 }

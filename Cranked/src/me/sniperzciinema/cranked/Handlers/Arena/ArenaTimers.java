@@ -1,8 +1,9 @@
 
 package me.sniperzciinema.cranked.Handlers.Arena;
 
-import me.sniperzciinema.cranked.Game;
 import me.sniperzciinema.cranked.Cranked;
+import me.sniperzciinema.cranked.Game;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
 import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
 import me.sniperzciinema.cranked.Messages.Msgs;
 import me.sniperzciinema.cranked.Messages.Time;
@@ -127,13 +128,14 @@ public class ArenaTimers {
 		// Set the info
 		stopUpdaterTimer();
 		timeLeft = getTimePreGame();
-		arena.setState(GameState.PreGame);
+		arena.setGameState(GameState.PreGame);
 
 		// Apply potions
 		for (Player player : arena.getPlayers())
 		{
-			CPlayerManager.getCrankedPlayer(player).respawn(true);
-			CPlayerManager.getCrankedPlayer(player).getScoreBoard().showStats();
+			CPlayer cp = CPlayerManager.getCrankedPlayer(player);
+			cp.respawn(true);
+			cp.getScoreBoard().showProper();
 			player.sendMessage(Msgs.Before_Game_Please_Wait.getString(true));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,
 					Integer.MAX_VALUE, 128));
@@ -172,13 +174,12 @@ public class ArenaTimers {
 	public void startGameTimer() {
 		// Set info
 		stopPreGameTimer();
-		arena.setState(GameState.Started);
+		arena.setGameState(GameState.Started);
 
 		timeLeft = getGameTime();
 		for (Player p : arena.getPlayers())
 		{
-			if (!p.isSneaking())
-				CPlayerManager.getCrankedPlayer(p).getScoreBoard().showStats();
+				CPlayerManager.getCrankedPlayer(p).getScoreBoard().showProper();
 			p.setWalkSpeed(0.2F);
 			for (PotionEffect effect : p.getActivePotionEffects())
 				p.removePotionEffect(effect.getType());

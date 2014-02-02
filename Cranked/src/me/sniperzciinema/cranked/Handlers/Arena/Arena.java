@@ -50,12 +50,12 @@ public class Arena {
 	}
 
 	// Get the arenas state
-	public GameState getState() {
+	public GameState getGameState() {
 		return state;
 	}
 
 	// Set the arenas state
-	public void setState(GameState state) {
+	public void setGameState(GameState state) {
 		this.state = state;
 	}
 
@@ -109,7 +109,7 @@ public class Arena {
 		getTimer().stopGameTimer();
 		getTimer().stopPreGameTimer();
 		getTimer().stopUpdaterTimer();
-		setState(GameState.Waiting);
+		setGameState(GameState.Waiting);
 		// Clear blocks
 		if (!this.getBlocks().isEmpty())
 			for (Location loc : this.getBlocks().keySet())

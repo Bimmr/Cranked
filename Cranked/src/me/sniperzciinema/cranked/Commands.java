@@ -3,10 +3,10 @@ package me.sniperzciinema.cranked;
 
 import java.util.List;
 
-import me.sniperzciinema.cranked.Extras.Menus;
 import me.sniperzciinema.cranked.GameMechanics.Agility;
 import me.sniperzciinema.cranked.GameMechanics.DeathTypes;
 import me.sniperzciinema.cranked.GameMechanics.Deaths;
+import me.sniperzciinema.cranked.GameMechanics.Equip;
 import me.sniperzciinema.cranked.GameMechanics.Stats;
 import me.sniperzciinema.cranked.Handlers.Arena.Arena;
 import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
@@ -27,6 +27,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 
 public class Commands implements CommandExecutor {
@@ -60,7 +62,7 @@ public class Commands implements CommandExecutor {
 					p.sendMessage(Msgs.Error_Game_Not_In.getString(true));
 
 				else
-					Menus.chooseKit(p);
+					cp.openMenu(Cranked.Menus.kitMenu);
 			}
 			// //////////////////////////////JOIN///////////////////////////////////
 			else if (args.length > 0 && args[0].equalsIgnoreCase("Join"))
@@ -90,13 +92,33 @@ public class Commands implements CommandExecutor {
 							p.sendMessage(Msgs.Game_Joined_You.getString(true, "<arena>", cp.getArena().getName()));
 							p.sendMessage(Msgs.Arena_Information.getString(true, "<arena>", arena.getName(), "<creator>", arena.getCreator()));
 							p.sendMessage("");
-							if (arena.getState() == GameState.Waiting)
+
+							if (arena.getGameState() == GameState.Waiting)
 								p.sendMessage(Msgs.Waiting_Players_Needed.getString(true, "<current>", String.valueOf(arena.getPlayers().size()), "<needed>", String.valueOf(arena.getSettings().getRequiredPlayers())));
+
+							if (arena.getGameState() == GameState.PreGame)
+							{
+								p.addPotionEffect(new PotionEffect(
+										PotionEffectType.JUMP,
+										Integer.MAX_VALUE, 128));
+								p.setWalkSpeed(0.0F);
+								Equip.equip(p);
+								cp.setTimeJoined(System.currentTimeMillis() / 1000);
+								p.sendMessage(Msgs.Before_Game_Time_Left.getString(true, "<time>", Time.getTime((long) arena.getTimer().getTimeLeft())));
+							}
+							if (arena.getGameState() == GameState.Started)
+							{
+								Equip.equip(p);
+								cp.setTimeJoined(System.currentTimeMillis() / 1000);
+								p.sendMessage(Msgs.Game_Time_Left.getString(true, "<time>", Time.getTime((long) arena.getTimer().getTimeLeft())));
+
+							}
 							p.sendMessage("");
 							p.sendMessage(Msgs.Format_Line.getString(false));
 
 							for (Player ppl : cp.getArena().getPlayers())
-								if (ppl != cp.getPlayer()){
+								if (ppl != cp.getPlayer())
+								{
 									ppl.sendMessage(Msgs.Game_Joined_They.getString(true, "<player>", p.getName(), "<arena>", cp.getArena().getName()));
 									CPlayerManager.getCrankedPlayer(ppl).getScoreBoard().showProper();
 								}
@@ -106,7 +128,7 @@ public class Commands implements CommandExecutor {
 					} else
 						sender.sendMessage(Msgs.Error_Arena_Doesnt_Exist.getString(true, "<arena>", arenaName));
 				} else
-					Menus.chooseArena(p);
+					cp.openMenu(Cranked.Menus.arenaMenu);
 			}
 			// //////////////////////////////LEAVE///////////////////////////////////
 			else if (args.length > 0 && args[0].equalsIgnoreCase("Leave"))
@@ -126,11 +148,8 @@ public class Commands implements CommandExecutor {
 					Game.leave(cp);
 
 					// Tell the player they left
-					p.sendMessage(Msgs.Format_Line.getString(false));
 					p.sendMessage("");
 					p.sendMessage(Msgs.Game_Left_You.getString(true, "<arena>", arena.getName()));
-					p.sendMessage("");
-					p.sendMessage(Msgs.Format_Line.getString(false));
 					// Update the other players on the situation
 					for (Player ppl : arena.getPlayers())
 					{
@@ -225,7 +244,6 @@ public class Commands implements CommandExecutor {
 				else
 				{
 					String arena = cp.getCreating();
-					System.out.println(arena);
 					if (ArenaManager.arenaRegistered(arena))
 					{
 						ArenaManager.setSpawn(arena, p.getLocation());
@@ -363,8 +381,8 @@ public class Commands implements CommandExecutor {
 						sender.sendMessage("");
 						sender.sendMessage(Msgs.Format_Header.getString(false, "<title>", arena.getName() + " Information"));
 						sender.sendMessage(Msgs.Command_Info_Players.getString(true, "<current>", String.valueOf(arena.getPlayers().size()), "<max>", String.valueOf(arena.getSettings().getMaxPlayers())));
-						sender.sendMessage(Msgs.Command_Info_State.getString(true, "<state>", String.valueOf(arena.getState())));
-						sender.sendMessage(Msgs.Game_Time_Left.getString(true, "<time>", String.valueOf(arena.getState() == GameState.Started ? Time.getTime((long) arena.getTimer().getTimeLeft()) : "N/A")));
+						sender.sendMessage(Msgs.Command_Info_State.getString(true, "<state>", String.valueOf(arena.getGameState())));
+						sender.sendMessage(Msgs.Game_Time_Left.getString(true, "<time>", String.valueOf(arena.getGameState() == GameState.Started ? Time.getTime((long) arena.getTimer().getTimeLeft()) : "N/A")));
 						sender.sendMessage(Msgs.Arena_Creator.getString(true, "<creator>", String.valueOf(arena.getCreator())));
 					} else
 						sender.sendMessage(Msgs.Error_Arena_Doesnt_Exist.getString(true, "<arena>", args[1]));
@@ -521,7 +539,7 @@ public class Commands implements CommandExecutor {
 				player.sendMessage("");
 				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "Author: " + ChatColor.GREEN + ChatColor.BOLD + "SniperzCiinema");
 				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "Version: " + ChatColor.GREEN + ChatColor.BOLD + plugin.getDescription().getVersion());
-				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "BukkitDev: " + ChatColor.GREEN + ChatColor.BOLD + "Link to come...");
+				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "BukkitDev: " + ChatColor.GREEN + ChatColor.BOLD + "http://dev.bukkit.org/bukkit-plugins/Cranked");
 				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.YELLOW + "For Help type: /Cranked Help");
 
 			}

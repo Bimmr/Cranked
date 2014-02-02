@@ -8,16 +8,19 @@ import me.sniperzciinema.cranked.GameMechanics.Agility;
 import me.sniperzciinema.cranked.GameMechanics.Equip;
 import me.sniperzciinema.cranked.GameMechanics.Stats;
 import me.sniperzciinema.cranked.Handlers.Arena.Arena;
+import me.sniperzciinema.cranked.Handlers.Arena.GameState;
 import me.sniperzciinema.cranked.Handlers.Kits.Kit;
 import me.sniperzciinema.cranked.Handlers.Kits.KitManager;
 import me.sniperzciinema.cranked.Handlers.Location.LocationHandler;
+import me.sniperzciinema.cranked.Messages.Msgs;
+import me.sniperzciinema.cranked.Tools.IconMenu;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scoreboard.DisplaySlot;
 
 
 public class CPlayer {
@@ -49,7 +52,8 @@ public class CPlayer {
 		name = p.getName();
 		player = p;
 	}
-	public boolean isInGame(){
+
+	public boolean isInGame() {
 		return getArena() != null;
 	}
 
@@ -76,43 +80,6 @@ public class CPlayer {
 		player.setFoodLevel(20);
 	}
 
-	// Method to reset the player to how they were before they joined an arena
-	@SuppressWarnings("deprecation")
-	public void reset() {
-		Player p = Bukkit.getPlayerExact(name);
-		p.getInventory().clear();
-		p.getInventory().setArmorContents(null);
-		p.setGameMode(gamemode);
-		p.setLevel(level);
-		p.setExp(exp);
-		p.setHealth(health);
-		p.setFireTicks(0);
-		p.setFoodLevel(food);
-		p.getInventory().setContents(inventory);
-		p.getInventory().setArmorContents(armor);
-		p.updateInventory();
-		p.setFallDistance(0);
-		p.teleport(location);
-		p.setWalkSpeed(0.2F);
-		for (PotionEffect effect : player.getActivePotionEffects())
-			player.removePotionEffect(effect.getType());
-		kills = 0;
-		deaths = 0;
-		killstreak = 0;
-		points = 0;
-		getTimer().stopTimer();
-		location = null;
-		gamemode = null;
-		level = 0;
-		exp = 0;
-		health = 20;
-		food = 20;
-		inventory = null;
-		armor = null;
-		arena = null;
-		timeJoined = 0;
-	}
-
 	// Set the last damager for the player
 	/**
 	 * @param p
@@ -126,6 +93,60 @@ public class CPlayer {
 	 */
 	public Player getLastDamager() {
 		return lastDamager;
+	}
+
+	public void unEquip() {
+		player.getInventory().clear();
+		player.getInventory().setArmorContents(null);
+	}
+
+	@SuppressWarnings("deprecation")
+	public void leave() {
+		player.setGameMode(gamemode);
+		player.setLevel(level);
+		player.setExp(exp);
+		player.setHealth(health);
+		player.setFireTicks(0);
+		player.setFoodLevel(food);
+		player.getInventory().setContents(inventory);
+		player.getInventory().setArmorContents(armor);
+		player.updateInventory();
+		player.setFallDistance(0);
+		player.teleport(location);
+		player.setWalkSpeed(0.2F);
+
+		getTimer().stopTimer();
+
+		for (PotionEffect effect : player.getActivePotionEffects())
+			player.removePotionEffect(effect.getType());
+
+		player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
+
+		if (arena.getGameState() != GameState.Waiting && arena.getPlayers().size() <= 1)
+			for (Player p : arena.getPlayers())
+			{
+				p.sendMessage(Msgs.Game_End_Not_Enough_Players.getString(true));
+				CPlayer cpp = CPlayerManager.getCrankedPlayer(p);
+				cpp.leave();
+			}
+
+		if (player.getOpenInventory() != null)
+			player.closeInventory();
+
+		kills = 0;
+		deaths = 0;
+		killstreak = 0;
+		points = 0;
+		location = null;
+		gamemode = null;
+		level = 0;
+		exp = 0;
+		health = 20;
+		food = 20;
+		inventory = null;
+		armor = null;
+		arena = null;
+		timeJoined = 0;
 	}
 
 	// Respawn the player
@@ -142,7 +163,7 @@ public class CPlayer {
 		String loc = getArena().getSpawns().get(i);
 		p.teleport(LocationHandler.getPlayerLocation(loc));
 		p.setFallDistance(0F);
-		if(equip)
+		if (equip)
 			Equip.equip(p);
 		p.updateInventory();
 	}
@@ -360,17 +381,27 @@ public class CPlayer {
 	public void setTimeJoined(long timeJoined) {
 		this.timeJoined = timeJoined;
 	}
+
 	public Kit getKit() {
-		if(kit == null)
+		if (kit == null)
 			return KitManager.getDefaultKit();
 		else
 			return kit;
 	}
+
 	/**
-	 * @param kit the kit to set
+	 * @param kit
+	 *            the kit to set
 	 */
 	public void setKit(Kit kit) {
 		this.kit = kit;
 	}
 
+	/**
+	 * Opens the menu for the player
+	 * @param menu
+	 */
+	public void openMenu(IconMenu menu) {
+		menu.open(player);
+	}
 }

@@ -87,7 +87,7 @@ public class CPlayerTimers {
 					// Times up and they didnt get a kill, so we'll kill them
 					// with a bang(That doesn't break blocks)!
 					if (getCrankedPlayer().isInGame())
-						if (getCrankedPlayer().getArena().getState() == GameState.Started)
+						if (getCrankedPlayer().getArena().getGameState() == GameState.Started)
 							Deaths.playerDies(null, player, DeathTypes.OutOfTime);
 				}
 			}

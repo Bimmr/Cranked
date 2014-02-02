@@ -35,7 +35,7 @@ public class CrackShotApi implements Listener {
 
 			Arena arena = ArenaManager.getArena(victim);
 
-			if (arena.getState() != GameState.Started)
+			if (arena.getGameState() != GameState.Started)
 			{
 				e.setDamage(0);
 				e.setCancelled(true);

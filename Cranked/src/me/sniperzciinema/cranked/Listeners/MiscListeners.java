@@ -1,11 +1,15 @@
 
 package me.sniperzciinema.cranked.Listeners;
 
+import me.sniperzciinema.cranked.Cranked;
 import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
+import me.sniperzciinema.cranked.Handlers.Arena.GameState;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
 import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
 import me.sniperzciinema.cranked.Messages.Msgs;
 import me.sniperzciinema.cranked.Tools.Files;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -24,11 +28,21 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 
 //TODO: Set up breaking/placing blocks to work with listeners
 
 public class MiscListeners implements Listener {
+
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		if (Cranked.update && event.getPlayer().hasPermission("Cranked.Admin"))
+		{
+			event.getPlayer().sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "An update is available: " + Cranked.name);
+			event.getPlayer().sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "Download it at: http://dev.bukkit.org/server-mods/infectedaddon-dedicated-server/");
+		}
+	}
 
 	// Disable dropping items if the player is in game
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -147,14 +161,15 @@ public class MiscListeners implements Listener {
 			if (e.getEntity() instanceof Player)
 			{
 				Player player = (Player) e.getEntity();
-				if (CPlayerManager.getCrankedPlayer(player).getArena() != null)
+				CPlayer cp = CPlayerManager.getCrankedPlayer(player);
+				if (cp.getArena() != null)
 				{
-					e.getProjectile().remove();
-					e.setCancelled(true);
-					player.updateInventory();
-				} else
-				{
-					e.setCancelled(false);
+					if (cp.getArena().getGameState() != GameState.Started)
+					{
+						e.getProjectile().remove();
+						e.setCancelled(true);
+						player.updateInventory();
+					}
 				}
 			}
 	}

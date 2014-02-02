@@ -37,7 +37,7 @@ public class DamageEvents implements Listener {
 					Arena arena = ArenaManager.getArena(victim);
 
 					// If the attack happened before the game started
-					if (arena.getState() != GameState.Started)
+					if (arena.getGameState() != GameState.Started)
 					{
 
 						if (victim.getHealth() - e.getDamage() <= 0)
@@ -107,7 +107,7 @@ public class DamageEvents implements Listener {
 				{
 					Arena arena = ArenaManager.getArena(victim);
 
-					if (arena.getState() != GameState.Started)
+					if (arena.getGameState() != GameState.Started)
 					{
 						e.setDamage(0);
 						e.setCancelled(true);

@@ -57,7 +57,7 @@ public class CPlayerManager {
 
 	// Reset the CPlayer
 	public static void reset(CPlayer cp) {
-		cp.reset();
+		cp.leave();
 	}
 
 	// Check if a player is in an arena

@@ -25,7 +25,7 @@ public class ScoreBoardVariables {
 		newString = newString.replaceAll("<players>", String.valueOf(cp.getArena().getPlayers().size()));
 		newString = newString.replaceAll("<neededplayers>", String.valueOf(cp.getArena().getSettings().getRequiredPlayers()));
 		newString = newString.replaceAll("<creator>", String.valueOf(cp.getArena().getCreator()));
-		newString = newString.replaceAll("<state>", String.valueOf(cp.getArena().getState()));
+		newString = newString.replaceAll("<state>", String.valueOf(cp.getArena().getGameState()));
 
 		// TODO: Fix kills and deaths
 
