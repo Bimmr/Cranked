@@ -51,7 +51,7 @@ public class Deaths {
 			cKilled.resetSpeed();
 			cKilled.getTimer().stopTimer();
 			cKilled.updateStats(0, 1, 0);
-			cKilled.setKills(cKilled.getDeaths() + 1);
+			cKilled.setDeaths(cKilled.getDeaths() + 1);
 			// Respawn the player
 			cKilled.respawn(true);
 			cKilled.getScoreBoard().showProper();

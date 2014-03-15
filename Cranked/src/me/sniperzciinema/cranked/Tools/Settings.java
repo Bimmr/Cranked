@@ -71,6 +71,10 @@ public class Settings {
 
 	// ////////////////////////////////////////////////-BOOLEANS-////////////////////////////////////////////////////
 
+	public static boolean MySQLEnabled() {
+		return Files.getConfig().getBoolean("MySQL.Enabled");
+	}
+
 	public boolean canDropBlocks() {
 		if (Files.getArenas().contains("Arenas." + arena.getName() + ".Misc.Can Drop Blocks"))
 			return Files.getArenas().getBoolean("Arenas." + arena.getName() + ".Misc.Can Drop Blocks");

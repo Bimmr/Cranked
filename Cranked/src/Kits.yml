@@ -14,42 +14,64 @@
 # Cranked.Kits
 #    Cranked.Kits.<ClassName>
 # =============================================== #
-Kits: 
+Kits:  
   Guard:
-    Icon: '268'
-    Helmet: '306'
-    Chestplate: '303'
-    Leggings: '304'
-    Boots: '305'
+    Icon: id:268
+    Helmet: id:306
+    Chestplate: id:303
+    Leggings: id:304
+    Boots: id:305
     Items:
-    - '268'
-    - '261'
-    - '262,10'
+    - id:268
+    - id:261
+    - id:262 amount:10
+    Potion Effects:
+    - '22:99999:1'
+    Transfer Potion Effects:
+    - '2:1:1'
     KillStreaks:
-      '5': '268-19'
-      '7': '305-2' 
+      '5': id:268 enchantment:19
+      '7': id:305 enchantment:2
   Knight:
-    Icon: '314'
-    Helmet: '314'
-    Chestplate: '315'
-    Leggings: '316'
-    Boots: '317'
+    Icon: id:314
+    Helmet: id:314
+    Chestplate: id:315
+    Leggings: id:316
+    Boots: id:317
     Items:
-    - '268'
-    - '261'
-    - '262,10'
+    - id:268
+    - id:261
+    - id:262 amount:10
+    Potion Effects:
+    - '2:99999:1'
+    Transfer Potion Effects:
+    - '2:1:1'
+    - '20:2:1'
     KillStreaks:
-      '5': '268-19@1'
-      '7': '262'
-      '6': '261,10'
-      '10': '261,10'
-  Regular:
-    Icon: '367'
-    Helmet: '298'
-    Chestplate: '299'
-    Leggings: '300'
-    Boots: '305'
+      '5': id:268 enchantment:19
+      '7': id:262
+      '6': id:261 amount:10
+      '10': id:261 amount:10
+  Soldier:
+    Icon: id:367
+    Helmet: id:298
+    Chestplate: id:299
+    Leggings: id:300
+    Boots: id:305
     Items:
-    - '272'
+    - id:272
+    Transfer Potion Effects:
+    - '23:10:1'
     KillStreaks:
-    '10': '276-1'
+      '10': id:276 enchantment:1
+  Bones:
+    Icon: id:352
+    Helmet: id:298
+    Chestplate: id:299 enchantmnt:7
+    Leggings: id:300
+    Boots: id:305
+    Items:
+    - id:262 enchantment:51 enchantment:49
+    - id:261 amount:1
+    Potion Effects:
+    - '16:99999:1'

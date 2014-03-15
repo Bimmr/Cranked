@@ -6,12 +6,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import me.sniperzciinema.cranked.Messages.StringUtil;
+
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 
 /**
@@ -25,7 +30,83 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class ItemHandler {
 
-	public static Integer getItemID(String Path) {
+	@SuppressWarnings("deprecation")
+	public static ItemStack getItemStack(String path) {
+		ItemStack stack = new ItemStack(Material.AIR, 1);
+		if (path != null)
+		{
+			if (path.contains(" "))
+			{
+				String[] line = path.split(" ");
+
+				for (String data : line)
+				{
+
+					if (data.startsWith("id"))
+						stack.setType(Material.getMaterial(Integer.parseInt(data.split(":")[1])));
+
+					else if (data.startsWith("amount") || data.startsWith("quantity"))
+						stack.setAmount(Integer.parseInt(data.split(":")[1]));
+
+					else if (data.startsWith("data") || data.startsWith("durability") || data.startsWith("damage"))
+						stack.setDurability(Short.parseShort(data.split(":")[1]));
+
+					else if (data.startsWith("enchantment") || data.startsWith("enchant"))
+					{
+						String s = data.split(":")[1];
+						if (s.contains("-"))
+							stack.addUnsafeEnchantment(Enchantment.getById(Integer.parseInt(s.split("-")[0])), Integer.parseInt(s.split("-")[1]));
+						else
+							stack.addUnsafeEnchantment(Enchantment.getById(Integer.parseInt(s)), 1);
+
+					} else if (data.startsWith("name") || data.startsWith("title"))
+					{
+						ItemMeta im = stack.getItemMeta();
+						im.setDisplayName(StringUtil.format(data.split(":")[1]));
+						stack.setItemMeta(im);
+					} else if (data.startsWith("owner") || data.startsWith("player"))
+					{
+						SkullMeta im = (SkullMeta) stack.getItemMeta();
+						im.setOwner(data.split(":")[1]);
+						stack.setItemMeta(im);
+					} else if (data.startsWith("color") || data.startsWith("colour"))
+					{
+						LeatherArmorMeta im = (LeatherArmorMeta) stack.getItemMeta();
+						String[] s = data.split(",");
+						int red = Integer.parseInt(s[0]);
+						int green = Integer.parseInt(s[1]);
+						int blue = Integer.parseInt(s[2]);
+						im.setColor(Color.fromRGB(red, green, blue));
+						stack.setItemMeta(im);
+					} else if (data.startsWith("lore") || data.startsWith("desc"))
+					{
+						String s = data.split(":")[1];
+						List<String> lores = new ArrayList<String>();
+						for (String lore : s.split("\\|"))
+						{
+							lores.add(StringUtil.format(lore.replace('_', ' ')));
+						}
+						ItemMeta meta = stack.getItemMeta();
+						meta.setLore(lores);
+						stack.setItemMeta(meta);
+					}
+				}
+			} else
+			{
+				if (path.startsWith("id"))
+				{
+					stack.setType(Material.getMaterial(Integer.parseInt(path.split(":")[1])));
+				} else
+				{
+					stack = getOldItemStack(path);
+				}
+			}
+		}
+		return stack;
+	}
+
+	@Deprecated
+	private static Integer getItemID(String Path) {
 		String itemid = null;
 		String string = Path;
 		if (string.contains(":"))
@@ -61,7 +142,8 @@ public class ItemHandler {
 		return i;
 	}
 
-	public static Short getItemData(String Path) {
+	@Deprecated
+	private static Short getItemData(String Path) {
 		String itemdata = null;
 		String string = Path;
 		if (string.contains(":"))
@@ -99,7 +181,8 @@ public class ItemHandler {
 		return s;
 	}
 
-	public static Integer getItemAmount(String Path) {
+	@Deprecated
+	private static Integer getItemAmount(String Path) {
 		String itemdata = null;
 		String string = Path;
 		if (string.contains(","))
@@ -132,7 +215,8 @@ public class ItemHandler {
 		return i;
 	}
 
-	public static int getItemEnchant(String Path) {
+	@Deprecated
+	private static int getItemEnchant(String Path) {
 		String itemdata = null;
 		String string = Path;
 		if (string.contains("-"))
@@ -163,7 +247,8 @@ public class ItemHandler {
 		return i;
 	}
 
-	public static int getItemEnchantLvl(String Path) {
+	@Deprecated
+	private static int getItemEnchantLvl(String Path) {
 		String itemdata = null;
 		String string = Path;
 		if (string.contains("@"))
@@ -194,7 +279,8 @@ public class ItemHandler {
 		return i;
 	}
 
-	public static String getItemName(String Path) {
+	@Deprecated
+	private static String getItemName(String Path) {
 		String itemName = null;
 		if (Path.contains("%"))
 		{
@@ -207,8 +293,12 @@ public class ItemHandler {
 		return itemName;
 	}
 
-	@SuppressWarnings("deprecation")
-	public static ItemStack getItemStack(String location) {
+	@Deprecated
+	private static ItemStack getOldItemStack(String location) {
+
+		if (location == null)
+			return null;
+
 		ItemStack is = null;
 		if (Material.getMaterial(getItemID(location)) != null)
 			is = new ItemStack(Material.getMaterial(getItemID(location)),
@@ -245,25 +335,38 @@ public class ItemHandler {
 
 	@SuppressWarnings("deprecation")
 	public static String getItemStackToString(ItemStack i) {
-		String itemCode = "0";
+		String itemCode = "id:0";
 
 		if (i.getTypeId() != 0 && i != null)
 		{
 
-			itemCode = String.valueOf(i.getTypeId());
+			itemCode = "id:"+String.valueOf(i.getTypeId());
 
 			if (i.getDurability() != 0)
-				itemCode = itemCode + ":" + i.getDurability();
+				itemCode = itemCode + " data:" + i.getDurability();
 			if (i.getAmount() > 1)
-				itemCode = itemCode + "," + i.getAmount();
+				itemCode = itemCode + " amount:" + i.getAmount();
 			for (Entry<Enchantment, Integer> ench : i.getEnchantments().entrySet())
 			{
-				itemCode = itemCode + "-" + ench.getKey().getId();
+				itemCode = itemCode + " enchantment:" + ench.getKey().getId();
 				if (ench.getValue() > 1)
-					itemCode = itemCode + "@" + ench.getValue();
+					itemCode = itemCode + "-" + ench.getValue();
 			}
 			if (i.getItemMeta().getDisplayName() != null)
-				itemCode = itemCode + "%" + i.getItemMeta().getDisplayName().replaceAll(" ", "_").replaceAll("§", "&");
+				itemCode = itemCode + " name:" + i.getItemMeta().getDisplayName().replaceAll(" ", "_").replaceAll("§", "&");
+
+			if (i.getItemMeta().hasLore())
+			{
+				itemCode = itemCode + " lore:";
+				for (String string : i.getItemMeta().getLore())
+					itemCode = itemCode + string.replaceAll(" ", "_").replaceAll("§", "&") + "|";
+				itemCode.substring(0, itemCode.length() - 2);
+			}
+			if (i.getType().toString().toLowerCase().contains("leather") && ((LeatherArmorMeta) i.getItemMeta()).getColor() != null)
+			{
+				LeatherArmorMeta im = (LeatherArmorMeta) i.getItemMeta();
+				itemCode = itemCode + " color:" + im.getColor().getRed() + "," + im.getColor().getGreen() + "," + im.getColor().getBlue();
+			}
 		}
 		return itemCode;
 	}

@@ -35,7 +35,7 @@ public class Game {
 		// Reset the timers and state
 		arena.reset();
 
-		Player[] winners = Sort.topStats(arena.getPlayers(), 3);
+		String[] winners = Sort.topPoints(arena.getPlayers(), 3);
 		// Reset all players, inform them the game ended
 		for (Player p : arena.getPlayers())
 		{
@@ -52,10 +52,10 @@ public class Game {
 				p.sendMessage(Msgs.Game_Over_Times_Up.getString(true));
 
 			p.sendMessage("");
-			for (Player winner : winners)
+			for (String winner : winners)
 			{
-				if (winner != null)
-					p.sendMessage(Msgs.Game_Over_Winners.getString(true, "<place>", String.valueOf(place + 1), "<player>", winner.getName() + "(" + CPlayerManager.getCrankedPlayer(winner).getPoints() + ")"));
+				if (winner != null && winner != "")
+					p.sendMessage(Msgs.Game_Over_Winners.getString(true, "<place>", String.valueOf(place + 1), "<player>", winner + "(" + CPlayerManager.getCrankedPlayer(winner).getPoints() + ")"));
 				place++;
 			}
 
@@ -86,6 +86,10 @@ public class Game {
 		cp.setArena(arena);
 		cp.getScoreBoard().showProper();
 
+
+		Cranked.Menus.destroyMenu(Cranked.Menus.arenaMenu);
+		Cranked.Menus.arenaMenu = Cranked.Menus.getArenaMenu();
+		
 		for (PotionEffect effect : p.getActivePotionEffects())
 			p.removePotionEffect(effect.getType());
 
@@ -108,7 +112,11 @@ public class Game {
 	}
 
 	public static void leave(CPlayer cp) {
-		cp.leave();
+
+		Cranked.Menus.destroyMenu(Cranked.Menus.arenaMenu);
+		Cranked.Menus.arenaMenu = Cranked.Menus.getArenaMenu();
+		
+		cp.fullLeave();
 	}
 
 }

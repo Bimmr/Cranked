@@ -141,8 +141,8 @@ public class Cranked extends JavaPlugin {
 				Files.getConfig().set("MySQL.Enabled", false);
 				System.out.println("Unable to connect to MySQL");
 			}
-		}
-		System.out.println("Using Players.yml for stats");
+		}else
+			System.out.println("Using Players.yml for stats");
 		System.out.println(Msgs.Format_Line.getString(false));
 
 		Menus = new Menus();

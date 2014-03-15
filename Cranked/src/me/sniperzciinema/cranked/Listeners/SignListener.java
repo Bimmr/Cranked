@@ -54,7 +54,7 @@ public class SignListener implements Listener {
 							p.sendMessage(Msgs.Format_Line.getString(false));
 							p.sendMessage("");
 							p.sendMessage(Msgs.Game_Joined_You.getString(true, "<arena>", cp.getArena().getName()));
-							p.sendMessage(Msgs.Arena_Creator.getString(true, "<creator>", arena.getCreator()));
+							p.sendMessage(Msgs.Arena_Information.getString(true, "<arena>", cp.getArena().getName(), "<creator>", arena.getCreator()));
 							p.sendMessage("");
 							p.sendMessage("");
 							if (arena.getGameState() == GameState.Waiting)

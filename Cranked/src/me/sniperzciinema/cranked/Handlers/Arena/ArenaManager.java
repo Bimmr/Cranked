@@ -91,11 +91,13 @@ public class ArenaManager {
 	}
 
 	// Create the area
-	public static void createArena(String name) {
+	public static Arena createArena(String name) {
 		name = StringUtil.getWord(name);
 		Files.arenas.set("Arenas." + name, null);
 		Files.saveArenas();
-		loadArena(new Arena(name));
+		Arena arena = new Arena(name);
+		loadArena(arena);
+		return arena;
 	}
 
 	// unload the arena

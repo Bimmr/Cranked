@@ -4,6 +4,8 @@ package me.sniperzciinema.cranked.Handlers.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.sniperzciinema.cranked.Game;
+
 import org.bukkit.entity.Player;
 
 
@@ -56,12 +58,21 @@ public class CPlayerManager {
 	}
 
 	// Reset the CPlayer
-	public static void reset(CPlayer cp) {
-		cp.leave();
+	public static void leave(CPlayer cp) {
+		Game.leave(cp);
 	}
 
 	// Check if a player is in an arena
 	public static boolean isInArena(Player player) {
 		return (getCrankedPlayer(player).getArena() != null);
+	}
+
+	public static CPlayer getCrankedPlayer(String player) {
+		for (CPlayer p : players)
+		{
+			if (p.name.equalsIgnoreCase(player))
+				return p;
+		}
+		return null;
 	}
 }

@@ -8,6 +8,37 @@ import me.sniperzciinema.cranked.Tools.MySQLManager;
 
 public class Stats {
 
+	
+	public enum StatType
+	{
+		kills, deaths, points, score, killstreak, time;
+	};
+
+	/**
+	 * From a StatType get the value for the player
+	 * 
+	 * @param type
+	 *            - The StatType
+	 * @param user
+	 *            - The player
+	 * @return the value
+	 */
+	public static int getStat(StatType type, String user) {
+		if (type == StatType.kills)
+			return getKills(user);
+		else if (type == StatType.deaths)
+			return getDeaths(user);
+		else if (type == StatType.points)
+			return getScore(user);
+		else if (type == StatType.killstreak)
+			return getHighestKillStreak(user);
+		else if (type == StatType.time)
+			return getPlayingTime(user);
+		else
+			return 0;
+	}
+	
+	
 	// Get the kills from the location required
 	public static int getKills(String name) {
 		if (Cranked.me.getConfig().getBoolean("MySQL.Enable"))

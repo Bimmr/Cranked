@@ -65,11 +65,11 @@ public class ScoreBoard {
 		// Now set all the scores and the title
 		ob.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + ChatColor.UNDERLINE + "Rankings");
 
-		for (Player p : Sort.topStats(cp.getArena().getPlayers(), 10))
+		for (String p : Sort.topPoints(cp.getArena().getPlayers(), 10))
 		{
-			if (p != null)
+			if (p != null && p != "")
 			{
-				Score score = ob.getScore(Bukkit.getOfflinePlayer(p.getName()));
+				Score score = ob.getScore(Bukkit.getOfflinePlayer(p));
 				score.setScore(CPlayerManager.getCrankedPlayer(p).getPoints());
 			}
 		}

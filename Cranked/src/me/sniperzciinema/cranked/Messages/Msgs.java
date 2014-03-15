@@ -53,7 +53,6 @@ public enum Msgs
 	Help_SetArena("Help.SetArena"),
 	Help_Info("Help.Info"),
 	Help_Top("Help.Top")/* <stats> */,
-	Arena_Creator("Arena.Creator"),
 
 	Waiting_Players_Needed("Waiting.Players Needed"),
 	Before_Game_Time_Left("Before Game.Time Left"),

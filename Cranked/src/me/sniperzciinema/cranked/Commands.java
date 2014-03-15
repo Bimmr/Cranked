@@ -3,11 +3,14 @@ package me.sniperzciinema.cranked;
 
 import java.util.List;
 
+import me.sniperzciinema.cranked.Extras.Menus;
 import me.sniperzciinema.cranked.GameMechanics.Agility;
 import me.sniperzciinema.cranked.GameMechanics.DeathTypes;
 import me.sniperzciinema.cranked.GameMechanics.Deaths;
 import me.sniperzciinema.cranked.GameMechanics.Equip;
+import me.sniperzciinema.cranked.GameMechanics.KDRatio;
 import me.sniperzciinema.cranked.GameMechanics.Stats;
+import me.sniperzciinema.cranked.GameMechanics.Stats.StatType;
 import me.sniperzciinema.cranked.Handlers.Arena.Arena;
 import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
 import me.sniperzciinema.cranked.Handlers.Arena.GameState;
@@ -19,6 +22,7 @@ import me.sniperzciinema.cranked.Messages.Msgs;
 import me.sniperzciinema.cranked.Messages.StringUtil;
 import me.sniperzciinema.cranked.Messages.Time;
 import me.sniperzciinema.cranked.Tools.Files;
+import me.sniperzciinema.cranked.Tools.Sort;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -75,7 +79,7 @@ public class Commands implements CommandExecutor {
 
 				else if (cp.getArena() != null)
 
-					sender.sendMessage(Msgs.Error_Game_Not_In.getString(true));
+					sender.sendMessage(Msgs.Error_Game_In.getString(true));
 
 				else if (args.length >= 2)
 				{
@@ -128,7 +132,9 @@ public class Commands implements CommandExecutor {
 					} else
 						sender.sendMessage(Msgs.Error_Arena_Doesnt_Exist.getString(true, "<arena>", arenaName));
 				} else
+				{
 					cp.openMenu(Cranked.Menus.arenaMenu);
+				}
 			}
 			// //////////////////////////////LEAVE///////////////////////////////////
 			else if (args.length > 0 && args[0].equalsIgnoreCase("Leave"))
@@ -177,11 +183,15 @@ public class Commands implements CommandExecutor {
 					if (!ArenaManager.arenaRegistered(arena))
 					{
 
-						ArenaManager.createArena(arena);
+						Arena a = ArenaManager.createArena(arena);
 						p.sendMessage(Msgs.Format_Line.getString(false));
 						p.sendMessage(Msgs.Command_Arena_Created.getString(true, "<arena>", arena));
 						p.sendMessage(Msgs.Help_SetSpawn.getString(true));
 						cp.setCreating(arena);
+						a.setBlock(p.getLocation().add(0, -1, 0).getBlock().getState().getData().toItemStack());
+
+						Cranked.Menus.destroyMenu(Cranked.Menus.arenaMenu);
+						Cranked.Menus.arenaMenu = Cranked.Menus.getArenaMenu();
 
 						if (args.length == 3)
 							ArenaManager.getArena(arena).setCreator(args[2]);
@@ -212,6 +222,9 @@ public class Commands implements CommandExecutor {
 					if (ArenaManager.arenaRegistered(arena))
 					{
 						ArenaManager.removeArena(args[1]);
+
+						Cranked.Menus.destroyMenu(Cranked.Menus.arenaMenu);
+						Cranked.Menus.arenaMenu = Cranked.Menus.getArenaMenu();
 
 						sender.sendMessage(Msgs.Command_Arena_Removed.getString(true, "<arena>", arena));
 					} else
@@ -247,6 +260,9 @@ public class Commands implements CommandExecutor {
 					if (ArenaManager.arenaRegistered(arena))
 					{
 						ArenaManager.setSpawn(arena, p.getLocation());
+
+						Cranked.Menus.destroyMenu(Cranked.Menus.arenaMenu);
+						Cranked.Menus.arenaMenu = Cranked.Menus.getArenaMenu();
 						p.sendMessage(Msgs.Command_Spawn_Set.getString(true, "<spawn>", String.valueOf(ArenaManager.getArena(arena).getSpawns().size())));
 					} else
 						p.sendMessage(Msgs.Help_SetArena.getString(true));
@@ -294,6 +310,8 @@ public class Commands implements CommandExecutor {
 							Files.reloadConfig();
 							Files.reloadMessages();
 							Files.reloadPlayers();
+
+							Cranked.Menus = new Menus();
 							sender.sendMessage(Msgs.Command_Admin_Reload.getString(true));
 						}
 						// CODE
@@ -302,6 +320,16 @@ public class Commands implements CommandExecutor {
 							p.sendMessage(Msgs.Format_Prefix.getString(false) + "Code: " + ChatColor.WHITE + ItemHandler.getItemStackToString(((Player) sender).getItemInHand()));
 							p.sendMessage(Msgs.Format_Prefix.getString(false) + "This code has also been sent to your console to allow for copy and paste!");
 							System.out.println(ItemHandler.getItemStackToString(((Player) sender).getItemInHand()));
+						}
+						// Start
+						else if (args[1].equalsIgnoreCase("Start"))
+						{
+							if (cp.getArena() == null)
+								p.sendMessage(Msgs.Error_Game_Not_In.getString(true));
+							else
+							{
+								Game.start(cp.getArena());
+							}
 						} else
 							p.sendMessage(Msgs.Error_Misc_Unkown_Command.getString(true));
 					} else if (args.length == 3)
@@ -345,21 +373,23 @@ public class Commands implements CommandExecutor {
 					{
 						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GREEN + ChatColor.STRIKETHROUGH + ChatColor.BOLD + "======" + ChatColor.GOLD + " Admin Menu " + ChatColor.GREEN + ChatColor.STRIKETHROUGH + ChatColor.BOLD + "======");
 						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.AQUA + "/Inf Admin Points <Player> <#>");
-						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Add points to a p(Also goes negative)");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Add points to a player(Also goes negative)");
 						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.BLUE + "/Inf Admin Score <Player> <#>");
-						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Add score to a p(Also goes negative)");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Add score to a player(Also goes negative)");
 						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.DARK_AQUA + "/Inf Admin KStats <Player> <#>");
-						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Add kills to a p(Also goes negative)");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Add kills to a player(Also goes negative)");
 						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.DARK_BLUE + "/Inf Admin DStats <Player> <#>");
-						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Add deaths to a p(Also goes negative)");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Add deaths to a player(Also goes negative)");
 						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.DARK_GRAY + "/Inf Admin Kick <Player>");
-						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Kick a p out of Cranked");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Kick a player out of Cranked");
 						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.DARK_GREEN + "/Inf Admin Reset <Player>");
-						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Reset a p's stats");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Reset a player's stats");
 						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.DARK_PURPLE + "/Inf Admin Shutdown");
 						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Prevent joining Cranked");
 						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.DARK_RED + "/Inf Admin Reload");
 						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Reload the config");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.LIGHT_PURPLE + "/Inf Admin Start");
+						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "Start the game");
 						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GOLD + "/Inf Admin Code");
 						p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + "-> " + ChatColor.WHITE + ChatColor.ITALIC + "See Cranked's item code for the item in hand");
 					}
@@ -383,7 +413,7 @@ public class Commands implements CommandExecutor {
 						sender.sendMessage(Msgs.Command_Info_Players.getString(true, "<current>", String.valueOf(arena.getPlayers().size()), "<max>", String.valueOf(arena.getSettings().getMaxPlayers())));
 						sender.sendMessage(Msgs.Command_Info_State.getString(true, "<state>", String.valueOf(arena.getGameState())));
 						sender.sendMessage(Msgs.Game_Time_Left.getString(true, "<time>", String.valueOf(arena.getGameState() == GameState.Started ? Time.getTime((long) arena.getTimer().getTimeLeft()) : "N/A")));
-						sender.sendMessage(Msgs.Arena_Creator.getString(true, "<creator>", String.valueOf(arena.getCreator())));
+						sender.sendMessage(Msgs.Arena_Information.getString(true, "<arena>", arena.getName(), "<creator>", arena.getCreator()));
 					} else
 						sender.sendMessage(Msgs.Error_Arena_Doesnt_Exist.getString(true, "<arena>", args[1]));
 				} else
@@ -415,7 +445,27 @@ public class Commands implements CommandExecutor {
 				{
 					sender.sendMessage("");
 					sender.sendMessage(Msgs.Format_Header.getString(false, "<title>", "Cranked Help"));
-					sender.sendMessage("Put help things here");
+					sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Join [Area]" + ChatColor.WHITE + " - Join Cranked");
+					sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Leave" + ChatColor.WHITE + " - Leave Cranked");
+					sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Arenas" + ChatColor.WHITE + " - View Arenas");
+					sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Kits" + ChatColor.WHITE + " - Choose a kit");
+					sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Suicide" + ChatColor.WHITE + " - Suicide");
+					sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Info" + ChatColor.WHITE + " - Check the arenas status");
+					sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Stats" + ChatColor.WHITE + " - Check your stats");
+					sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Top" + ChatColor.WHITE + " - Check the leaderboards");
+					if (sender.hasPermission("Cranked.Admin"))
+						sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Admin" + ChatColor.WHITE + " - Admin commands");
+					
+					if (sender.hasPermission("Cranked.Setup"))
+					{
+						sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Create <Arena>" + ChatColor.WHITE + " - Create an arena");
+						sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "SetArena <Arena>" + ChatColor.WHITE + " - Set an arena");
+						sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Setspawn" + ChatColor.WHITE + " - Set a spawn");
+						sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Spawns" + ChatColor.WHITE + " - View spawns");
+						sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "TpSpawn <Spawn>" + ChatColor.WHITE + " - Tp to a spawn");
+						sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "DelSpawn <Spawn>" + ChatColor.WHITE + " - Delete a spawn");
+						sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Remove <Arena>" + ChatColor.WHITE + " - Remove an arena");
+					}
 				}
 			}
 			// //////////////////////////////////////////////STATS/////////////////////////////////////
@@ -428,30 +478,29 @@ public class Commands implements CommandExecutor {
 				if (!p.hasPermission("Cranked.Stats"))
 					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
 
-//				if (args.length != 1)
-//				{
-//					if (!p.hasPermission("Cranked.Stats.Other"))
-//						p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
-//					
-//					String user = args[1].toLowerCase();
-//					p.sendMessage("");
-//					p.sendMessage(Msgs.Format_Header.getString(false, "<title>", user));
-//					p.sendMessage(Msgs.getString("<value>", String.valueOf(Stats.getScore(user))));
-//					p.sendMessage(Msgs.Stats_Highest_KillStreak.getString("<value>", String.valueOf(Stats.getHighestKillStreak(user))));
-//					p.sendMessage(Msgs.Stats_Kills.getString("<value>", String.valueOf(Stats.getKills(user))));
-//					p.sendMessage(Msgs.Stats_Deaths.getString("<value>", String.valueOf(Stats.getDeaths(user))));
-//					p.sendMessage(Msgs.Stats_Playing_Time.getString("<value>", String.valueOf(Time.getTime((long) Stats.getPlayingTime(user)))));
-//				} else
-//				{
-//					String user = p.getName().toLowerCase();
-//					p.sendMessage("");
-//					p.sendMessage(Msgs.Format_Header.getString("<title>", user));
-//					p.sendMessage(Msgs.Stats_Score.getString("<value>", String.valueOf(Stats.getScore(user))));
-//					p.sendMessage(Msgs.Stats_Highest_KillStreak.getString("<value>", String.valueOf(Stats.getHighestKillStreak(user))));
-//					p.sendMessage(Msgs.Stats_Kills.getString("<value>", String.valueOf(Stats.getKills(user))));
-//					p.sendMessage(Msgs.Stats_Deaths.getString("<value>", String.valueOf(Stats.getDeaths(user))));
-//					p.sendMessage(Msgs.Stats_Playing_Time.getString("<value>", String.valueOf(Time.getTime((long) Stats.getPlayingTime(user)))));
-//				}
+				if (args.length != 1)
+				{
+					if (!p.hasPermission("Cranked.Stats.Other"))
+						p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+
+					String user = args[1];
+
+					p.sendMessage("");
+					p.sendMessage(Msgs.Format_Header.getString(false, "<title>", user));
+					p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GREEN + "Score: " + ChatColor.GOLD + Stats.getScore(user));
+					p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GREEN + "Playing Time: " + ChatColor.GOLD + Time.getOnlineTime((long) Stats.getPlayingTime(user)));
+					p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GREEN + "Kills: " + ChatColor.GOLD + Stats.getKills(user) + ChatColor.GREEN + "     Deaths: " + ChatColor.GOLD + Stats.getDeaths(user) + ChatColor.GREEN + "    KDR: " + ChatColor.GOLD + KDRatio.KD(user));
+					p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GREEN + "Highest KillStreak: " + ChatColor.GOLD + Stats.getHighestKillStreak(user));
+				} else
+				{
+					String user = sender.getName();
+					p.sendMessage("");
+					p.sendMessage(Msgs.Format_Header.getString(false, "<title>", user));
+					p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GREEN + "Score: " + ChatColor.GOLD + Stats.getScore(user));
+					p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GREEN + "Playing Time: " + ChatColor.GOLD + Time.getOnlineTime((long) Stats.getPlayingTime(user)));
+					p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GREEN + "Kills: " + ChatColor.GOLD + Stats.getKills(user) + ChatColor.GREEN + "     Deaths: " + ChatColor.GOLD + Stats.getDeaths(user) + ChatColor.GREEN + "    KDR: " + ChatColor.GOLD + KDRatio.KD(user));
+					p.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GREEN + "Highest KillStreak: " + ChatColor.GOLD + Stats.getHighestKillStreak(user));
+				}
 			}
 
 			// //////////////////////////////////////////////TPSPAWN////////////////////////////////
@@ -529,7 +578,52 @@ public class Commands implements CommandExecutor {
 
 				List<String> list = ArenaManager.getArena(cp.getCreating()).getSpawns();
 				p.sendMessage(Msgs.Command_Spawn_Spawns.getString(true, "<spawns>", String.valueOf(list.size())));
-			} else
+			}
+			// /////////////////////////////////////////////////-TOP-/////////////////////////////////////////
+			else if (args.length > 0 && args[0].equalsIgnoreCase("Top"))
+			{
+
+				if (!p.hasPermission("Infected.Top"))
+					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+
+				else
+				{
+					if (args.length == 2)
+					{
+						String stat = args[1].toLowerCase();
+						System.out.println(stat);
+						if (stat.equals("kills") || stat.equals("deaths") || stat.equals("score") || stat.equals("time") || stat.equals("points") || stat.equals("killstreak"))
+						{
+							StatType type = StatType.valueOf(stat);
+
+							int i = 1;
+							sender.sendMessage(Msgs.Format_Header.getString(false, "<title>", "Top " + stat.toString()));
+							for (String name : Sort.topStats(type, 5))
+							{
+								if (name != " ")
+								{
+									if (i == 1)
+										sender.sendMessage("" + ChatColor.GREEN + ChatColor.BOLD + i + ". " + ChatColor.GOLD + ChatColor.BOLD + (name.length() == 16 ? name : (name + "                 ").substring(0, 16)) + ChatColor.GREEN + " =-= " + ChatColor.GRAY + (type == StatType.time ? Time.getOnlineTime((long) Stats.getStat(type, name)) : Stats.getStat(type, name)));
+									else if (i == 2 || i == 3)
+										sender.sendMessage("" + ChatColor.GREEN + ChatColor.BOLD + i + ". " + ChatColor.GRAY + ChatColor.BOLD + (name.length() == 16 ? name : (name + "                ").substring(0, 16)) + ChatColor.GREEN + " =-= " + ChatColor.GRAY + (type == StatType.time ? Time.getOnlineTime((long) Stats.getStat(type, name)) : Stats.getStat(type, name)));
+									else
+										sender.sendMessage("" + ChatColor.GREEN + ChatColor.BOLD + i + ". " + ChatColor.WHITE + ChatColor.BOLD + (name.length() == 16 ? name : (name + "                 ").substring(0, 16)) + ChatColor.GREEN + " =-= " + ChatColor.DARK_GRAY + (type == StatType.time ? Time.getOnlineTime((long) Stats.getStat(type, name)) : Stats.getStat(type, name)));
+								}
+								i++;
+
+								if (i == 6)
+									break;
+							}
+
+						} else
+							sender.sendMessage(Msgs.Error_Top_Not_Stat.getString(true));
+					} else
+						sender.sendMessage(Msgs.Help_Top.getString(true));
+				}
+			}
+
+			
+			else
 			{
 				CommandSender player = sender;
 				player.sendMessage("");

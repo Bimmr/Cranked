@@ -4,6 +4,8 @@ package me.sniperzciinema.cranked.Handlers.Arena;
 import java.util.HashMap;
 import java.util.List;
 
+import me.sniperzciinema.cranked.Handlers.Items.ItemHandler;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
 import me.sniperzciinema.cranked.Tools.Files;
 import me.sniperzciinema.cranked.Tools.Settings;
 
@@ -11,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 
 public class Arena {
@@ -69,6 +72,9 @@ public class Arena {
 	public List<Player> getPlayers() {
 		return ArenaManager.getPlayers(this);
 	}
+	public void removePlayer(CPlayer cp){
+		cp.setArena(null);
+	}
 
 	// Get the saved chests
 	public HashMap<Location, Inventory> getChests() {
@@ -105,6 +111,29 @@ public class Arena {
 		return Timer;
 	}
 
+	/**
+	 * @return the block
+	 */
+	public ItemStack getBlock() {
+		if(Files.getArenas().getString("Arenas." + name + ".Block") == null || Files.getArenas().getString("Arenas." + name + ".Block") == "")
+			return new ItemStack(Material.EMPTY_MAP, 1);
+		else
+			return ItemHandler.getItemStack(Files.getArenas().getString("Arenas." + name + ".Block"));
+	}
+
+	/**
+	 * @param block
+	 *            the block to set
+	 */
+	@SuppressWarnings("deprecation")
+	public void setBlock(ItemStack is) {
+		if (is.getType() == null || is.getType().getId() == 0)
+			Files.getArenas().set("Arenas." + name + ".Block", "id:395");
+		else
+			Files.getArenas().set("Arenas." + name + ".Block", ItemHandler.getItemStackToString(is));
+		Files.saveArenas();
+	}
+	
 	public void reset() {
 		getTimer().stopGameTimer();
 		getTimer().stopPreGameTimer();

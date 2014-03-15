@@ -19,9 +19,6 @@ public class Equip {
 		Kit kit = CP.getKit();
 		p.playSound(p.getLocation(), Sound.ANVIL_USE, 1, 1);
 
-		// Reset their inventory by: Going through and removing any old items
-		// from the class
-		// and add the new ones, this way we don't remove purchased/grenades
 		p.getInventory().clear();
 		if (!kit.getItems().isEmpty())
 			for (ItemStack is : kit.getItems())

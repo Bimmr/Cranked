@@ -3,6 +3,7 @@ package me.sniperzciinema.cranked.Handlers.Player;
 
 import java.util.Random;
 
+import me.sniperzciinema.cranked.Game;
 import me.sniperzciinema.cranked.Extras.ScoreBoard;
 import me.sniperzciinema.cranked.GameMechanics.Agility;
 import me.sniperzciinema.cranked.GameMechanics.Equip;
@@ -101,7 +102,7 @@ public class CPlayer {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void leave() {
+	public void fullLeave() {
 		player.setGameMode(gamemode);
 		player.setLevel(level);
 		player.setExp(exp);
@@ -117,19 +118,26 @@ public class CPlayer {
 
 		getTimer().stopTimer();
 
+		Arena a = arena;
+		arena.removePlayer(this);
+
 		for (PotionEffect effect : player.getActivePotionEffects())
 			player.removePotionEffect(effect.getType());
 
 		player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
 
-		if (arena.getGameState() != GameState.Waiting && arena.getPlayers().size() <= 1)
-			for (Player p : arena.getPlayers())
-			{
-				p.sendMessage(Msgs.Game_End_Not_Enough_Players.getString(true));
-				CPlayer cpp = CPlayerManager.getCrankedPlayer(p);
-				cpp.leave();
-			}
-
+		if (a.getGameState() != GameState.Waiting && a.getPlayers().size() <= 1)
+			if (!a.getPlayers().isEmpty())
+				for (Player p : a.getPlayers())
+				{
+					p.sendMessage(Msgs.Game_End_Not_Enough_Players.getString(true));
+					CPlayer cpp = CPlayerManager.getCrankedPlayer(p);
+					Game.leave(cpp);
+				}
+		if(a.getPlayers().isEmpty())
+			// Reset the timers and state
+			a.reset();
+		
 		if (player.getOpenInventory() != null)
 			player.closeInventory();
 
@@ -399,6 +407,7 @@ public class CPlayer {
 
 	/**
 	 * Opens the menu for the player
+	 * 
 	 * @param menu
 	 */
 	public void openMenu(IconMenu menu) {

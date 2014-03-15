@@ -1,12 +1,11 @@
 # Default Cranked Messages.yml, last edited in version 0.0.2
 Format:
-  Header: '&e&l>&e&m-----------««&4&l<title>&e&o&m»»-----------&l<'
+  Header: '&e&l>&e&m-----------<<&4&l<title>&e&o&m>>-----------&l<'
   Line: '&e&l>&e&m-------------------------------------------&l<'
-  Prefix: '&8&l«&6&lCranked&8&l»&9'
+  Prefix: '&8&l{&6&lCranked&8&l}&9'
 Arena:
   Information: '&a&lArena: &f&o<arena> - &a&lMade by: &f&o<creator>'
   Arenas: 'Arenas: &a<validarenas>, &8<notvalidarenas>.'
-  Creator: '<creator> made this'
 Command:
   Arena:
     Created: '&x<arena> has been created'
@@ -18,8 +17,8 @@ Command:
     Spawns: '&xThere are <spawns> spawns'
     Deleted: '&xSpawn #<spawn> has been deleted'
   Info:
-    Players: '&xPlayers in game: &c<current>&x/&c<max>'
-    State: '&xGame State: <state>'
+    Players: '&5&lPlayers in game: &d<current>&5/&d<max>'
+    State: '&6&lGame State: &e<state>'
   Admin:
     Reload: 'Cranked Files'' have been reloaded'
     Stat Changed: 'Stat Changed'
