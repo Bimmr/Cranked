@@ -42,7 +42,7 @@ public class DamageEvents implements Listener {
 
 						if (victim.getHealth() - e.getDamage() <= 0)
 						{
-							
+
 							CPlayer cv = CPlayerManager.getCrankedPlayer(victim);
 							cv.respawn(true);
 							e.setDamage(0);

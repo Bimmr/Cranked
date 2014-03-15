@@ -1,14 +1,27 @@
-# Default Kits.yml, Last Edited in v0.0.3
+# Default Kits.yml, Last Edited in v1.0.0
 # #
 # For more help with ids go here: 
 # Item/Block Ids - Minecraftinfo.com/IDList.htm
 # Enchantment Ids - http://minecraft.gamepedia.com/Enchanting#Enchantments
 # Potion Effect Ids - http://minecraft.gamepedia.com/Potion_effects#List_of_effects
 # #
-# Cranked's Item Codes  -----   ItemID:DamageValue,Amount-EnchantmentID@EnchantmentLevel-EnchantmentID@EnchantmentLevel%Item_Name
-# This code HAS to be used in the order shown, in other words no saying the amount of the item you want, then saying the damage value
-# You can use "/Cranked Admin Code" To return the code for the item in your hand
+# Cranked's Item Codes
+# ---------------------
+# id:<item id>
+# data:<item durability>
+# amount:<amount>
+# enchant:<enchantment id>-<enchantment level>
+# name:<item name>
+# lore:<line1|line_2>
+# owner:<Player name> - Used on skulls
+# color:<red>,<green>,<blue> - Used on leather armor(http://www.colorschemer.com/online.html)
 # #
+# Examples:
+# id:397 data:3 amount:1 owner:Notch
+# id:269 enchantment:32-3 name:Dwarf lore:Diggy|Diggy|Hole
+# id:299 color:255,204,51 name:Orange_ChestPlate
+# --------------------- 
+# You can use "/Cranked Admin Code" To return the code for the item in your hand
 # #
 # ==== Permissions =====
 # Cranked.Kits
@@ -25,10 +38,6 @@ Kits:
     - id:268
     - id:261
     - id:262 amount:10
-    Potion Effects:
-    - '22:99999:1'
-    Transfer Potion Effects:
-    - '2:1:1'
     KillStreaks:
       '5': id:268 enchantment:19
       '7': id:305 enchantment:2
@@ -44,9 +53,6 @@ Kits:
     - id:262 amount:10
     Potion Effects:
     - '2:99999:1'
-    Transfer Potion Effects:
-    - '2:1:1'
-    - '20:2:1'
     KillStreaks:
       '5': id:268 enchantment:19
       '7': id:262
@@ -60,8 +66,6 @@ Kits:
     Boots: id:305
     Items:
     - id:272
-    Transfer Potion Effects:
-    - '23:10:1'
     KillStreaks:
       '10': id:276 enchantment:1
   Bones:

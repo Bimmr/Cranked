@@ -86,10 +86,9 @@ public class Game {
 		cp.setArena(arena);
 		cp.getScoreBoard().showProper();
 
-
 		Cranked.Menus.destroyMenu(Cranked.Menus.arenaMenu);
 		Cranked.Menus.arenaMenu = Cranked.Menus.getArenaMenu();
-		
+
 		for (PotionEffect effect : p.getActivePotionEffects())
 			p.removePotionEffect(effect.getType());
 
@@ -115,7 +114,7 @@ public class Game {
 
 		Cranked.Menus.destroyMenu(Cranked.Menus.arenaMenu);
 		Cranked.Menus.arenaMenu = Cranked.Menus.getArenaMenu();
-		
+
 		cp.fullLeave();
 	}
 

@@ -13,6 +13,7 @@ import me.sniperzciinema.cranked.Handlers.Arena.GameState;
 import me.sniperzciinema.cranked.Handlers.Kits.Kit;
 import me.sniperzciinema.cranked.Handlers.Kits.KitManager;
 import me.sniperzciinema.cranked.Handlers.Location.LocationHandler;
+import me.sniperzciinema.cranked.Handlers.Potions.PotionEffects;
 import me.sniperzciinema.cranked.Messages.Msgs;
 import me.sniperzciinema.cranked.Tools.IconMenu;
 
@@ -134,10 +135,10 @@ public class CPlayer {
 					CPlayer cpp = CPlayerManager.getCrankedPlayer(p);
 					Game.leave(cpp);
 				}
-		if(a.getPlayers().isEmpty())
+		if (a.getPlayers().isEmpty())
 			// Reset the timers and state
 			a.reset();
-		
+
 		if (player.getOpenInventory() != null)
 			player.closeInventory();
 
@@ -171,6 +172,12 @@ public class CPlayer {
 		String loc = getArena().getSpawns().get(i);
 		p.teleport(LocationHandler.getPlayerLocation(loc));
 		p.setFallDistance(0F);
+
+		for (PotionEffect reffect : player.getActivePotionEffects())
+			player.removePotionEffect(reffect.getType());
+
+		PotionEffects.applyKitEffects(player);
+
 		if (equip)
 			Equip.equip(p);
 		p.updateInventory();

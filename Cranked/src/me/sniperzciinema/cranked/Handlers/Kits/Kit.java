@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 
 public class Kit {
@@ -16,10 +17,13 @@ public class Kit {
 	private ItemStack boots;
 	private ItemStack icon;
 	private ArrayList<ItemStack> items;
+
+	private ArrayList<PotionEffect> potionEffects;
 	private HashMap<Integer, ItemStack> killstreaks;
 
 	public Kit(String name, ItemStack helmet, ItemStack chestplate,
 			ItemStack leggings, ItemStack boots, ArrayList<ItemStack> items,
+			ArrayList<PotionEffect> effects,
 			HashMap<Integer, ItemStack> killstreaks, ItemStack icon)
 	{
 		this.name = name;
@@ -27,6 +31,7 @@ public class Kit {
 		this.chestplate = chestplate;
 		this.leggings = leggings;
 		this.boots = boots;
+		this.setPotionEffects(effects);
 		this.setIcon(icon);
 		this.items = items;
 		this.setKillstreaks(killstreaks);
@@ -153,6 +158,21 @@ public class Kit {
 	 */
 	public void setIcon(ItemStack icon) {
 		this.icon = icon;
+	}
+
+	/**
+	 * @return the potionEffects
+	 */
+	public ArrayList<PotionEffect> getPotionEffects() {
+		return potionEffects;
+	}
+
+	/**
+	 * @param potionEffects
+	 *            the potionEffects to set
+	 */
+	public void setPotionEffects(ArrayList<PotionEffect> potionEffects) {
+		this.potionEffects = potionEffects;
 	}
 
 }

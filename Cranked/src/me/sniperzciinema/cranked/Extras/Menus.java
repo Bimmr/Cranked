@@ -25,29 +25,29 @@ import org.bukkit.inventory.ItemStack;
 
 public class Menus {
 
-	//Create all the menus
+	// Create all the menus
 	public IconMenu arenaMenu;
 	public IconMenu kitMenu;
 
-	//When the class gets loaded create all the IconMenus and store them for later use
+	// When the class gets loaded create all the IconMenus and store them for
+	// later use
 	public Menus()
 	{
 		arenaMenu = getArenaMenu();
 		kitMenu = getKitMenu();
 	}
-	
-	public void destroyMenu(IconMenu menu){
+
+	public void destroyMenu(IconMenu menu) {
 		menu.destroy();
 	}
-	
-	public void destroyAllMenus(){
+
+	public void destroyAllMenus() {
 		arenaMenu.destroy();
 		kitMenu.destroy();
 	}
 
 	public IconMenu getArenaMenu() {
-		IconMenu menu = new IconMenu(
-				ChatColor.GREEN + "Join An Arena",
+		IconMenu menu = new IconMenu(ChatColor.GREEN + "Join An Arena",
 				((ArenaManager.getArenas().size() / 9) * 9) + 9,
 				new IconMenu.OptionClickEventHandler()
 				{
@@ -71,7 +71,7 @@ public class Menus {
 				}, Cranked.me);
 		// Choose a block to represent the arena in the GUI
 		int place = 0;
-		
+
 		for (Arena arena : ArenaManager.getArenas())
 		{
 
@@ -83,46 +83,25 @@ public class Menus {
 
 			place++;
 		}
-		
+
 		return menu;
 	}
 
 	public IconMenu getKitMenu() {
-	IconMenu menu = new IconMenu(
-			RandomChatColor.getColor(ChatColor.GOLD, ChatColor.GREEN, ChatColor.BLUE, ChatColor.RED, ChatColor.DARK_AQUA, ChatColor.YELLOW) + "Choose a Kit",
-			((KitManager.getKits().size() / 9) * 9) + 18,
-			new IconMenu.OptionClickEventHandler()
-			{
+		IconMenu menu = new IconMenu(
+				RandomChatColor.getColor(ChatColor.GOLD, ChatColor.GREEN, ChatColor.BLUE, ChatColor.RED, ChatColor.DARK_AQUA, ChatColor.YELLOW) + "Choose a Kit",
+				((KitManager.getKits().size() / 9) * 9) + 18,
+				new IconMenu.OptionClickEventHandler()
+				{
 
-				@Override
-				public void onOptionClick(IconMenu.OptionClickEvent event) {
-					final Player p = event.getPlayer();
-					final CPlayer cp = CPlayerManager.getCrankedPlayer(p);
-					if (ChatColor.stripColor(event.getName()).equalsIgnoreCase("None"))
-					{
-						p.sendMessage(Msgs.Kits_None.getString(true));
-
-						if (event.getClickType().isRightClick())
+					@Override
+					public void onOptionClick(IconMenu.OptionClickEvent event) {
+						final Player p = event.getPlayer();
+						final CPlayer cp = CPlayerManager.getCrankedPlayer(p);
+						if (ChatColor.stripColor(event.getName()).equalsIgnoreCase("None"))
 						{
-							Bukkit.getScheduler().scheduleSyncDelayedTask(Cranked.me, new Runnable()
-							{
+							p.sendMessage(Msgs.Kits_None.getString(true));
 
-								public void run() {
-									cp.openMenu(kitMenu);
-								}
-							}, 2);
-						}
-					} else if (p.hasPermission("Cranked.Kits") || p.hasPermission("Cranked.Kits." + event.getName()))
-					{
-						if (KitManager.isRegistered(KitManager.getKit(ChatColor.stripColor(event.getName()))))
-						{
-							p.sendMessage(Msgs.Kits_Chosen.getString(true, "<kit>", event.getName()));
-							cp.setKit(KitManager.getKit(ChatColor.stripColor(event.getName())));
-
-							if (cp.getArena().getGameState() == GameState.Started)
-								p.sendMessage("Wait till you respawn");
-							if (cp.getArena().getGameState() == GameState.PreGame)
-								Equip.equip(p);
 							if (event.getClickType().isRightClick())
 							{
 								Bukkit.getScheduler().scheduleSyncDelayedTask(Cranked.me, new Runnable()
@@ -133,20 +112,41 @@ public class Menus {
 									}
 								}, 2);
 							}
-						}
+						} else if (p.hasPermission("Cranked.Kits") || p.hasPermission("Cranked.Kits." + event.getName()))
+						{
+							if (KitManager.isRegistered(KitManager.getKit(ChatColor.stripColor(event.getName()))))
+							{
+								p.sendMessage(Msgs.Kits_Chosen.getString(true, "<kit>", event.getName()));
+								cp.setKit(KitManager.getKit(ChatColor.stripColor(event.getName())));
 
-					} else
-						p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
-				}
-			}, Cranked.me);
-	int i = 0;
-	for (Kit kit : KitManager.getKits())
-	{
-		ItemStack item = kit.getIcon();
-		menu.setOption(i, item, kit.getName(), ChatColor.DARK_AQUA + Msgs.Menu_Kits_Click_To_Choose.getString(false), "", ChatColor.GRAY + "Helmet: " + ChatColor.GREEN + StringUtil.getWord(kit.getHelmet().getType().name()), ChatColor.GRAY + "Chestplate: " + ChatColor.GREEN + StringUtil.getWord(kit.getChestplate().getType().name()), ChatColor.GRAY + "Leggings: " + ChatColor.GREEN + StringUtil.getWord(kit.getLeggings().getType().name()), ChatColor.GRAY + "Boots: " + ChatColor.GREEN + StringUtil.getWord(kit.getBoots().getType().name()));
-		i++;
-	}
-	menu.setOption(i, new ItemStack(Material.CAKE), "None", Msgs.Menu_Kits_Click_For_None.getString(false));
+								if (cp.getArena().getGameState() == GameState.Started)
+									p.sendMessage("Wait till you respawn");
+								if (cp.getArena().getGameState() == GameState.PreGame)
+									Equip.equip(p);
+								if (event.getClickType().isRightClick())
+								{
+									Bukkit.getScheduler().scheduleSyncDelayedTask(Cranked.me, new Runnable()
+									{
+
+										public void run() {
+											cp.openMenu(kitMenu);
+										}
+									}, 2);
+								}
+							}
+
+						} else
+							p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+					}
+				}, Cranked.me);
+		int i = 0;
+		for (Kit kit : KitManager.getKits())
+		{
+			ItemStack item = kit.getIcon();
+			menu.setOption(i, item, kit.getName(), ChatColor.DARK_AQUA + Msgs.Menu_Kits_Click_To_Choose.getString(false), "", ChatColor.GRAY + "Helmet: " + ChatColor.GREEN + StringUtil.getWord(kit.getHelmet().getType().name()), ChatColor.GRAY + "Chestplate: " + ChatColor.GREEN + StringUtil.getWord(kit.getChestplate().getType().name()), ChatColor.GRAY + "Leggings: " + ChatColor.GREEN + StringUtil.getWord(kit.getLeggings().getType().name()), ChatColor.GRAY + "Boots: " + ChatColor.GREEN + StringUtil.getWord(kit.getBoots().getType().name()));
+			i++;
+		}
+		menu.setOption(i, new ItemStack(Material.CAKE), "None", Msgs.Menu_Kits_Click_For_None.getString(false));
 		return menu;
 	}
 }

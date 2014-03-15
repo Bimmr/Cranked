@@ -56,10 +56,9 @@ public class Files {
 		getConfig().options().copyDefaults(true);
 		getArenas().options().copyDefaults(true);
 		getPlayers().options().copyDefaults(true);
-		getMessages().options().copyDefaults(true);	
+		getMessages().options().copyDefaults(true);
 		getKits().options().copyDefaults(true);
 	}
-
 
 	// Reload Abilities File
 	public static void reloadKits() {
@@ -97,6 +96,7 @@ public class Files {
 			Bukkit.getLogger().log(Level.SEVERE, "Could not save config " + kitsFile, ex);
 		}
 	}
+
 	// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Reload Arenas File
 	public static void reloadArenas() {
@@ -214,6 +214,5 @@ public class Files {
 			Bukkit.getLogger().log(Level.SEVERE, "Could not save config " + playerFile, ex);
 		}
 	}
-
 
 }

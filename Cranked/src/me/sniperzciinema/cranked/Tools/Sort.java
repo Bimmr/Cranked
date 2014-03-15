@@ -30,6 +30,7 @@ public class Sort {
 
 		return highest;
 	}
+
 	public static String[] topStats(StatType type, Integer howMany) {
 
 		HashMap<String, Integer> players = new HashMap<String, Integer>();
@@ -69,6 +70,7 @@ public class Sort {
 
 		return top;
 	}
+
 	public static String[] topPoints(List<Player> list, Integer howMany) {
 
 		HashMap<String, Integer> players = new HashMap<String, Integer>();

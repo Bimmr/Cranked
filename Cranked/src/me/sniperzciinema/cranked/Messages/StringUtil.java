@@ -18,7 +18,8 @@ public class StringUtil {
 		}
 		return string;
 	}
-	public static String format(String string){
+
+	public static String format(String string) {
 		return (string.replaceAll("&", "§"));
 	}
 }

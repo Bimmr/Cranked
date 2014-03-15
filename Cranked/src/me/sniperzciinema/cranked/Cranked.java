@@ -41,7 +41,7 @@ public class Cranked extends JavaPlugin {
 
 	public static boolean update;
 	public static String name;
-	
+
 	public static Menus Menus;
 
 	public void onEnable() {
@@ -141,7 +141,7 @@ public class Cranked extends JavaPlugin {
 				Files.getConfig().set("MySQL.Enabled", false);
 				System.out.println("Unable to connect to MySQL");
 			}
-		}else
+		} else
 			System.out.println("Using Players.yml for stats");
 		System.out.println(Msgs.Format_Line.getString(false));
 

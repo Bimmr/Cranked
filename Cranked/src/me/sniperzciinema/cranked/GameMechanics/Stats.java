@@ -8,7 +8,6 @@ import me.sniperzciinema.cranked.Tools.MySQLManager;
 
 public class Stats {
 
-	
 	public enum StatType
 	{
 		kills, deaths, points, score, killstreak, time;
@@ -37,8 +36,7 @@ public class Stats {
 		else
 			return 0;
 	}
-	
-	
+
 	// Get the kills from the location required
 	public static int getKills(String name) {
 		if (Cranked.me.getConfig().getBoolean("MySQL.Enable"))

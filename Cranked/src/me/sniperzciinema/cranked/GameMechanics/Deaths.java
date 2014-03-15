@@ -28,7 +28,7 @@ public class Deaths {
 			cKiller.getTimer().restartTimer();
 			// Update their overall stats
 			cKiller.updateStats(1, 0, cKiller.getScore() + cKiller.getArena().getSettings().getScorePerKill());
-			//Update their current game kills
+			// Update their current game kills
 			cKiller.setKills(cKiller.getKills() + 1);
 			// Set the players Points accordingly
 			cKiller.setPoints(cKiller.getPoints() + 1 + (cKiller.getKillstreak() >= 1 ? 1 : 0));

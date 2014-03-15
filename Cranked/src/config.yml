@@ -1,4 +1,28 @@
-# Default Cranked Config, last edited in version 0.0.3
+# Default Config.yml, Last Edited in v1.0.0
+# #
+# For more help with ids go here: 
+# Item/Block Ids - Minecraftinfo.com/IDList.htm
+# Enchantment Ids - http://minecraft.gamepedia.com/Enchanting#Enchantments
+# Potion Effect Ids - http://minecraft.gamepedia.com/Potion_effects#List_of_effects
+# #
+# Cranked's Item Codes
+# ---------------------
+# id:<item id>
+# data:<item durability>
+# amount:<amount>
+# enchant:<enchantment id>-<enchantment level>
+# name:<item name>
+# lore:<line1|line_2>
+# owner:<Player name> - Used on skulls
+# color:<red>,<green>,<blue> - Used on leather armor(http://www.colorschemer.com/online.html)
+# #
+# Examples:
+# id:397 data:3 amount:1 owner:Notch
+# id:269 enchantment:32-3 name:Dwarf lore:Diggy|Diggy|Hole
+# id:299 color:255,204,51 name:Orange_ChestPlate
+# --------------------- 
+# You can use "/Cranked Admin Code" To return the code for the item in your hand
+# #
 MySQL:
   Enable: false
   Host: 127.0.0.1

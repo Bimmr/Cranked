@@ -72,7 +72,8 @@ public class Arena {
 	public List<Player> getPlayers() {
 		return ArenaManager.getPlayers(this);
 	}
-	public void removePlayer(CPlayer cp){
+
+	public void removePlayer(CPlayer cp) {
 		cp.setArena(null);
 	}
 
@@ -115,7 +116,7 @@ public class Arena {
 	 * @return the block
 	 */
 	public ItemStack getBlock() {
-		if(Files.getArenas().getString("Arenas." + name + ".Block") == null || Files.getArenas().getString("Arenas." + name + ".Block") == "")
+		if (Files.getArenas().getString("Arenas." + name + ".Block") == null || Files.getArenas().getString("Arenas." + name + ".Block") == "")
 			return new ItemStack(Material.EMPTY_MAP, 1);
 		else
 			return ItemHandler.getItemStack(Files.getArenas().getString("Arenas." + name + ".Block"));
@@ -133,7 +134,7 @@ public class Arena {
 			Files.getArenas().set("Arenas." + name + ".Block", ItemHandler.getItemStackToString(is));
 		Files.saveArenas();
 	}
-	
+
 	public void reset() {
 		getTimer().stopGameTimer();
 		getTimer().stopPreGameTimer();

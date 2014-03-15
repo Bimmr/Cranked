@@ -179,7 +179,7 @@ public class ArenaTimers {
 		timeLeft = getGameTime();
 		for (Player p : arena.getPlayers())
 		{
-				CPlayerManager.getCrankedPlayer(p).getScoreBoard().showProper();
+			CPlayerManager.getCrankedPlayer(p).getScoreBoard().showProper();
 			p.setWalkSpeed(0.2F);
 			for (PotionEffect effect : p.getActivePotionEffects())
 				p.removePotionEffect(effect.getType());

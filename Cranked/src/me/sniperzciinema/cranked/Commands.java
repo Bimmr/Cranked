@@ -62,6 +62,9 @@ public class Commands implements CommandExecutor {
 				if (p == null)
 					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(false));
 
+				else if (!p.hasPermission("Cranked.Kits"))
+					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
+				
 				else if (cp.getArena() == null)
 					p.sendMessage(Msgs.Error_Game_Not_In.getString(true));
 
@@ -455,7 +458,7 @@ public class Commands implements CommandExecutor {
 					sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Top" + ChatColor.WHITE + " - Check the leaderboards");
 					if (sender.hasPermission("Cranked.Admin"))
 						sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Admin" + ChatColor.WHITE + " - Admin commands");
-					
+
 					if (sender.hasPermission("Cranked.Setup"))
 					{
 						sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Create <Arena>" + ChatColor.WHITE + " - Create an arena");
@@ -570,7 +573,7 @@ public class Commands implements CommandExecutor {
 				if (!(sender instanceof Player))
 					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(true));
 
-				if (!p.hasPermission("Cranked.Spawns"))
+				if (!p.hasPermission("Cranked.Setup"))
 					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
 
 				if (cp.getCreating() == null)
@@ -583,7 +586,7 @@ public class Commands implements CommandExecutor {
 			else if (args.length > 0 && args[0].equalsIgnoreCase("Top"))
 			{
 
-				if (!p.hasPermission("Infected.Top"))
+				if (!p.hasPermission("Cranked.Top"))
 					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
 
 				else
@@ -622,7 +625,6 @@ public class Commands implements CommandExecutor {
 				}
 			}
 
-			
 			else
 			{
 				CommandSender player = sender;

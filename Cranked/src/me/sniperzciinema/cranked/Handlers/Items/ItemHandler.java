@@ -340,7 +340,7 @@ public class ItemHandler {
 		if (i.getTypeId() != 0 && i != null)
 		{
 
-			itemCode = "id:"+String.valueOf(i.getTypeId());
+			itemCode = "id:" + String.valueOf(i.getTypeId());
 
 			if (i.getDurability() != 0)
 				itemCode = itemCode + " data:" + i.getDurability();

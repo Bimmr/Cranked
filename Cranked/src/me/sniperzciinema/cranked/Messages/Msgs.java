@@ -63,9 +63,9 @@ public enum Msgs
 	Game_Over_Ended("Game Over.Ended"),
 	Game_Over_Times_Up("Game Over.Times Up"),
 	Game_Over_Winners("Game Over.Winners"),
-	Game_Started("Game.Started"), 
-	Kits_None("Kits.None"), 
-	Kits_Chosen("Kits.Chosen"), 
+	Game_Started("Game.Started"),
+	Kits_None("Kits.None"),
+	Kits_Chosen("Kits.Chosen"),
 	Menu_Kits_Click_To_Choose("Menu.Kits.Click To Choose"),
 	Menu_Kits_Click_For_None("Menu.Kits.Click For None");
 

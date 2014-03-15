@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import me.sniperzciinema.cranked.Handlers.Items.ItemHandler;
+import me.sniperzciinema.cranked.Handlers.Potions.PotionHandler;
 import me.sniperzciinema.cranked.Tools.Files;
 
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 
 public class KitManager {
@@ -15,9 +17,9 @@ public class KitManager {
 	private static ArrayList<Kit> kits = new ArrayList<Kit>();
 	private static Kit defaultKit;
 
-	public static void addClass(String name, ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots, ArrayList<ItemStack> items, HashMap<Integer, ItemStack> killstreaks, ItemStack icon) {
+	public static void addClass(String name, ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots, ArrayList<ItemStack> items, ArrayList<PotionEffect> effects, HashMap<Integer, ItemStack> killstreaks, ItemStack icon) {
 		Kit kit = new Kit(name, helmet, chestplate, leggings, boots, items,
-				killstreaks, icon);
+				effects, killstreaks, icon);
 
 		kits.add(kit);
 	}
@@ -106,6 +108,7 @@ public class KitManager {
 			String boots = "0";
 			String icon = "0";
 			ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+			ArrayList<PotionEffect> effects = new ArrayList<PotionEffect>();
 			HashMap<Integer, ItemStack> killstreaks = new HashMap<Integer, ItemStack>();
 			if (!s.contains("."))
 			{
@@ -116,12 +119,13 @@ public class KitManager {
 				boots = Files.getKits().getString("Kits." + s + ".Boots");
 				icon = Files.getKits().getString("Kits." + s + ".Icon");
 				items = ItemHandler.getItemStackList(Files.getKits().getStringList("Kits." + s + ".Items"));
+				effects = PotionHandler.getPotions(Files.getKits().getStringList("Kits." + s + ".Potion Effects"));
 				killstreaks = ItemHandler.getItemHashMap(Files.getKits(), "Kits." + s + ".KillStreaks");
 				Kit kit = new Kit(name, ItemHandler.getItemStack(helmet),
 						ItemHandler.getItemStack(chestplate),
 						ItemHandler.getItemStack(leggings),
-						ItemHandler.getItemStack(boots), items, killstreaks,
-						ItemHandler.getItemStack(icon));
+						ItemHandler.getItemStack(boots), items, effects,
+						killstreaks, ItemHandler.getItemStack(icon));
 
 				System.out.println("Loaded kit: " + kit.getName());
 				if (!isRegistered(kit))
