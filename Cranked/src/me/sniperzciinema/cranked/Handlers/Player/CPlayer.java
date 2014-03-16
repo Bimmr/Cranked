@@ -13,6 +13,7 @@ import me.sniperzciinema.cranked.Handlers.Arena.GameState;
 import me.sniperzciinema.cranked.Handlers.Kits.Kit;
 import me.sniperzciinema.cranked.Handlers.Kits.KitManager;
 import me.sniperzciinema.cranked.Handlers.Location.LocationHandler;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager.Team;
 import me.sniperzciinema.cranked.Handlers.Potions.PotionEffects;
 import me.sniperzciinema.cranked.Messages.Msgs;
 import me.sniperzciinema.cranked.Tools.IconMenu;
@@ -48,6 +49,7 @@ public class CPlayer {
 	private int kills = 0;
 	private int deaths = 0;
 	private Kit kit;
+	private Team team = null;
 
 	public CPlayer(Player p)
 	{
@@ -103,7 +105,7 @@ public class CPlayer {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void fullLeave() {
+	public void leave() {
 		player.setGameMode(gamemode);
 		player.setLevel(level);
 		player.setExp(exp);
@@ -168,8 +170,9 @@ public class CPlayer {
 		p.setExp(1.0F);
 		p.setFallDistance(0F);
 		Random r = new Random();
-		int i = r.nextInt(getArena().getSpawns().size());
-		String loc = getArena().getSpawns().get(i);
+
+		int i = r.nextInt(getArena().getSpawns(team).size());
+		String loc = getArena().getSpawns(team).get(i);
 		p.teleport(LocationHandler.getPlayerLocation(loc));
 		p.setFallDistance(0F);
 
@@ -180,6 +183,7 @@ public class CPlayer {
 
 		if (equip)
 			Equip.equip(p);
+
 		p.updateInventory();
 	}
 
@@ -419,5 +423,20 @@ public class CPlayer {
 	 */
 	public void openMenu(IconMenu menu) {
 		menu.open(player);
+	}
+
+	/**
+	 * @return the team
+	 */
+	public Team getTeam() {
+		return team;
+	}
+
+	/**
+	 * @param team
+	 *            the team to set
+	 */
+	public void setTeam(Team team) {
+		this.team = team;
 	}
 }

@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="C:/Users/Randy/Documents/Downloads/Dependancies/CrackShot.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Randy/Documents/Downloads/Dependancies/bukkit-1.7.2-R0.3.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Randy/Documents/Downloads/Dependancies/craftbukkit-1.7.2-R0.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Randy/Documents/Downloads/Dependancies/TagAPI.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

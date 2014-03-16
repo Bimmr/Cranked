@@ -11,6 +11,11 @@ import org.bukkit.entity.Player;
 
 public class CPlayerManager {
 
+	public enum Team
+	{
+		A, B;
+	};
+
 	// An list to hold all of the arenas
 	private static List<CPlayer> players = new ArrayList<CPlayer>();
 

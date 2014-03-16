@@ -8,14 +8,14 @@ Arena:
   Arenas: 'Arenas: &a<validarenas>, &8<notvalidarenas>.'
 Command:
   Arena:
-    Created: '&x<arena> has been created'
-    Removed: '&x<arena> has been removed'
+    Created: '&a&l<arena> has been created with the &oGametype: <gametype>'
+    Removed: '&c&l<arena> has been removed'
     Set: '&x<arena> has been selected'
   Spawn:
-    Set: '&xSpawn #<spawn> has been set for the selected arena'
-    Tp: '&xYou have teleported to spawn #<spawn>'
-    Spawns: '&xThere are <spawns> spawns'
-    Deleted: '&xSpawn #<spawn> has been deleted'
+    Set: '&xSpawn <team> #<spawn> has been set for the selected arena'
+    Tp: '&xYou have teleported to spawn <team> #<spawn>'
+    Spawns: '&xThere are <spawns> <team> spawns'
+    Deleted: '&xSpawn <team> #<spawn> has been deleted'
   Info:
     Players: '&5&lPlayers in game: &d<current>&5/&d<max>'
     State: '&6&lGame State: &e<state>'
@@ -32,6 +32,7 @@ Error:
     Use Command: '&c&oUnable to use this command in Cranked!'
     Not Player: '&c&oYou need to be a player to use this command!'
     Unkown Command: '&c&oCranked has no clue what command you''re trying to use'
+    Not A Gametype: '&c&oThats not a valid Gametype. Please use FFA or TDM.'
   Game:
     Started: 'Cranked is already started'
     Not Started: 'The game still hasn''t started'
@@ -70,15 +71,16 @@ Menu:
 Game Over:
   Times Up: '       &6&lTimes Up!'
   Winners: '&l&a<place>. &e&o<player>.'
-  Ended: '    &9&lThe Game Has Ended!'
+  Ended: ' &9&lThe Game Has Ended!'
+  Team Won: '    &6&l<team> has &lwon!'
 Help:
-  SetSpawn: '&e&o/CR SetSpawn &7- &fSet a spawn'
+  SetSpawn: '&e&o/CR SetSpawn [A/B] &7- &fSet a spawn'
   SetArena: '&e&o/CR SetArena <Arena> &7- &fSet an Arena'
-  Create: '&e&o/CR Create <Arena> &7- &fCreate an Arena'
+  Create: '&e&o/CR Create <Arena> <FFA/TDM> [Creator] &7- &fCreate an Arena'
   Remove: '&e&o/CR Remove <Arena> &7- &fRemove an Arena'
   Info: '&e&o/CR Info <Arena>&7- &fSee Arena info'
-  Spawns: '&e&o/CR TpSpawn <Spawn>&7 - &fTp to arena Spawns'
-  DelSpawns: '&e&o/CR DelSpawns <Spawn> &7- &fDelete arena Spawns'
+  Spawns: '&e&o/CR TpSpawn <Spawn>&7 [A/B]- &fTp to arena Spawns'
+  DelSpawns: '&e&o/CR DelSpawns <Spawn> [A/B]&7- &fDelete arena Spawns'
 Kills:
   Arrow:
     - "&c<killer> &e&ohas shot &7<killed>"

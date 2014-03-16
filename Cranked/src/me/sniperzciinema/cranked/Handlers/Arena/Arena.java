@@ -1,11 +1,15 @@
 
 package me.sniperzciinema.cranked.Handlers.Arena;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager.GameType;
 import me.sniperzciinema.cranked.Handlers.Items.ItemHandler;
 import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager.Team;
 import me.sniperzciinema.cranked.Tools.Files;
 import me.sniperzciinema.cranked.Tools.Settings;
 
@@ -19,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 public class Arena {
 
 	private String name;
+	private GameType gameType;
 	private GameState state = GameState.Waiting;
 	private HashMap<Location, Inventory> chests = new HashMap<Location, Inventory>();
 	private HashMap<Location, Material> blocks = new HashMap<Location, Material>();
@@ -29,6 +34,7 @@ public class Arena {
 	public Arena(String name)
 	{
 		this.name = name;
+		gameType = getGameType();
 	}
 
 	// Get the arenas settings
@@ -62,9 +68,36 @@ public class Arena {
 		this.state = state;
 	}
 
-	// Get the arenas spawns
-	public List<String> getSpawns() {
+	public void setSpawns(List<String> spawns, Team team) {
+		if (team == Team.A || team == Team.B)
+			Files.getArenas().set("Arenas." + name + "." + team.toString() + " Spawns", spawns);
+		else
+			Files.getArenas().set("Arenas." + name + ".Spawns", spawns);
+
+		Files.saveArenas();
+	}
+
+	/**
+	 * Returns the spawns from the config
+	 * 
+	 * @return the spawns
+	 */
+	public List<String> getSpawns(Team team) {
 		List<String> spawns = Files.getArenas().getStringList("Arenas." + name + ".Spawns");
+
+		if (team != null)
+			spawns.addAll(Files.getArenas().getStringList("Arenas." + name + "." + team.toString() + " Spawns"));
+
+		return spawns;
+	}
+
+	public List<String> getExactSpawns(Team team) {
+		List<String> spawns = new ArrayList<String>();
+		if (team == null)
+			spawns.addAll(Files.getArenas().getStringList("Arenas." + name + ".Spawns"));
+		else
+			spawns.addAll(Files.getArenas().getStringList("Arenas." + name + "." + team.toString() + " Spawns"));
+
 		return spawns;
 	}
 
@@ -155,4 +188,75 @@ public class Arena {
 		this.getChests().clear();
 	}
 
+	/**
+	 * @return the gameType
+	 */
+	public GameType getGameType() {
+		if (gameType == null)
+			if (Files.getArenas().getString("Arenas." + name + ".Game Type") != null)
+				gameType = GameType.valueOf(Files.getArenas().getString("Arenas." + name + ".Game Type"));
+			else
+			{
+				Files.getArenas().set("Arenas." + name + ".Game Type", "FFA");
+				Files.saveArenas();
+				gameType = GameType.FFA;
+			}
+
+		return gameType;
+	}
+
+	/**
+	 * @param gameType
+	 *            the gameType to set
+	 */
+	public void setGameType(GameType gameType) {
+		Files.getArenas().set("Arenas." + name + ".Game Type", gameType.toString());
+		Files.saveArenas();
+		this.gameType = gameType;
+	}
+	/**
+	 * Look at the other teams and add the player to the proper team
+	 * 
+	 * @param cp
+	 */
+	public void addTeamPlayer(CPlayer cp) {
+		ArrayList<Player> teamA = getTeam(Team.A);
+		ArrayList<Player> teamB = getTeam(Team.B);
+		
+		if (teamA.size() <= teamB.size())
+			cp.setTeam(Team.A);
+		else
+			cp.setTeam(Team.B);
+	}
+
+	/**
+	 * @return the teamA
+	 */
+	public ArrayList<Player> getTeam(Team team) {
+		ArrayList<Player> teamP = new ArrayList<Player>();
+		for (Player player : getPlayers())
+		{
+			CPlayer cpp = CPlayerManager.getCrankedPlayer(player);
+			if (cpp.getTeam() == team)
+				teamP.add(player);
+		}
+		return teamP;
+	}
+	
+	/**
+	 * Set the CPlayer's team
+	 * @param cp
+	 * @param team
+	 */
+	public void setTeam(CPlayer cp, Team team){
+		cp.setTeam(team);
+	}
+
+	public int getTeamPoints(Team team){
+		int i = 0;
+		for(Player p : getTeam(team))
+			i += CPlayerManager.getCrankedPlayer(p).getPoints();
+		
+		return i;
+	}
 }

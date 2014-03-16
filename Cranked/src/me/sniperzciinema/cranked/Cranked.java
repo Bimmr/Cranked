@@ -14,6 +14,7 @@ import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
 import me.sniperzciinema.cranked.Listeners.CrackShotApi;
 import me.sniperzciinema.cranked.Listeners.DamageEvents;
 import me.sniperzciinema.cranked.Listeners.MiscListeners;
+import me.sniperzciinema.cranked.Listeners.NameTags;
 import me.sniperzciinema.cranked.Listeners.RankingsToggle;
 import me.sniperzciinema.cranked.Listeners.RegisterAndUnRegister;
 import me.sniperzciinema.cranked.Listeners.SignListener;
@@ -80,16 +81,14 @@ public class Cranked extends JavaPlugin {
 		me = this;
 		// Register the event listeners
 
-		DamageEvents damage = new DamageEvents();
-		getServer().getPluginManager().registerEvents(damage, this);
-		SignListener sign = new SignListener();
-		getServer().getPluginManager().registerEvents(sign, this);
-		RegisterAndUnRegister register = new RegisterAndUnRegister();
-		getServer().getPluginManager().registerEvents(register, this);
-		MiscListeners MiscListeners = new MiscListeners();
-		getServer().getPluginManager().registerEvents(MiscListeners, this);
-		RankingsToggle RankingsToggle = new RankingsToggle();
-		getServer().getPluginManager().registerEvents(RankingsToggle, this);
+		getServer().getPluginManager().registerEvents(new DamageEvents(), this);
+		getServer().getPluginManager().registerEvents(new SignListener(), this);
+		getServer().getPluginManager().registerEvents(new RegisterAndUnRegister(), this);
+		getServer().getPluginManager().registerEvents(new MiscListeners(), this);
+		getServer().getPluginManager().registerEvents(new RankingsToggle(), this);
+
+		if(Bukkit.getServer().getPluginManager().getPlugin("TagAPI") != null)
+			getServer().getPluginManager().registerEvents(new NameTags(), this);
 
 		if (getServer().getPluginManager().getPlugin("CrackShot") != null)
 		{
@@ -113,7 +112,7 @@ public class Cranked extends JavaPlugin {
 			{
 				Arena arena = new Arena(StringUtil.getWord(s));
 				ArenaManager.loadArena(arena);
-				System.out.println("Loaded Arena: " + arena.getName());
+				System.out.println("Loaded Arena: " + arena.getName() + " -|- Game Type: " + arena.getGameType().toString());
 			}
 		else
 			System.out.println("Couldn't Find Any Arenas");

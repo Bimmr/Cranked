@@ -3,9 +3,11 @@ package me.sniperzciinema.cranked;
 
 import me.sniperzciinema.cranked.GameMechanics.Stats;
 import me.sniperzciinema.cranked.Handlers.Arena.Arena;
+import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager.GameType;
 import me.sniperzciinema.cranked.Handlers.Arena.GameState;
 import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
 import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager.Team;
 import me.sniperzciinema.cranked.Messages.Msgs;
 import me.sniperzciinema.cranked.Tools.Settings;
 import me.sniperzciinema.cranked.Tools.Sort;
@@ -35,36 +37,59 @@ public class Game {
 		// Reset the timers and state
 		arena.reset();
 
-		String[] winners = Sort.topPoints(arena.getPlayers(), 3);
-		// Reset all players, inform them the game ended
-		for (Player p : arena.getPlayers())
+		if (arena.getGameType() == GameType.FFA)
 		{
-			int place = 0;
-			CPlayer cp = CPlayerManager.getCrankedPlayer(p);
-			cp.getTimer().stopTimer();
-			if (Stats.getHighestKillStreak(p.getName()) < cp.getKillstreak())
-				Stats.setHighestKillStreak(p.getName(), cp.getKillstreak());
-			Stats.setPlayingTime(p.getName(), Stats.getPlayingTime(p.getName()) + (System.currentTimeMillis() / 1000 - cp.getTimeJoined()));
-			p.sendMessage(Msgs.Format_Line.getString(false));
-			p.sendMessage("");
-			p.sendMessage(Msgs.Game_Over_Ended.getString(true));
-			if (timeRanOut)
-				p.sendMessage(Msgs.Game_Over_Times_Up.getString(true));
-
-			p.sendMessage("");
-			for (String winner : winners)
+			String[] winners = Sort.topPoints(arena.getPlayers(), 3);
+			// Reset all players, inform them the game ended
+			for (Player p : arena.getPlayers())
 			{
-				if (winner != null && winner != "")
-					p.sendMessage(Msgs.Game_Over_Winners.getString(true, "<place>", String.valueOf(place + 1), "<player>", winner + "(" + CPlayerManager.getCrankedPlayer(winner).getPoints() + ")"));
-				place++;
+				int place = 0;
+				CPlayer cp = CPlayerManager.getCrankedPlayer(p);
+				cp.getTimer().stopTimer();
+				if (Stats.getHighestKillStreak(p.getName()) < cp.getKillstreak())
+					Stats.setHighestKillStreak(p.getName(), cp.getKillstreak());
+				Stats.setPlayingTime(p.getName(), Stats.getPlayingTime(p.getName()) + (System.currentTimeMillis() / 1000 - cp.getTimeJoined()));
+				p.sendMessage(Msgs.Format_Line.getString(false));
+				p.sendMessage("");
+				p.sendMessage(Msgs.Game_Over_Ended.getString(true));
+				if (timeRanOut)
+					p.sendMessage(Msgs.Game_Over_Times_Up.getString(true));
+
+				p.sendMessage("");
+				for (String winner : winners)
+				{
+					if (winner != null && winner != "")
+						p.sendMessage(Msgs.Game_Over_Winners.getString(true, "<place>", String.valueOf(place + 1), "<player>", winner + "(" + CPlayerManager.getCrankedPlayer(winner).getPoints() + ")"));
+					place++;
+				}
+
+				p.sendMessage("");
+				p.sendMessage(Msgs.Arena_Information.getString(true, "<arena>", arena.getName(), "<creator>", arena.getCreator()));
+				p.sendMessage(Msgs.Format_Line.getString(false));
+
 			}
+		}
+		else{
+			for (Player p : arena.getPlayers())
+			{
+				CPlayer cp = CPlayerManager.getCrankedPlayer(p);
+				cp.getTimer().stopTimer();
+				if (Stats.getHighestKillStreak(p.getName()) < cp.getKillstreak())
+					Stats.setHighestKillStreak(p.getName(), cp.getKillstreak());
+				Stats.setPlayingTime(p.getName(), Stats.getPlayingTime(p.getName()) + (System.currentTimeMillis() / 1000 - cp.getTimeJoined()));
+				p.sendMessage(Msgs.Format_Line.getString(false));
+				p.sendMessage("");
+				p.sendMessage(Msgs.Game_Over_Ended.getString(true));
+				if (timeRanOut)
+					p.sendMessage(Msgs.Game_Over_Times_Up.getString(true));
 
-			p.sendMessage("");
-			p.sendMessage(Msgs.Arena_Information.getString(true, "<arena>", arena.getName(), "<creator>", arena.getCreator()));
-			p.sendMessage(Msgs.Format_Line.getString(false));
+				p.sendMessage("");
+				p.sendMessage(Msgs.Game_Over_Team_Won.getString(true, "<team>", (arena.getTeamPoints(Team.A) > arena.getTeamPoints(Team.B)) ? "Red" : "Blue"));
+				p.sendMessage("");
+				p.sendMessage(Msgs.Arena_Information.getString(true, "<arena>", arena.getName(), "<creator>", arena.getCreator()));
+				p.sendMessage(Msgs.Format_Line.getString(false));
 
-			// Set back any blocks that were broken well playing in the
-			// arena(This includes chests)
+			}
 		}
 		for (Player p : arena.getPlayers())
 			leave(CPlayerManager.getCrankedPlayer(p));
@@ -85,6 +110,8 @@ public class Game {
 		cp.setInfo();
 		cp.setArena(arena);
 		cp.getScoreBoard().showProper();
+		if (arena.getGameType() == GameType.TDM)
+			arena.addTeamPlayer(cp);
 
 		Cranked.Menus.destroyMenu(Cranked.Menus.arenaMenu);
 		Cranked.Menus.arenaMenu = Cranked.Menus.getArenaMenu();
@@ -115,7 +142,7 @@ public class Game {
 		Cranked.Menus.destroyMenu(Cranked.Menus.arenaMenu);
 		Cranked.Menus.arenaMenu = Cranked.Menus.getArenaMenu();
 
-		cp.fullLeave();
+		cp.leave();
 	}
 
 }

@@ -13,11 +13,13 @@ import me.sniperzciinema.cranked.GameMechanics.Stats;
 import me.sniperzciinema.cranked.GameMechanics.Stats.StatType;
 import me.sniperzciinema.cranked.Handlers.Arena.Arena;
 import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
+import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager.GameType;
 import me.sniperzciinema.cranked.Handlers.Arena.GameState;
 import me.sniperzciinema.cranked.Handlers.Items.ItemHandler;
 import me.sniperzciinema.cranked.Handlers.Location.LocationHandler;
 import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
 import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager.Team;
 import me.sniperzciinema.cranked.Messages.Msgs;
 import me.sniperzciinema.cranked.Messages.StringUtil;
 import me.sniperzciinema.cranked.Messages.Time;
@@ -64,7 +66,7 @@ public class Commands implements CommandExecutor {
 
 				else if (!p.hasPermission("Cranked.Kits"))
 					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
-				
+
 				else if (cp.getArena() == null)
 					p.sendMessage(Msgs.Error_Game_Not_In.getString(true));
 
@@ -180,15 +182,21 @@ public class Commands implements CommandExecutor {
 				if (!sender.hasPermission("Cranked.Create"))
 					sender.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
 
-				else if (args.length >= 2)
+				else if (args.length >= 3)
 				{
 					String arena = StringUtil.getWord(args[1]);
-					if (!ArenaManager.arenaRegistered(arena))
+					String gameType = args[2].toUpperCase();
+					
+					if(GameType.valueOf(gameType) == null)
+						sender.sendMessage(Msgs.Error_Misc_Not_A_Gametype.getString(true));
+						
+					else if (!ArenaManager.arenaRegistered(arena))
 					{
 
 						Arena a = ArenaManager.createArena(arena);
+						a.setGameType(GameType.valueOf(gameType));
 						p.sendMessage(Msgs.Format_Line.getString(false));
-						p.sendMessage(Msgs.Command_Arena_Created.getString(true, "<arena>", arena));
+						p.sendMessage(Msgs.Command_Arena_Created.getString(true, "<arena>", arena, "<gametype>", gameType));
 						p.sendMessage(Msgs.Help_SetSpawn.getString(true));
 						cp.setCreating(arena);
 						a.setBlock(p.getLocation().add(0, -1, 0).getBlock().getState().getData().toItemStack());
@@ -196,8 +204,8 @@ public class Commands implements CommandExecutor {
 						Cranked.Menus.destroyMenu(Cranked.Menus.arenaMenu);
 						Cranked.Menus.arenaMenu = Cranked.Menus.getArenaMenu();
 
-						if (args.length == 3)
-							ArenaManager.getArena(arena).setCreator(args[2]);
+						if (args.length == 4)
+							ArenaManager.getArena(arena).setCreator(args[3]);
 
 						else
 							ArenaManager.getArena(StringUtil.getWord(arena)).setCreator("Unkown");
@@ -257,20 +265,34 @@ public class Commands implements CommandExecutor {
 				else if (!p.hasPermission("Cranked.SetSpawn"))
 					p.sendMessage(Msgs.Error_Misc_No_Permission.getString(true));
 
+				else if (cp.getCreating() == null)
+					p.sendMessage(Msgs.Help_SetArena.getString(true));
+
 				else
 				{
-					String arena = cp.getCreating();
-					if (ArenaManager.arenaRegistered(arena))
+					Arena a = ArenaManager.getArena(cp.getCreating());
+
+					if ((args.length == 1 && a.getGameType() == GameType.FFA) || (args.length == 2 && (args[1].equalsIgnoreCase("Global") || args[1].equalsIgnoreCase("A") || args[1].equalsIgnoreCase("B"))))
 					{
-						ArenaManager.setSpawn(arena, p.getLocation());
+						Team team = null;
+						if (args.length != 1)
+							team = args[1].equalsIgnoreCase("A") ? Team.A : args[1].equalsIgnoreCase("B") ? Team.B : null;
+
+						Location l = p.getLocation();
+						String s = LocationHandler.getLocationToString(l);
+						List<String> list = a.getExactSpawns(team);
+						list.add(s);
+						a.setSpawns(list, team);
 
 						Cranked.Menus.destroyMenu(Cranked.Menus.arenaMenu);
 						Cranked.Menus.arenaMenu = Cranked.Menus.getArenaMenu();
-						p.sendMessage(Msgs.Command_Spawn_Set.getString(true, "<spawn>", String.valueOf(ArenaManager.getArena(arena).getSpawns().size())));
+
+						p.sendMessage(Msgs.Command_Spawn_Set.getString(true, "<team>", team != null ? team.toString() : "", "<spawn>", String.valueOf(list.size())));
 					} else
-						p.sendMessage(Msgs.Help_SetArena.getString(true));
+						p.sendMessage(Msgs.Help_SetSpawn.getString(true));
 				}
 			}
+
 			// //////////////////////////////SETARENA///////////////////////////////////
 			else if (args.length > 0 && args[0].equalsIgnoreCase("SetArena"))
 			{
@@ -458,7 +480,6 @@ public class Commands implements CommandExecutor {
 					sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Top" + ChatColor.WHITE + " - Check the leaderboards");
 					if (sender.hasPermission("Cranked.Admin"))
 						sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Admin" + ChatColor.WHITE + " - Admin commands");
-
 					if (sender.hasPermission("Cranked.Setup"))
 					{
 						sender.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "/CR " + ChatColor.GREEN + "Create <Arena>" + ChatColor.WHITE + " - Create an arena");
@@ -518,21 +539,32 @@ public class Commands implements CommandExecutor {
 				if (cp.getCreating() == null)
 					p.sendMessage(Msgs.Help_SetArena.getString(true));
 
-				if (args.length != 1)
+				else
 				{
-					try
+					Arena a = ArenaManager.getArena(cp.getCreating());
+
+					if ((args.length == 1 && a.getGameType() == GameType.FFA) || (args.length == 2 && (args[1].equalsIgnoreCase("Global") || args[1].equalsIgnoreCase("A") || args[1].equalsIgnoreCase("B"))))
 					{
-						int spawn = Integer.valueOf(args[1]);
-						List<String> list = ArenaManager.getArena(cp.getCreating()).getSpawns();
-						Location loc = LocationHandler.getPlayerLocation(list.get(spawn - 1));
-						p.teleport(loc);
-						p.sendMessage(Msgs.Command_Spawn_Tp.getString(true, "<spawn>", String.valueOf(spawn)));
-					} catch (NumberFormatException NFE)
-					{
-						p.sendMessage(Msgs.Help_TpSpawn.getString(true));
-					}
-				} else
-					p.sendMessage(Msgs.Help_TpSpawn.getString(true));
+						Team team = null;
+						if (args.length != 1)
+							team = args[1].equalsIgnoreCase("A") ? Team.A : args[1].equalsIgnoreCase("B") ? Team.B : null;
+
+						int i = Integer.valueOf(args[1]) - 1;
+						if (i < a.getSpawns(team).size())
+						{
+							List<String> spawns = a.getExactSpawns(team);
+							spawns.remove(i);
+							a.setSpawns(spawns, team);
+
+							Cranked.Menus.destroyMenu(Cranked.Menus.arenaMenu);
+							Cranked.Menus.arenaMenu = Cranked.Menus.getArenaMenu();
+
+							p.sendMessage(Msgs.Command_Spawn_Deleted.getString(true, "<team>", team.toString(), "<spawn>", String.valueOf(i + 1)));
+						} else
+							p.sendMessage(Msgs.Help_DelSpawn.getString(true));
+					} else
+						p.sendMessage(Msgs.Help_DelSpawn.getString(true));
+				}
 
 			}
 			// ////////////////////////////////////////DELSPAWN/////////////////////////////////////
@@ -547,23 +579,32 @@ public class Commands implements CommandExecutor {
 				if (cp.getCreating() == null)
 					p.sendMessage(Msgs.Help_SetArena.getString(true));
 
-				if (args.length != 1)
+				else
 				{
-					try
+					Arena a = ArenaManager.getArena(cp.getCreating());
+
+					if ((args.length == 1 && a.getGameType() == GameType.FFA) || (args.length == 2 && (args[1].equalsIgnoreCase("Global") || args[1].equalsIgnoreCase("A") || args[1].equalsIgnoreCase("B"))))
 					{
-						int spawn = Integer.valueOf(args[1]);
-						String arenaName = cp.getCreating();
-						List<String> list = ArenaManager.getArena(arenaName).getSpawns();
-						list.remove(spawn - 1);
-						Files.getArenas().set("Arenas." + arenaName + ".Spawns", list);
-						Files.saveArenas();
-						p.sendMessage(Msgs.Command_Spawn_Deleted.getString(true, "<spawn>", String.valueOf(spawn)));
-					} catch (NumberFormatException NFE)
-					{
+						Team team = null;
+						if (args.length != 1)
+							team = args[1].equalsIgnoreCase("A") ? Team.A : args[1].equalsIgnoreCase("B") ? Team.B : null;
+
+						int i = Integer.valueOf(args[1]) - 1;
+						if (i < a.getSpawns(team).size())
+						{
+							List<String> spawns = a.getExactSpawns(team);
+							spawns.remove(i);
+							a.setSpawns(spawns, team);
+
+							Cranked.Menus.destroyMenu(Cranked.Menus.arenaMenu);
+							Cranked.Menus.arenaMenu = Cranked.Menus.getArenaMenu();
+
+							p.sendMessage(Msgs.Command_Spawn_Deleted.getString(true, "<team>", team.toString(), "<spawn>", String.valueOf(i + 1)));
+						} else
+							p.sendMessage(Msgs.Help_DelSpawn.getString(true));
+					} else
 						p.sendMessage(Msgs.Help_DelSpawn.getString(true));
-					}
-				} else
-					p.sendMessage(Msgs.Help_DelSpawn.getString(true));
+				}
 			}
 
 			// //////////////////////////////////SPAWNS/////////////////////////////////////////
@@ -579,8 +620,20 @@ public class Commands implements CommandExecutor {
 				if (cp.getCreating() == null)
 					p.sendMessage(Msgs.Help_SetArena.getString(true));
 
-				List<String> list = ArenaManager.getArena(cp.getCreating()).getSpawns();
-				p.sendMessage(Msgs.Command_Spawn_Spawns.getString(true, "<spawns>", String.valueOf(list.size())));
+				else
+				{
+					Arena a = ArenaManager.getArena(cp.getCreating());
+
+					if ((args.length == 1 && a.getGameType() == GameType.FFA) || (args.length == 2 && (args[1].equalsIgnoreCase("Global") || args[1].equalsIgnoreCase("A") || args[1].equalsIgnoreCase("B"))))
+					{
+						Team team = null;
+						if (args.length != 1)
+							team = args[1].equalsIgnoreCase("A") ? Team.A : args[1].equalsIgnoreCase("B") ? Team.B : null;
+
+						p.sendMessage(Msgs.Command_Spawn_Spawns.getString(true, "<team>", team.toString(), "<spawns>", String.valueOf(a.getExactSpawns(team).size())));
+					} else
+						p.sendMessage(Msgs.Help_Spawns.getString(true));
+				}
 			}
 			// /////////////////////////////////////////////////-TOP-/////////////////////////////////////////
 			else if (args.length > 0 && args[0].equalsIgnoreCase("Top"))

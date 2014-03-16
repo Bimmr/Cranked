@@ -5,6 +5,7 @@ import me.sniperzciinema.cranked.GameMechanics.DeathTypes;
 import me.sniperzciinema.cranked.GameMechanics.Deaths;
 import me.sniperzciinema.cranked.Handlers.Arena.Arena;
 import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager;
+import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager.GameType;
 import me.sniperzciinema.cranked.Handlers.Arena.GameState;
 import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
 import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
@@ -58,14 +59,23 @@ public class DamageEvents implements Listener {
 						if (cv.getLastDamager() != null)
 							killer = cv.getLastDamager();
 
+						// If both players not null
 						if ((victim != null) && (killer != null))
 						{
-
-							// If it was enough to kill the player
-							if (victim.getHealth() - e.getDamage() <= 0)
+							// If the game type is TDM and both players are on
+							// the same team do no damage
+							if (arena.getGameType() == GameType.TDM && cv.getTeam() == CPlayerManager.getCrankedPlayer(killer).getTeam())
 							{
-								Deaths.playerDies(killer, victim, DeathTypes.Melee);
 								e.setDamage(0);
+								e.setCancelled(true);
+							} else
+							{
+								// If it was enough to kill the player
+								if (victim.getHealth() - e.getDamage() <= 0)
+								{
+									Deaths.playerDies(killer, victim, DeathTypes.Melee);
+									e.setDamage(0);
+								}
 							}
 						}
 
@@ -116,18 +126,27 @@ public class DamageEvents implements Listener {
 					// If the game has fully started
 					else
 					{
-
 						CPlayer cv = CPlayerManager.getCrankedPlayer(victim);
 
-						// Saves who hit the person last
-						cv.setLastDamager(killer);
-
-						// If it was enough to kill the player
-						if (victim.getHealth() - e.getDamage() <= 0)
+						// If the game type is TDM and both players are on the
+						// same team do no damage
+						if (arena.getGameType() == GameType.TDM && cv.getTeam() == CPlayerManager.getCrankedPlayer(killer).getTeam())
+						{
+							e.setDamage(0);
+							e.setCancelled(true);
+						} else
 						{
 
-							e.setDamage(0);
-							Deaths.playerDies(killer, victim, death);
+							// Saves who hit the person last
+							cv.setLastDamager(killer);
+
+							// If it was enough to kill the player
+							if (victim.getHealth() - e.getDamage() <= 0)
+							{
+
+								e.setDamage(0);
+								Deaths.playerDies(killer, victim, death);
+							}
 						}
 
 					}

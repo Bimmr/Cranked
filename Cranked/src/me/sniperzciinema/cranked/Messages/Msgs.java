@@ -28,6 +28,7 @@ public enum Msgs
 	Error_Misc_Use_Command("Error.Misc.Cant Use Command"),
 	Error_Misc_Not_Player("Error.Misc.Not Player"),
 	Error_Misc_Unkown_Command("Error.Misc.Unkown Command"),
+	Error_Misc_Not_A_Gametype("Error.Misc.Not A Gametype"),
 	Error_Game_Started("Error.Game.Started"),
 	Error_Game_Not_Started("Error.Game.Not Started"),
 	Error_Game_Not_In("Error.Game.Not In"),
@@ -62,12 +63,14 @@ public enum Msgs
 	Command_Admin_Stat_Changed("Command.Admin.Stat Changed"),
 	Game_Over_Ended("Game Over.Ended"),
 	Game_Over_Times_Up("Game Over.Times Up"),
-	Game_Over_Winners("Game Over.Winners"),
+	Game_Over_Winners("Game Over.Winners"), 
+	Game_Over_Team_Won("Game Over.Team Won"),
 	Game_Started("Game.Started"),
 	Kits_None("Kits.None"),
 	Kits_Chosen("Kits.Chosen"),
 	Menu_Kits_Click_To_Choose("Menu.Kits.Click To Choose"),
-	Menu_Kits_Click_For_None("Menu.Kits.Click For None");
+	Menu_Kits_Click_For_None("Menu.Kits.Click For None"),
+	Help_Spawns("Help.Spawns");
 
 	private String string;
 

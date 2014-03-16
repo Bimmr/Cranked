@@ -16,6 +16,11 @@ import org.bukkit.entity.Player;
 
 public class ArenaManager {
 
+	public enum GameType
+	{
+		FFA(), TDM();
+	};
+
 	private static List<Arena> arenas = new ArrayList<Arena>();
 
 	// Return the list of arenas
@@ -130,7 +135,10 @@ public class ArenaManager {
 	// Check if the arena is avalid
 	public static boolean isArenaValid(String name) {
 		name = StringUtil.getWord(name);
-		return !Files.getArenas().getStringList("Arenas." + name + ".Spawns").isEmpty();
+		if (!Files.getArenas().getStringList("Arenas." + name + ".Spawns").isEmpty() || (!Files.getArenas().getStringList("Arenas." + name + ".A Spawns").isEmpty() && !Files.getArenas().getStringList("Arenas." + name + ".B Spawns").isEmpty()))
+			return true;
+		else
+			return !Files.getArenas().getStringList("Arenas." + name + ".Spawns").isEmpty();
 	}
 
 	// Return the players arenas

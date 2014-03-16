@@ -3,8 +3,10 @@ package me.sniperzciinema.cranked.GameMechanics;
 
 import me.sniperzciinema.cranked.Game;
 import me.sniperzciinema.cranked.Handlers.Arena.Arena;
+import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager.GameType;
 import me.sniperzciinema.cranked.Handlers.Player.CPlayer;
 import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager;
+import me.sniperzciinema.cranked.Handlers.Player.CPlayerManager.Team;
 import me.sniperzciinema.cranked.Messages.KillMessages;
 
 import org.bukkit.entity.Player;
@@ -64,7 +66,8 @@ public class Deaths {
 		// Check if they reached the max kills, if so end the game
 		if (cKiller != null)
 		{
-			if (cKiller.getPoints() >= cKiller.getArena().getSettings().getPointsToWin())
+			if ((arena.getGameType() == GameType.TDM && (arena.getTeamPoints(Team.A) >= cKiller.getArena().getSettings().getPointsToWin() || arena.getTeamPoints(Team.B) >= cKiller.getArena().getSettings().getPointsToWin()))
+					&& (arena.getGameType() == GameType.FFA && cKiller.getPoints() >= cKiller.getArena().getSettings().getPointsToWin()))
 				Game.end(cKiller.getArena(), false);
 		}
 	}
