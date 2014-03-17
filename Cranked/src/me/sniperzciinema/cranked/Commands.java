@@ -59,7 +59,7 @@ public class Commands implements CommandExecutor {
 			}
 
 			// //////////////////////////////////////////////-Kits-///////////////////////////////////////
-			if (args.length >= 1 && args[0].equalsIgnoreCase("Kits"))
+			if (args.length >= 1 && args[0].equalsIgnoreCase("Kits") && args[0].equalsIgnoreCase("Kit"))
 			{
 				if (p == null)
 					sender.sendMessage(Msgs.Error_Misc_Not_Player.getString(false));
@@ -186,10 +186,10 @@ public class Commands implements CommandExecutor {
 				{
 					String arena = StringUtil.getWord(args[1]);
 					String gameType = args[2].toUpperCase();
-					
-					if(GameType.valueOf(gameType) == null)
+
+					if (GameType.valueOf(gameType) == null)
 						sender.sendMessage(Msgs.Error_Misc_Not_A_Gametype.getString(true));
-						
+
 					else if (!ArenaManager.arenaRegistered(arena))
 					{
 
@@ -685,11 +685,10 @@ public class Commands implements CommandExecutor {
 				player.sendMessage(Msgs.Format_Header.getString(false, "<title>", "Cranked"));
 				if (Cranked.update)
 					player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.RED + ChatColor.BOLD + "Update Available: " + ChatColor.WHITE + ChatColor.BOLD + Cranked.name);
-				player.sendMessage("");
-				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "Author: " + ChatColor.GREEN + ChatColor.BOLD + "SniperzCiinema");
+				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "Author: " + ChatColor.GREEN + ChatColor.BOLD + "SniperzCiinema" + ChatColor.WHITE + ChatColor.ITALIC + "(" + ChatColor.DARK_AQUA + "xXSniperzXx_SD" + ChatColor.WHITE + ")");
 				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "Version: " + ChatColor.GREEN + ChatColor.BOLD + plugin.getDescription().getVersion());
-				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "BukkitDev: " + ChatColor.GREEN + ChatColor.BOLD + "http://dev.bukkit.org/bukkit-plugins/Cranked");
-				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.YELLOW + "For Help type: /Cranked Help");
+				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.GRAY + "BukkitDev: " + ChatColor.GREEN + ChatColor.BOLD + "http://bit.ly/Cranked");
+				player.sendMessage(Msgs.Format_Prefix.getString(false) + ChatColor.YELLOW + ChatColor.BOLD + "For Help type: /Cranked Help");
 
 			}
 		}

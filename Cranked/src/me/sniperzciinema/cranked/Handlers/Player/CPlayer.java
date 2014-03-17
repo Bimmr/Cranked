@@ -10,6 +10,7 @@ import me.sniperzciinema.cranked.GameMechanics.Equip;
 import me.sniperzciinema.cranked.GameMechanics.Stats;
 import me.sniperzciinema.cranked.Handlers.Arena.Arena;
 import me.sniperzciinema.cranked.Handlers.Arena.GameState;
+import me.sniperzciinema.cranked.Handlers.Arena.ArenaManager.GameType;
 import me.sniperzciinema.cranked.Handlers.Kits.Kit;
 import me.sniperzciinema.cranked.Handlers.Kits.KitManager;
 import me.sniperzciinema.cranked.Handlers.Location.LocationHandler;
@@ -129,7 +130,8 @@ public class CPlayer {
 
 		player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
 
-		if (a.getGameState() != GameState.Waiting && a.getPlayers().size() <= 1)
+		if (a.getGameType() == GameType.FFA && (a.getGameState() != GameState.Waiting && a.getPlayers().size() <= 1))
+		{
 			if (!a.getPlayers().isEmpty())
 				for (Player p : a.getPlayers())
 				{
@@ -137,9 +139,20 @@ public class CPlayer {
 					CPlayer cpp = CPlayerManager.getCrankedPlayer(p);
 					Game.leave(cpp);
 				}
-		if (a.getPlayers().isEmpty())
-			// Reset the timers and state
 			a.reset();
+		}
+
+		else if (a.getGameType() == GameType.TDM && (a.getTeam(Team.A).isEmpty() || a.getTeam(Team.B).isEmpty()))
+		{
+			if (!a.getPlayers().isEmpty())
+				for (Player p : a.getPlayers())
+				{
+					p.sendMessage(Msgs.Game_End_Not_Enough_Players.getString(true));
+					CPlayer cpp = CPlayerManager.getCrankedPlayer(p);
+					Game.leave(cpp);
+				}
+			a.reset();
+		}
 
 		if (player.getOpenInventory() != null)
 			player.closeInventory();

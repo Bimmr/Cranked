@@ -169,9 +169,7 @@ public class Arena {
 	}
 
 	public void reset() {
-		getTimer().stopGameTimer();
-		getTimer().stopPreGameTimer();
-		getTimer().stopUpdaterTimer();
+		getTimer().resetTimers();
 		setGameState(GameState.Waiting);
 		// Clear blocks
 		if (!this.getBlocks().isEmpty())

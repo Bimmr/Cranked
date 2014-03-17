@@ -81,7 +81,7 @@ public class Sort {
 			players.put(p.getName(), CPlayerManager.getCrankedPlayer(p).getPoints());
 
 		int place = 0;
-		while (place != howMany - 1)
+		while (place != howMany)
 		{
 			// If the list still has players in it, find the top player
 

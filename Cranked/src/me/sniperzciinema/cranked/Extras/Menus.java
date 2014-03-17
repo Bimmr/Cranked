@@ -1,6 +1,8 @@
 
 package me.sniperzciinema.cranked.Extras;
 
+import java.util.Random;
+
 import me.sniperzciinema.cranked.Cranked;
 import me.sniperzciinema.cranked.GameMechanics.Equip;
 import me.sniperzciinema.cranked.Handlers.Arena.Arena;
@@ -57,13 +59,30 @@ public class Menus {
 						Bukkit.getScheduler().scheduleSyncDelayedTask(Cranked.me, new Runnable()
 						{
 							public void run() {
-								// Make sure the item(Arena) they choose is a
-								// valid arena
-								if (ArenaManager.isArenaValid(ChatColor.stripColor(event.getName())))
-
-									event.getPlayer().performCommand("Cranked Join " + ChatColor.stripColor(event.getName()));
-								else
+								Arena arena;
+								if (ChatColor.stripColor(event.getName()).equalsIgnoreCase("Random"))
+								{
+									Random r = new Random();
+									int i = r.nextInt(ArenaManager.getArenas().size());
+									
+									arena = ArenaManager.getArenas().get(i);
+									while (!ArenaManager.isArenaValid(arena.getName()))
+									{
+										i = r.nextInt(ArenaManager.getArenas().size());
+										arena = ArenaManager.getArenas().get(i);
+									}
+								} else
+								{
+									arena = ArenaManager.getArena(ChatColor.stripColor(event.getName()));
+								}
+								if (ArenaManager.isArenaValid(arena.getName()))
+								{
+									event.getPlayer().performCommand("Cranked Join " + arena.getName());
+								}else
+								{
 									event.getPlayer().sendMessage(Msgs.Error_Arena_No_Spawns.getString(false));
+									event.setWillClose(false);
+								}
 							}
 						}, 2);
 					}
@@ -83,6 +102,7 @@ public class Menus {
 			place++;
 		}
 
+		menu.setOption(place, new ItemStack(Material.MAP), "§aR§ba§cn§dd§eo§fm", "", Msgs.Menu_Join_Random.getString(false));
 		return menu;
 	}
 

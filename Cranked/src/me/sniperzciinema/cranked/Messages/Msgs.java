@@ -70,6 +70,7 @@ public enum Msgs
 	Kits_Chosen("Kits.Chosen"),
 	Menu_Kits_Click_To_Choose("Menu.Kits.Click To Choose"),
 	Menu_Kits_Click_For_None("Menu.Kits.Click For None"),
+	Menu_Join_Random("Menu.Join.Random"),
 	Help_Spawns("Help.Spawns");
 
 	private String string;

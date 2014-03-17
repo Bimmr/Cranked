@@ -116,7 +116,7 @@ public class ArenaTimers {
 	}
 
 	// Reset the game
-	public void resetGame() {
+	public void resetTimers() {
 		stopPreGameTimer();
 		stopGameTimer();
 		timeLeft = getTimePreGame();
